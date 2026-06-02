@@ -1,0 +1,2317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GymPro — Management System</title>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --bg2: #141414;
+      --card: #1a1a1a;
+      --hover: #222;
+      --accent: #f59e0b;
+      --accent2: #d97706;
+      --green: #10b981;
+      --red: #ef4444;
+      --blue: #3b82f6;
+      --purple: #8b5cf6;
+      --txt: #f3f4f6;
+      --txt2: #9ca3af;
+      --txt3: #6b7280;
+      --border: #2a2a2a;
+      --border2: #333;
+      --sw: 255px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--txt);
+      display: flex;
+      min-height: 100vh
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg)
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border2);
+      border-radius: 3px
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: var(--sw);
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      z-index: 100;
+      overflow-y: auto
+    }
+
+    .logo {
+      padding: 22px 20px;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .logo h1 {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: -0.5px
+    }
+
+    .logo span {
+      font-size: 11px;
+      color: var(--txt3);
+      margin-top: 2px;
+      display: block
+    }
+
+    .nav-section {
+      padding: 14px 20px 4px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--txt3)
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 11px 20px;
+      cursor: pointer;
+      color: var(--txt2);
+      font-size: 13.5px;
+      font-weight: 500;
+      position: relative;
+      transition: all .15s
+    }
+
+    .nav-item:hover {
+      background: var(--hover);
+      color: var(--txt)
+    }
+
+    .nav-item.active {
+      background: rgba(245, 158, 11, .1);
+      color: var(--accent)
+    }
+
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--accent);
+      border-radius: 0 2px 2px 0
+    }
+
+    .nav-icon {
+      font-size: 16px;
+      width: 18px;
+      text-align: center
+    }
+
+    .sidebar-bottom {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      margin-top: auto
+    }
+
+    #sb-time {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent);
+      font-family: monospace;
+      letter-spacing: 1px
+    }
+
+    #sb-date {
+      font-size: 11px;
+      color: var(--txt3);
+      margin-top: 3px
+    }
+
+    /* MAIN */
+    .main {
+      margin-left: var(--sw);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh
+    }
+
+    .topbar {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50
+    }
+
+    .topbar h2 {
+      font-size: 18px;
+      font-weight: 700
+    }
+
+    #topbar-date {
+      font-size: 13px;
+      color: var(--txt3)
+    }
+
+    .content {
+      padding: 24px 28px;
+      flex: 1
+    }
+
+    /* PAGES */
+    .page {
+      display: none
+    }
+
+    .page.active {
+      display: block
+    }
+
+    /* STATS */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 14px;
+      margin-bottom: 22px
+    }
+
+    .stat {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px
+    }
+
+    .stat-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0
+    }
+
+    .ic-amber {
+      background: rgba(245, 158, 11, .15)
+    }
+
+    .ic-green {
+      background: rgba(16, 185, 129, .15)
+    }
+
+    .ic-blue {
+      background: rgba(59, 130, 246, .15)
+    }
+
+    .ic-red {
+      background: rgba(239, 68, 68, .15)
+    }
+
+    .ic-purple {
+      background: rgba(139, 92, 246, .15)
+    }
+
+    .stat-info h3 {
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1
+    }
+
+    .stat-info p {
+      font-size: 12px;
+      color: var(--txt3);
+      margin-top: 3px
+    }
+
+    /* CARDS */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 16px
+    }
+
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px
+    }
+
+    .grid3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px
+    }
+
+    /* PAGE HEADER */
+    .ph {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px
+    }
+
+    .ph h2 {
+      font-size: 20px;
+      font-weight: 700
+    }
+
+    .ph-sub {
+      font-size: 12px;
+      color: var(--txt3);
+      margin-top: 2px
+    }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 15px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all .15s
+    }
+
+    .btn-p {
+      background: var(--accent);
+      color: #000
+    }
+
+    .btn-p:hover {
+      background: var(--accent2)
+    }
+
+    .btn-s {
+      background: var(--hover);
+      color: var(--txt);
+      border: 1px solid var(--border)
+    }
+
+    .btn-s:hover {
+      border-color: var(--accent)
+    }
+
+    .btn-g {
+      background: rgba(16, 185, 129, .12);
+      color: var(--green);
+      border: 1px solid rgba(16, 185, 129, .25)
+    }
+
+    .btn-g:hover {
+      background: rgba(16, 185, 129, .22)
+    }
+
+    .btn-r {
+      background: rgba(239, 68, 68, .12);
+      color: var(--red);
+      border: 1px solid rgba(239, 68, 68, .25)
+    }
+
+    .btn-r:hover {
+      background: rgba(239, 68, 68, .22)
+    }
+
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 12px
+    }
+
+    .btn-xs {
+      padding: 3px 8px;
+      font-size: 11px
+    }
+
+    /* TABLE */
+    .tbl-wrap {
+      overflow-x: auto
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse
+    }
+
+    th {
+      background: var(--bg2);
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--txt3);
+      border-bottom: 1px solid var(--border)
+    }
+
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      vertical-align: middle
+    }
+
+    tr:last-child td {
+      border-bottom: none
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, .02)
+    }
+
+    /* BADGES */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600
+    }
+
+    .bg-g {
+      background: rgba(16, 185, 129, .15);
+      color: var(--green)
+    }
+
+    .bg-r {
+      background: rgba(239, 68, 68, .15);
+      color: var(--red)
+    }
+
+    .bg-a {
+      background: rgba(245, 158, 11, .15);
+      color: var(--accent)
+    }
+
+    .bg-b {
+      background: rgba(59, 130, 246, .15);
+      color: var(--blue)
+    }
+
+    .bg-p {
+      background: rgba(139, 92, 246, .15);
+      color: var(--purple)
+    }
+
+    /* AVATAR */
+    .av {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(245, 158, 11, .15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--accent);
+      flex-shrink: 0
+    }
+
+    /* FORMS */
+    .fg {
+      margin-bottom: 14px
+    }
+
+    .fl {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--txt2);
+      margin-bottom: 5px
+    }
+
+    .fc {
+      width: 100%;
+      padding: 9px 12px;
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      color: var(--txt);
+      font-size: 13px;
+      transition: border-color .15s;
+      font-family: inherit
+    }
+
+    .fc:focus {
+      outline: none;
+      border-color: var(--accent)
+    }
+
+    .fr2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px
+    }
+
+    .fa {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px
+    }
+
+    /* MODAL */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .75);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      backdrop-filter: blur(3px)
+    }
+
+    .overlay.open {
+      display: flex
+    }
+
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      width: 90%;
+      max-width: 480px;
+      max-height: 90vh;
+      overflow-y: auto
+    }
+
+    .modal-lg {
+      max-width: 700px
+    }
+
+    .mh {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px
+    }
+
+    .mh h3 {
+      font-size: 17px;
+      font-weight: 700
+    }
+
+    .mx {
+      background: none;
+      border: none;
+      color: var(--txt3);
+      cursor: pointer;
+      font-size: 22px;
+      line-height: 1;
+      padding: 2px
+    }
+
+    .mx:hover {
+      color: var(--txt)
+    }
+
+    /* PUNCH CARDS */
+    .punch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 14px
+    }
+
+    .punch-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden
+    }
+
+    .pch {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, .02);
+      border-bottom: 1px solid var(--border)
+    }
+
+    .pname {
+      font-weight: 700;
+      font-size: 14px
+    }
+
+    .prole {
+      font-size: 11px;
+      color: var(--txt3);
+      margin-top: 2px
+    }
+
+    .shift-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .shift-row:last-child {
+      border-bottom: none
+    }
+
+    .sh-label {
+      font-size: 13px;
+      font-weight: 600
+    }
+
+    .sh-time {
+      font-size: 11px;
+      color: var(--txt3)
+    }
+
+    .sh-acts {
+      display: flex;
+      align-items: center;
+      gap: 7px
+    }
+
+    .t-green {
+      color: var(--green);
+      font-family: monospace;
+      font-size: 11px
+    }
+
+    /* ATTENDANCE GRID */
+    .att-wrap {
+      overflow-x: auto
+    }
+
+    .att-tbl {
+      border-collapse: collapse;
+      min-width: 100%
+    }
+
+    .att-tbl th,
+    .att-tbl td {
+      padding: 5px 3px;
+      text-align: center;
+      font-size: 10px;
+      min-width: 30px
+    }
+
+    .att-tbl th {
+      background: var(--bg2);
+      color: var(--txt3);
+      font-weight: 700;
+      font-size: 9px;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .att-cell {
+      width: 26px;
+      height: 26px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      font-size: 9px;
+      font-weight: 800;
+      cursor: default
+    }
+
+    .ac-full {
+      background: rgba(16, 185, 129, .2);
+      color: var(--green)
+    }
+
+    .ac-m {
+      background: rgba(59, 130, 246, .2);
+      color: var(--blue)
+    }
+
+    .ac-e {
+      background: rgba(245, 158, 11, .2);
+      color: var(--accent)
+    }
+
+    .ac-late {
+      background: rgba(59, 130, 246, .18);
+      color: var(--blue)
+    }
+
+    .ac-leave {
+      background: rgba(139, 92, 246, .14);
+      color: var(--purple)
+    }
+
+    .ac-abs {
+      background: rgba(239, 68, 68, .08);
+      color: var(--red)
+    }
+
+    .ac-fut {
+      background: transparent;
+      color: var(--border2)
+    }
+
+    .ac-sun {
+      background: rgba(139, 92, 246, .1);
+      color: var(--purple)
+    }
+
+    .sticky-col {
+      position: sticky;
+      left: 0;
+      background: var(--card);
+      z-index: 5
+    }
+
+    .sticky-hdr {
+      position: sticky;
+      left: 0;
+      background: var(--bg2);
+      z-index: 6
+    }
+
+    /* SALARY CARDS */
+    .sal-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      transition: transform .2s ease, box-shadow .2s ease;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, .05);
+    }
+
+    .sal-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 18px 38px rgba(0, 0, 0, .08);
+    }
+
+    .sal-head {
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, .04);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .sal-body {
+      padding: 18px 20px;
+    }
+
+    .sal-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px
+    }
+
+    .sal-row:last-child {
+      border-bottom: none
+    }
+
+    .sal-lbl {
+      color: var(--txt2)
+    }
+
+    .sal-val {
+      font-weight: 600
+    }
+
+    .sal-total {
+      padding: 12px 18px;
+      border-top: 2px solid var(--accent);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(245, 158, 11, .04)
+    }
+
+    .sal-foot {
+      padding: 12px 18px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+      align-items: center
+    }
+
+    /* LEGEND */
+    .legend {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 14px;
+      flex-wrap: wrap
+    }
+
+    .leg-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--txt2)
+    }
+
+    .leg-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 3px
+    }
+
+    /* TOAST */
+    .toast-wrap {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px
+    }
+
+    .toast {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 11px 15px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 260px;
+      animation: tslide .25s ease
+    }
+
+    @keyframes tslide {
+      from {
+        transform: translateX(110%);
+        opacity: 0
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1
+      }
+    }
+
+    .t-suc {
+      border-left: 3px solid var(--green)
+    }
+
+    .t-err {
+      border-left: 3px solid var(--red)
+    }
+
+    .t-inf {
+      border-left: 3px solid var(--blue)
+    }
+
+    /* EMPTY STATE */
+    .empty {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--txt3)
+    }
+
+    .empty-icon {
+      font-size: 42px;
+      margin-bottom: 10px
+    }
+
+    .empty h3 {
+      font-size: 15px;
+      color: var(--txt2);
+      margin-bottom: 6px
+    }
+
+    /* SHIFT INFO BAR */
+    .shift-bar {
+      display: flex;
+      gap: 20px;
+      padding: 14px 18px;
+      background: rgba(245, 158, 11, .04);
+      border: 1px solid rgba(245, 158, 11, .15);
+      border-radius: 10px;
+      margin-bottom: 18px
+    }
+
+    .sb-item .sb-label {
+      font-size: 11px;
+      color: var(--txt3)
+    }
+
+    .sb-item .sb-val {
+      font-weight: 700;
+      font-size: 13px;
+      margin-top: 2px
+    }
+
+    /* FILTERS */
+    .filters {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      align-items: center
+    }
+
+    /* MONTH NAV */
+    .mnav {
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    /* PRINT */
+    @media print {
+
+      .sidebar,
+      .topbar,
+      .btn,
+      .toast-wrap {
+        display: none !important
+      }
+
+      .main {
+        margin-left: 0
+      }
+
+      .content {
+        padding: 0
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="logo">
+      <h1>💪 GymPro</h1>
+      <span>Management System</span>
+    </div>
+    <div>
+      <div class="nav-section">Main</div>
+      <div class="nav-item active" onclick="nav('dashboard')"><span class="nav-icon">📊</span>Dashboard</div>
+      <div class="nav-item" onclick="nav('employees')"><span class="nav-icon">👥</span>Employees</div>
+      <div class="nav-section">Attendance</div>
+      <div class="nav-item" onclick="nav('punch')"><span class="nav-icon">👊</span>Attendance</div>
+      <div class="nav-item" onclick="nav('monthly')"><span class="nav-icon">📅</span>Monthly View</div>
+      <div class="nav-item" onclick="nav('leave')"><span class="nav-icon">📝</span>Leave</div>
+      <div class="nav-section">Finance</div>
+      <div class="nav-item" onclick="nav('salary')"><span class="nav-icon">💰</span>Salary</div>
+      <div class="nav-item" onclick="nav('advances')"><span class="nav-icon">💳</span>Advances</div>
+    </div>
+    <div class="sidebar-bottom">
+      <div id="sb-time"></div>
+      <div id="sb-date"></div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+    <header class="topbar">
+      <h2 id="page-title">Dashboard</h2>
+      <div id="topbar-date" style="font-size:13px;color:var(--txt3)"></div>
+    </header>
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div id="page-dashboard" class="page active">
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-icon ic-amber">👥</div>
+            <div class="stat-info">
+              <h3 id="s-staff">0</h3>
+              <p>Total Staff</p>
+            </div>
+          </div>
+          <div class="stat">
+            <div class="stat-icon ic-green">✅</div>
+            <div class="stat-info">
+              <h3 id="s-present">0</h3>
+              <p>Present Today</p>
+            </div>
+          </div>
+          <div class="stat">
+            <div class="stat-icon ic-blue">🌅</div>
+            <div class="stat-info">
+              <h3 id="s-morning">0</h3>
+              <p>Morning Shift</p>
+            </div>
+          </div>
+          <div class="stat">
+            <div class="stat-icon ic-red">🌆</div>
+            <div class="stat-info">
+              <h3 id="s-evening">0</h3>
+              <p>Evening Shift</p>
+            </div>
+          </div>
+          <div class="stat">
+            <div class="stat-icon ic-purple">💳</div>
+            <div class="stat-info">
+              <h3 id="s-advances">₹0</h3>
+              <p>Advances This Month</p>
+            </div>
+          </div>
+        </div>
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">Today's Attendance</div>
+            <div id="dash-att"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Recent Punches</div>
+            <div id="dash-recent"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EMPLOYEES -->
+      <div id="page-employees" class="page">
+        <div class="ph">
+          <div>
+            <h2>Employees</h2>
+            <div class="ph-sub">Manage your gym staff</div>
+          </div>
+          <button id="btn-add-emp" type="button" class="btn btn-p" onclick="openEmpModal()">+ Add Employee</button>
+        </div>
+        <div class="card">
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Employee</th>
+                  <th>Role</th>
+                  <th>Schedule</th>
+                  <th>Phone</th>
+                  <th>Join Date</th>
+                  <th>Salary/Month</th>
+                  <th>Working Days</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="emp-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PUNCH -->
+      <div id="page-punch" class="page">
+        <div class="ph">
+          <div>
+            <h2>Attendance</h2>
+            <div class="ph-sub" id="punch-sub"></div>
+          </div>
+          <button class="btn btn-s" onclick="openManualModal()">📋 Add Attendance</button>
+        </div>
+        <div class="shift-bar">
+          <div class="sb-item">
+            <div class="sb-label">🌅 Morning Shift</div>
+            <div class="sb-val" style="color:var(--blue)">5:30 AM – 9:00 AM</div>
+          </div>
+          <div class="sb-item">
+            <div class="sb-label">🌆 Evening Shift</div>
+            <div class="sb-val" style="color:var(--accent)">4:00 PM – 10:30 PM</div>
+          </div>
+          <div class="sb-item">
+            <div class="sb-label">Admin Privilege</div>
+            <div class="sb-val"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox"
+                  id="admin-mode">Enable leave marking</label></div>
+          </div>
+        </div>
+        <div id="punch-grid" class="punch-grid"></div>
+      </div>
+
+      <!-- MONTHLY ATTENDANCE -->
+      <div id="page-monthly" class="page">
+        <div class="ph">
+          <div>
+            <h2>Monthly Attendance</h2>
+            <div class="ph-sub">Full month shift-wise view</div>
+          </div>
+          <div class="mnav">
+            <button class="btn btn-s btn-sm" onclick="changeMonth('att',-1)">◀</button>
+            <input type="month" id="att-month" class="fc" style="width:150px" onchange="renderMonthly()">
+            <button class="btn btn-s btn-sm" onclick="changeMonth('att',1)">▶</button>
+          </div>
+        </div>
+        <div class="legend">
+          <div class="leg-item">
+            <div class="leg-dot" style="background:rgba(16,185,129,.3)"></div>Full Day (M+E)
+          </div>
+          <div class="leg-item">
+            <div class="leg-dot" style="background:rgba(59,130,246,.3)"></div>Morning Only
+          </div>
+          <div class="leg-item">
+            <div class="leg-dot" style="background:rgba(245,158,11,.3)"></div>Evening Only
+          </div>
+          <div class="leg-item">
+            <div class="leg-dot" style="background:rgba(59,130,246,.3)"></div>Late
+          </div>
+          <div class="leg-item">
+            <div class="leg-dot" style="background:rgba(139,92,246,.15)"></div>Leave
+          </div>
+          <div class="leg-item">
+            <div class="leg-dot" style="background:rgba(239,68,68,.12)"></div>Absent
+          </div>
+          <div class="leg-item">
+            <div class="leg-dot" style="background:rgba(139,92,246,.15)"></div>Sunday
+          </div>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden">
+          <div class="att-wrap" id="att-grid-wrap"></div>
+        </div>
+      </div>
+
+      <!-- LEAVE -->
+      <div id="page-leave" class="page">
+        <div class="ph">
+          <div>
+            <h2>Leave Templates</h2>
+            <div class="ph-sub">Create leave templates for selected employees</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="fg"><label class="fl">Template Name *</label><input class="fc" id="lt-name"
+              placeholder="Enter leave template name"></div>
+          <div class="fr2">
+            <div class="fg"><label class="fl">Days *</label><input type="number" class="fc" id="lt-days" min="1"
+                placeholder="Number of days"></div>
+            <div class="fg"><label class="fl">Reasons</label><textarea class="fc" id="lt-reasons" rows="2"
+                placeholder="Reason(s) for this leave"></textarea></div>
+          </div>
+          <div class="fg"><label class="fl">Applicable Employees</label>
+            <select class="fc" id="lt-employees" multiple size="6"></select>
+          </div>
+          <div class="fa"><button class="btn btn-p" onclick="saveLeaveTemplate(event)">Save Template</button></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Saved Leave Templates</div>
+          <div id="lt-list"></div>
+        </div>
+      </div>
+
+      <!-- SALARY -->
+      <div id="page-salary" class="page">
+        <div class="ph">
+          <div>
+            <h2>Salary Management</h2>
+            <div class="ph-sub">Monthly salary & payments</div>
+          </div>
+          <div class="mnav">
+            <button class="btn btn-s btn-sm" onclick="changeMonth('sal',-1)">◀</button>
+            <input type="month" id="sal-month" class="fc" style="width:150px" onchange="renderSalary()">
+            <button class="btn btn-s btn-sm" onclick="changeMonth('sal',1)">▶</button>
+          </div>
+          <div class="fa" style="gap:10px;margin-top:8px">
+            <button class="btn btn-p btn-sm" onclick="saveWeeklyReport()">Export Weekly Report</button>
+            <button class="btn btn-p btn-sm" onclick="saveMonthlyReport()">Export Monthly Report</button>
+            <button class="btn btn-s btn-sm" onclick="openReportFolder()">Open Report Folder</button>
+          </div>
+        </div>
+        <div id="sal-grid" class="grid3"></div>
+      </div>
+
+      <!-- ADVANCES -->
+      <div id="page-advances" class="page">
+        <div class="ph">
+          <div>
+            <h2>Salary Advances</h2>
+            <div class="ph-sub">Track advance payments</div>
+          </div>
+          <button class="btn btn-p" onclick="openAdvModal()">+ New Advance</button>
+        </div>
+        <div class="filters">
+          <select class="fc" style="width:190px" id="adv-f-emp" onchange="renderAdvances()">
+            <option value="">All Employees</option>
+          </select>
+          <input type="month" id="adv-f-month" class="fc" style="width:150px" onchange="renderAdvances()">
+          <button class="btn btn-s btn-sm" onclick="clearAdvFilters()">Clear</button>
+        </div>
+        <div class="card">
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Employee</th>
+                  <th>Date</th>
+                  <th>Amount</th>
+                  <th>For Month</th>
+                  <th>Reason</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adv-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- TOAST -->
+  <div class="toast-wrap" id="toasts"></div>
+
+  <!-- MODAL: Employee -->
+  <div class="overlay" id="emp-modal">
+    <div class="modal">
+      <div class="mh">
+        <h3 id="emp-modal-title">Add Employee</h3><button class="mx" onclick="closeModal('emp-modal')">✕</button>
+      </div>
+      <form onsubmit="saveEmployee(event)">
+        <div class="fr2">
+          <div class="fg"><label class="fl">Full Name *</label><input class="fc" id="e-name" required
+              placeholder="e.g. Ravi Kumar"></div>
+          <div class="fg"><label class="fl">Mobile No</label><input class="fc" id="e-phone" placeholder="9876543210">
+          </div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Role / Designation</label><input class="fc" id="e-role"
+              placeholder="Trainer, Receptionist…"></div>
+          <div class="fg"><label class="fl">Join Date *</label><input type="date" class="fc" id="e-join" required></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Morning Start</label><input type="time" class="fc" id="e-morning-from"
+              placeholder="05:30"></div>
+          <div class="fg"><label class="fl">Morning End</label><input type="time" class="fc" id="e-morning-to"
+              placeholder="09:00"></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Evening Start</label><input type="time" class="fc" id="e-evening-from"
+              placeholder="16:00"></div>
+          <div class="fg"><label class="fl">Evening End</label><input type="time" class="fc" id="e-evening-to"
+              placeholder="22:30"></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Salary (₹) *</label><input type="number" class="fc" id="e-sal" required
+              placeholder="15000" min="0"></div>
+          <div class="fg"><label class="fl">Working Days/Month</label><input type="number" class="fc" id="e-wdays"
+              value="26" min="1" max="31"></div>
+        </div>
+        <div class="fg"><label class="fl">Status</label>
+          <select class="fc" id="e-status">
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+        <input type="hidden" id="e-id">
+        <div class="fa">
+          <button type="button" class="btn btn-s" onclick="closeModal('emp-modal')">Cancel</button>
+          <button type="submit" class="btn btn-p">Save Employee</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: Manual Attendance -->
+  <div class="overlay" id="manual-modal">
+    <div class="modal">
+      <div class="mh">
+        <h3>Quick Attendance Entry</h3><button class="mx" onclick="closeModal('manual-modal')">✕</button>
+      </div>
+      <form onsubmit="saveManual(event)">
+        <div class="fr2">
+          <div class="fg"><label class="fl">Employee *</label>
+            <select class="fc" id="m-emp" required onchange="updateManualShiftOptions()">
+              <option value="">Select Employee</option>
+            </select>
+          </div>
+          <div class="fg"><label class="fl">Date *</label><input type="date" class="fc" id="m-date" required></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Shift *</label>
+            <select class="fc" id="m-shift" required>
+              <option value="morning">🌅 Morning</option>
+              <option value="evening">🌆 Evening</option>
+            </select>
+          </div>
+          <div class="fg"><label class="fl">Status</label>
+            <select class="fc" id="m-status" onchange="toggleManualReason()">
+              <option value="present">Present</option>
+              <option value="late">Late</option>
+              <option value="absent">Absent</option>
+              <option value="half-day">Half Day</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg" id="m-reason-row" style="display:none">
+          <label class="fl">Reason for Late</label>
+          <input class="fc" id="m-reason" placeholder="Late because...">
+        </div>
+        <div class="fa">
+          <button type="button" class="btn btn-s" onclick="closeModal('manual-modal')">Cancel</button>
+          <button type="submit" class="btn btn-p">Save Attendance</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: Late Reason -->
+  <div class="overlay" id="late-modal">
+    <div class="modal">
+      <div class="mh">
+        <h3>Add Late Reason</h3><button class="mx" onclick="closeModal('late-modal')">✕</button>
+      </div>
+      <form onsubmit="saveLate(event)">
+        <div class="fg"><label class="fl">Employee</label>
+          <div id="l-emp-name" class="fc" style="background:var(--bg2);border:none;cursor:default"></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Shift</label>
+            <div id="l-shift-label" class="fc" style="background:var(--bg2);border:none;cursor:default"></div>
+          </div>
+          <div class="fg"><label class="fl">Date</label>
+            <div id="l-date-label" class="fc" style="background:var(--bg2);border:none;cursor:default"></div>
+          </div>
+        </div>
+        <div class="fg"><label class="fl">Reason *</label><input class="fc" id="l-reason" required
+            placeholder="Employee arrived late because..."></div>
+        <input type="hidden" id="l-emp">
+        <input type="hidden" id="l-date">
+        <input type="hidden" id="l-shift">
+        <div class="fa">
+          <button type="button" class="btn btn-s" onclick="closeModal('late-modal')">Cancel</button>
+          <button type="submit" class="btn btn-p">Save Late</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: Advance -->
+  <div class="overlay" id="adv-modal">
+    <div class="modal">
+      <div class="mh">
+        <h3 id="adv-modal-title">Add Salary Advance</h3><button class="mx" onclick="closeModal('adv-modal')">✕</button>
+      </div>
+      <form onsubmit="saveAdvance(event)">
+        <div class="fg"><label class="fl">Employee *</label>
+          <select class="fc" id="a-emp" required>
+            <option value="">Select Employee</option>
+          </select>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Date *</label><input type="date" class="fc" id="a-date" required></div>
+          <div class="fg"><label class="fl">For Month *</label><input type="month" class="fc" id="a-month" required>
+          </div>
+        </div>
+        <div class="fg"><label class="fl">Amount (₹) *</label><input type="number" class="fc" id="a-amount" required
+            placeholder="2000" min="1"></div>
+        <div class="fg"><label class="fl">Reason</label><input class="fc" id="a-reason"
+            placeholder="Emergency, Medical, etc."></div>
+        <input type="hidden" id="a-id">
+        <div class="fa">
+          <button type="button" class="btn btn-s" onclick="closeModal('adv-modal')">Cancel</button>
+          <button type="submit" class="btn btn-p">Save Advance</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: Salary Detail -->
+  <div class="overlay" id="sal-detail-modal">
+    <div class="modal modal-lg">
+      <div class="mh">
+        <h3 id="sal-detail-title">Salary Details</h3><button class="mx"
+          onclick="closeModal('sal-detail-modal')">✕</button>
+      </div>
+      <div id="sal-detail-body"></div>
+    </div>
+  </div>
+
+  <!-- MODAL: Salary Slip Print -->
+  <div class="overlay" id="slip-modal">
+    <div class="modal modal-lg">
+      <div class="mh">
+        <h3>Salary Slip</h3><button class="mx" onclick="closeModal('slip-modal')">✕</button>
+      </div>
+      <div id="slip-body"></div>
+      <div class="fa" style="margin-top:16px">
+        <button class="btn btn-s" onclick="closeModal('slip-modal')">Close</button>
+        <button class="btn btn-p" onclick="window.print()">🖨 Print</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+  <script>
+    // ─── STORAGE ────────────────────────────────────────────────────────
+    const K = { emp: 'gp_emp', att: 'gp_att', adv: 'gp_adv', pay: 'gp_pay', leave: 'gp_leave', init: 'gp_init' };
+    const load = k => { try { return JSON.parse(localStorage.getItem(k)) || []; } catch { return []; } };
+    const loadObj = k => { try { return JSON.parse(localStorage.getItem(k)) || {}; } catch { return {}; } };
+    const save = (k, d) => localStorage.setItem(k, JSON.stringify(d));
+    const getEmp = () => load(K.emp);
+    const getAtt = () => load(K.att);
+    const getAdv = () => load(K.adv);
+    const getPay = () => load(K.pay);
+    const getLeaveTemplates = () => load(K.leave);
+    function clearAllData() {
+      [K.emp, K.att, K.adv, K.pay, K.leave].forEach(key => localStorage.removeItem(key));
+    }
+    const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+    const today = () => new Date().toISOString().slice(0, 10);
+    const curMonth = () => new Date().toISOString().slice(0, 7);
+    const fmtDate = s => s ? new Date(s + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+    const fmtMon = m => new Date(m + '-01').toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+    const defaultMorning = { from: '05:30', to: '09:00' };
+    const defaultEvening = { from: '16:00', to: '22:30' };
+
+    function getLeaveTemplatesList() {
+      return getLeaveTemplates().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+
+    function saveLeaveTemplate(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      const name = document.getElementById('lt-name').value.trim();
+      const days = parseInt(document.getElementById('lt-days').value, 10) || 0;
+      const reasons = document.getElementById('lt-reasons').value.trim();
+      const applicableEmpIds = Array.from(document.getElementById('lt-employees').selectedOptions).map(opt => opt.value);
+      if (!name) { toast('Template name is required', 'err'); return; }
+      if (!days || days < 1) { toast('Enter a valid number of days', 'err'); return; }
+      const templates = getLeaveTemplates();
+      templates.push({ id: uid(), name, days, reasons, applicableEmpIds, createdAt: new Date().toISOString() });
+      save(K.leave, templates);
+      document.getElementById('lt-name').value = '';
+      document.getElementById('lt-days').value = '';
+      document.getElementById('lt-reasons').value = '';
+      Array.from(document.getElementById('lt-employees').options).forEach(opt => opt.selected = false);
+      toast('Leave template saved', 'suc');
+      renderLeavePage();
+    }
+
+    function deleteLeaveTemplate(id) {
+      if (!confirm('Delete this leave template?')) return;
+      const templates = getLeaveTemplates().filter(t => t.id !== id);
+      save(K.leave, templates);
+      toast('Leave template deleted', 'suc');
+      renderLeavePage();
+    }
+
+    function renderLeavePage() {
+      const employees = getEmp();
+      const select = document.getElementById('lt-employees');
+      select.innerHTML = employees.length
+        ? employees.map(emp => `<option value="${emp.id}">${emp.name}</option>`).join('')
+        : `<option value="" disabled>No employees found</option>`;
+      const templates = getLeaveTemplatesList();
+      const list = document.getElementById('lt-list');
+      if (!templates.length) {
+        list.innerHTML = '<div class="empty"><div class="empty-icon">📝</div><h3>No leave templates yet</h3><p>Create one using the form above.</p></div>';
+      } else {
+        list.innerHTML = templates.map(t => {
+          const names = employees.filter(emp => t.applicableEmpIds.includes(emp.id)).map(emp => emp.name).join(', ') || 'None';
+          return `<div class="card" style="padding:14px;margin-bottom:12px">
+            <div style="display:flex;justify-content:space-between;align-items:start;gap:10px">
+              <div>
+                <div style="font-weight:700">${t.name}</div>
+                <div style="font-size:12px;color:var(--txt3);margin-top:4px">${t.reasons || 'No reason provided'}</div>
+              </div>
+              <button class="btn btn-r btn-xs" onclick="deleteLeaveTemplate('${t.id}')">Delete</button>
+            </div>
+            <div style="margin-top:12px;font-size:13px">Days: <strong>${t.days}</strong></div>
+            <div style="margin-top:8px;font-size:13px">Applies to: <strong>${names}</strong></div>
+          </div>`;
+        }).join('');
+      }
+    }
+
+
+    function hasMorning(emp) {
+      return (emp?.morningFrom && emp?.morningTo) || emp?.shift === 'morning' || emp?.shift === 'both';
+    }
+    function hasEvening(emp) {
+      return (emp?.eveningFrom && emp?.eveningTo) || emp?.shift === 'evening' || emp?.shift === 'both';
+    }
+    function getEmpShiftType(emp) {
+      if (hasMorning(emp) && hasEvening(emp)) return 'both';
+      if (hasMorning(emp)) return 'morning';
+      if (hasEvening(emp)) return 'evening';
+      return emp.shift || 'morning';
+    }
+    function getShiftTime(emp, shift) {
+      if (shift === 'morning') {
+        return `${emp.morningFrom || defaultMorning.from} – ${emp.morningTo || defaultMorning.to}`;
+      }
+      return `${emp.eveningFrom || defaultEvening.from} – ${emp.eveningTo || defaultEvening.to}`;
+    }
+    function formatShiftDisplay(emp) {
+      const parts = [];
+      if (hasMorning(emp)) parts.push(`🌅 ${getShiftTime(emp, 'morning')}`);
+      if (hasEvening(emp)) parts.push(`🌆 ${getShiftTime(emp, 'evening')}`);
+      return parts.length ? parts.join('<br>') : 'No schedule';
+    }
+
+    // ─── NAVIGATION ─────────────────────────────────────────────────────
+    const PAGE_TITLES = { dashboard: 'Dashboard', employees: 'Employees', punch: 'Attendance', monthly: 'Monthly Attendance', leave: 'Leave Templates', salary: 'Salary Management', advances: 'Salary Advances' };
+    let curPage = 'dashboard';
+
+    function nav(page) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById('page-' + page).classList.add('active');
+      document.querySelectorAll('.nav-item').forEach(n => {
+        if (n.getAttribute('onclick') === `nav('${page}')`) n.classList.add('active');
+      });
+      document.getElementById('page-title').textContent = PAGE_TITLES[page];
+      curPage = page;
+      const renders = { dashboard: renderDash, employees: renderEmp, punch: renderPunch, monthly: renderMonthly, leave: renderLeavePage, salary: renderSalary, advances: renderAdvances };
+      if (renders[page]) renders[page]();
+    }
+
+    // ─── CLOCK ──────────────────────────────────────────────────────────
+    function tick() {
+      const now = new Date();
+      const t = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+      const d = now.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+      const full = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+      document.getElementById('sb-time').textContent = t;
+      document.getElementById('sb-date').textContent = d;
+      document.getElementById('topbar-date').textContent = full;
+      const ps = document.getElementById('punch-sub');
+      if (ps) ps.textContent = full;
+    }
+
+    // ─── TOAST ──────────────────────────────────────────────────────────
+    function toast(msg, type = 'inf') {
+      const icons = { suc: '✅', err: '❌', inf: 'ℹ️' };
+      const c = document.getElementById('toasts');
+      const el = document.createElement('div');
+      el.className = `toast t-${type}`;
+      el.innerHTML = `<span>${icons[type] || 'ℹ️'}</span><span>${msg}</span>`;
+      c.appendChild(el);
+      setTimeout(() => el.remove(), 3200);
+    }
+
+    // ─── MODAL ──────────────────────────────────────────────────────────
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    document.querySelectorAll('.overlay').forEach(o => o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); }));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.overlay.open').forEach(o => o.classList.remove('open')); });
+    const addEmpButton = document.getElementById('btn-add-emp');
+    if (addEmpButton) addEmpButton.addEventListener('click', openEmpModal);
+
+    // ─── EMPLOYEES ──────────────────────────────────────────────────────
+    function openEmpModal(id = null) {
+      const emps = getEmp();
+      const emp = id ? emps.find(e => e.id === id) : null;
+      document.getElementById('emp-modal-title').textContent = emp ? 'Edit Employee' : 'Add Employee';
+      document.getElementById('e-id').value = emp?.id || '';
+      document.getElementById('e-name').value = emp?.name || '';
+      document.getElementById('e-phone').value = emp?.phone || '';
+      document.getElementById('e-role').value = emp?.role || '';
+      document.getElementById('e-join').value = emp?.joinDate || today();
+      document.getElementById('e-morning-from').value = emp?.morningFrom || '';
+      document.getElementById('e-morning-to').value = emp?.morningTo || '';
+      document.getElementById('e-evening-from').value = emp?.eveningFrom || '';
+      document.getElementById('e-evening-to').value = emp?.eveningTo || '';
+      document.getElementById('e-sal').value = emp?.salary || '';
+      document.getElementById('e-wdays').value = emp?.wdays || 26;
+      document.getElementById('e-status').value = emp?.status || 'active';
+      openModal('emp-modal');
+    }
+
+    function saveEmployee(e) {
+      e.preventDefault();
+      const emps = getEmp();
+      const id = document.getElementById('e-id').value;
+      const name = document.getElementById('e-name').value.trim();
+      const salary = parseFloat(document.getElementById('e-sal').value);
+      const morningFrom = document.getElementById('e-morning-from').value;
+      const morningTo = document.getElementById('e-morning-to').value;
+      const eveningFrom = document.getElementById('e-evening-from').value;
+      const eveningTo = document.getElementById('e-evening-to').value;
+      const morningValid = morningFrom && morningTo;
+      const eveningValid = eveningFrom && eveningTo;
+      if (!name) { toast('Employee name is required', 'err'); return; }
+      if (Number.isNaN(salary)) { toast('Salary must be a number', 'err'); return; }
+      if (!morningValid && !eveningValid) { toast('Provide at least one shift schedule', 'err'); return; }
+      if ((morningFrom && !morningTo) || (!morningFrom && morningTo)) { toast('Complete morning shift times or leave both blank', 'err'); return; }
+      if ((eveningFrom && !eveningTo) || (!eveningFrom && eveningTo)) { toast('Complete evening shift times or leave both blank', 'err'); return; }
+      const shift = morningValid && eveningValid ? 'both' : morningValid ? 'morning' : 'evening';
+      const data = {
+        id: id || uid(),
+        name,
+        phone: document.getElementById('e-phone').value.trim(),
+        role: document.getElementById('e-role').value.trim(),
+        joinDate: document.getElementById('e-join').value || today(),
+        morningFrom: morningValid ? morningFrom : '',
+        morningTo: morningValid ? morningTo : '',
+        eveningFrom: eveningValid ? eveningFrom : '',
+        eveningTo: eveningValid ? eveningTo : '',
+        shift,
+        salary,
+        wdays: parseInt(document.getElementById('e-wdays').value) || 26,
+        status: document.getElementById('e-status').value,
+        createdAt: id ? emps.find(x => x.id === id)?.createdAt : new Date().toISOString()
+      };
+      if (id) { const i = emps.findIndex(x => x.id === id); emps[i] = data; toast('Employee updated', 'suc'); }
+      else { emps.push(data); toast('Employee added', 'suc'); }
+      save(K.emp, emps);
+      closeModal('emp-modal');
+      renderEmp();
+      if (curPage === 'leave') renderLeavePage();
+      if (curPage === 'punch') renderPunch();
+      if (curPage === 'dashboard') renderDash();
+    }
+
+    function deleteEmp(id) {
+      if (!confirm('Delete this employee and all their records?')) return;
+      save(K.emp, getEmp().filter(e => e.id !== id));
+      toast('Employee deleted', 'suc');
+      renderEmp();
+      if (curPage === 'leave') renderLeavePage();
+    }
+
+    function renderEmp() {
+      const emps = getEmp();
+      const tb = document.getElementById('emp-tbody');
+      if (!emps.length) { tb.innerHTML = `<tr><td colspan="9"><div class="empty"><div class="empty-icon">👥</div><h3>No employees yet</h3><p>Add your first employee to get started</p></div></td></tr>`; return; }
+      tb.innerHTML = emps.map(e => `
+    <tr>
+      <td><div style="display:flex;align-items:center;gap:10px"><div class="av">${e.name[0].toUpperCase()}</div><div><div style="font-weight:600">${e.name}</div><div style="font-size:11px;color:var(--txt3)">${e.phone || '—'}</div></div></div></td>
+      <td>${e.role || '—'}</td>
+      <td>${formatShiftDisplay(e)}</td>
+      <td>${e.phone || '—'}</td>
+      <td>${fmtDate(e.joinDate)}</td>
+      <td style="font-weight:700">₹${(e.salary || 0).toLocaleString('en-IN')}</td>
+      <td>${e.wdays || 26} days</td>
+      <td><span class="badge ${e.status === 'active' ? 'bg-g' : 'bg-r'}">${e.status || 'active'}</span></td>
+      <td><div style="display:flex;gap:6px">
+        <button class="btn btn-s btn-xs" onclick="openEmpModal('${e.id}')">Edit</button>
+        <button class="btn btn-r btn-xs" onclick="deleteEmp('${e.id}')">Del</button>
+      </div></td>
+    </tr>`).join('');
+    }
+
+    // ─── PUNCH ──────────────────────────────────────────────────────────
+    function getAttRec(empId, date, shift) {
+      return getAtt().find(a => a.empId === empId && a.date === date && a.shift === shift);
+    }
+
+    function isPresentStatus(status) {
+      return status === 'present' || status === 'late';
+    }
+
+    function markAttendance(empId, shift, status) {
+      const date = today();
+      const att = getAtt();
+      const idx = att.findIndex(a => a.empId === empId && a.date === date && a.shift === shift);
+      const rec = { id: idx >= 0 ? att[idx].id : uid(), empId, date, shift, punchIn: null, punchOut: null, status };
+      if (idx >= 0) att[idx] = rec; else att.push(rec);
+      save(K.att, att);
+      const label = status === 'present' ? 'Present' : status === 'late' ? 'Late' : 'Absent';
+      toast(`Marked ${label} — ${shift} shift`, 'suc');
+      renderPunch();
+      if (curPage === 'dashboard') renderDash();
+    }
+
+    function renderPunch() {
+      const emps = getEmp().filter(e => e.status !== 'inactive');
+      const date = today();
+      const c = document.getElementById('punch-grid');
+      if (!emps.length) { c.innerHTML = `<div class="empty"><div class="empty-icon">👊</div><h3>No active employees</h3><p>Add employees to track attendance</p></div>`; return; }
+      c.innerHTML = emps.map(emp => {
+        const shifts = [];
+        if (hasMorning(emp)) shifts.push('morning');
+        if (hasEvening(emp)) shifts.push('evening');
+        if (!shifts.length) shifts.push('morning');
+        const rows = shifts.map(shift => {
+          const rec = getAttRec(emp.id, date, shift);
+          return shiftRow(
+            shift,
+            shift === 'morning' ? '🌅 Morning' : '🌆 Evening',
+            getShiftTime(emp, shift),
+            emp.id,
+            rec
+          );
+        }).join('');
+        return `
+      <div class="punch-card">
+        <div class="pch">
+          <div><div class="pname">${emp.name}</div><div class="prole">${emp.role || 'Staff'}</div></div>
+          <div class="av">${emp.name[0].toUpperCase()}</div>
+        </div>
+        ${rows}
+      </div>`;
+      }).join('');
+    }
+
+    function openLateModal(empId, shift) {
+      const emp = getEmp().find(e => e.id === empId);
+      document.getElementById('l-emp').value = empId;
+      document.getElementById('l-date').value = today();
+      document.getElementById('l-shift').value = shift;
+      document.getElementById('l-emp-name').textContent = emp?.name || 'Unknown';
+      document.getElementById('l-shift-label').textContent = shift === 'morning' ? '🌅 Morning' : '🌆 Evening';
+      document.getElementById('l-date-label').textContent = today();
+      document.getElementById('l-reason').value = '';
+      openModal('late-modal');
+    }
+
+    function saveLate(e) {
+      e.preventDefault();
+      const empId = document.getElementById('l-emp').value;
+      const date = document.getElementById('l-date').value;
+      const shift = document.getElementById('l-shift').value;
+      const reason = document.getElementById('l-reason').value.trim();
+      if (!reason) { toast('Add a reason for late', 'err'); return; }
+      const att = getAtt();
+      const idx = att.findIndex(a => a.empId === empId && a.date === date && a.shift === shift);
+      const rec = { id: idx >= 0 ? att[idx].id : uid(), empId, date, shift, punchIn: null, punchOut: null, status: 'late', reason };
+      if (idx >= 0) att[idx] = rec; else att.push(rec);
+      save(K.att, att);
+      closeModal('late-modal');
+      toast('Late attendance saved', 'suc');
+      if (curPage === 'punch') renderPunch();
+      if (curPage === 'dashboard') renderDash();
+      if (curPage === 'monthly') renderMonthly();
+    }
+
+    function isAdminMode() {
+      return document.getElementById('admin-mode')?.checked;
+    }
+
+    function getManualStatusOptions() {
+      const options = [
+        ['present', 'Present'],
+        ['late', 'Late'],
+        ['absent', 'Absent'],
+        ['half-day', 'Half Day']
+      ];
+      if (isAdminMode()) options.push(['leave', 'Leave']);
+      return options.map(([v, label]) => `<option value="${v}">${label}</option>`).join('');
+    }
+
+    function updateManualStatusOptions() {
+      const statusSelect = document.getElementById('m-status');
+      const current = statusSelect.value;
+      statusSelect.innerHTML = getManualStatusOptions();
+      statusSelect.value = Array.from(statusSelect.options).some(o => o.value === current) ? current : 'present';
+      toggleManualReason();
+    }
+
+    function toggleManualReason() {
+      const status = document.getElementById('m-status').value;
+      const row = document.getElementById('m-reason-row');
+      const reason = document.getElementById('m-reason');
+      if (status === 'late') {
+        row.style.display = 'block';
+        reason.required = true;
+      } else {
+        row.style.display = 'none';
+        reason.required = false;
+        reason.value = '';
+      }
+    }
+
+    function shiftRow(shift, label, time, empId, rec) {
+      let right = '';
+      if (rec) {
+        if (rec.status === 'present') {
+          right = `<span class="badge bg-g">Present</span>`;
+        } else if (rec.status === 'late') {
+          right = `<span class="badge bg-p" title="${rec.reason || 'Late'}">Late</span>`;
+        } else if (rec.status === 'leave') {
+          right = `<span class="badge bg-b">Leave</span>`;
+        } else if (rec.status === 'absent') {
+          right = `<span class="badge bg-r">Absent</span>`;
+        } else {
+          right = `<span class="badge bg-a">${rec.status}</span>`;
+        }
+      } else {
+        right = `<button class="btn btn-g btn-xs" onclick="markAttendance('${empId}','${shift}','present')">Present</button><button class="btn btn-s btn-xs" onclick="openLateModal('${empId}','${shift}')">Late</button><button class="btn btn-r btn-xs" onclick="markAttendance('${empId}','${shift}','absent')">Absent</button>`;
+        if (isAdminMode()) {
+          right += `<button class="btn btn-s btn-xs" onclick="markAttendance('${empId}','${shift}','leave')">Leave</button>`;
+        }
+      }
+      return `<div class="shift-row"><div><div class="sh-label">${label}</div><div class="sh-time">${time}</div></div><div class="sh-acts">${right}</div></div>`;
+    }
+
+    // ─── MANUAL ATTENDANCE ──────────────────────────────────────────────
+    function openManualModal() {
+      const emps = getEmp().filter(e => e.status !== 'inactive');
+      const empSelect = document.getElementById('m-emp');
+      empSelect.innerHTML = '<option value="">Select Employee</option>' + emps.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
+      document.getElementById('m-date').value = today();
+      updateManualStatusOptions();
+      document.getElementById('m-status').value = 'present';
+      toggleManualReason();
+      updateManualShiftOptions();
+      openModal('manual-modal');
+    }
+
+    function updateManualShiftOptions() {
+      const empId = document.getElementById('m-emp').value;
+      const shiftSelect = document.getElementById('m-shift');
+      const emp = getEmp().find(e => e.id === empId);
+      if (!emp) {
+        shiftSelect.innerHTML = `
+          <option value="morning">🌅 Morning</option>
+          <option value="evening">🌆 Evening</option>`;
+        shiftSelect.disabled = false;
+        return;
+      }
+      const options = [];
+      if (hasMorning(emp)) options.push(`<option value="morning">🌅 Morning</option>`);
+      if (hasEvening(emp)) options.push(`<option value="evening">🌆 Evening</option>`);
+      if (options.length === 0) {
+        options.push(`<option value="morning">🌅 Morning</option>`, `<option value="evening">🌆 Evening</option>`);
+      }
+      shiftSelect.innerHTML = options.join('');
+      shiftSelect.disabled = options.length === 1;
+    }
+
+    function saveManual(e) {
+      e.preventDefault();
+      const att = getAtt();
+      const empId = document.getElementById('m-emp').value;
+      if (!empId) { toast('Select an employee', 'err'); return; }
+      const date = document.getElementById('m-date').value;
+      const shift = document.getElementById('m-shift').value;
+      const status = document.getElementById('m-status').value;
+      const reason = document.getElementById('m-reason').value.trim();
+      if (status === 'late' && !reason) { toast('Provide a reason for late', 'err'); return; }
+      const idx = att.findIndex(a => a.empId === empId && a.date === date && a.shift === shift);
+      const rec = { id: idx >= 0 ? att[idx].id : uid(), empId, date, shift, punchIn: null, punchOut: null, status, reason };
+      if (idx >= 0) att[idx] = rec; else att.push(rec);
+      save(K.att, att);
+      toast('Attendance saved', 'suc');
+      closeModal('manual-modal');
+      if (curPage === 'punch') renderPunch();
+      if (curPage === 'monthly') renderMonthly();
+      if (curPage === 'dashboard') renderDash();
+    }
+
+    // ─── MONTHLY ATTENDANCE ─────────────────────────────────────────────
+    function changeMonth(type, dir) {
+      const pickerId = type === 'att' ? 'att-month' : 'sal-month';
+      const picker = document.getElementById(pickerId);
+      const [y, m] = picker.value.split('-').map(Number);
+      const d = new Date(y, m - 1 + dir, 1);
+      picker.value = d.toISOString().slice(0, 7);
+      if (type === 'att') renderMonthly(); else renderSalary();
+    }
+
+    function renderMonthly() {
+      const month = document.getElementById('att-month').value;
+      const emps = getEmp();
+      const att = getAtt();
+      const [y, m] = month.split('-').map(Number);
+      const daysInMonth = new Date(y, m, 0).getDate();
+      const todayStr = today();
+      const wrap = document.getElementById('att-grid-wrap');
+
+      if (!emps.length) { wrap.innerHTML = `<div class="empty"><div class="empty-icon">📅</div><h3>No employees</h3></div>`; return; }
+
+      const days = [];
+      for (let d = 1; d <= daysInMonth; d++) {
+        const ds = `${month}-${String(d).padStart(2, '0')}`;
+        const dow = new Date(ds).getDay();
+        days.push({ d, ds, dow, sun: dow === 0 });
+      }
+
+      const thead = `<thead><tr>
+    <th class="sticky-hdr" style="text-align:left;min-width:130px;padding:8px 10px">Employee</th>
+    ${days.map(({ d, ds, sun }) => `<th style="${sun ? 'color:var(--purple)' : ''}" title="${ds}"><div>${d}</div><div style="font-size:8px;font-weight:400">${['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'][new Date(ds).getDay()]}</div></th>`).join('')}
+    <th>Days</th><th>Shifts</th>
+  </tr></thead>`;
+
+      const tbody = emps.map(emp => {
+        let days_p = 0, shifts_p = 0;
+        const cells = days.map(({ ds, sun }) => {
+          if (sun) return `<td><div class="att-cell ac-sun" title="Sunday">—</div></td>`;
+          const mr = att.find(a => a.empId === emp.id && a.date === ds && a.shift === 'morning');
+          const er = att.find(a => a.empId === emp.id && a.date === ds && a.shift === 'evening');
+          const hm = isPresentStatus(mr?.status);
+          const he = isPresentStatus(er?.status);
+          const mv = mr?.status === 'leave';
+          const ev = er?.status === 'leave';
+          if (ds > todayStr) return `<td><div class="att-cell ac-fut">·</div></td>`;
+          if (hm && he) { days_p++; shifts_p += 2; return `<td><div class="att-cell ac-full" title="Full day">F</div></td>`; }
+          if (hm) { days_p += 0.5; shifts_p++; return `<td><div class="att-cell ac-m" title="Morning">M</div></td>`; }
+          if (he) { days_p += 0.5; shifts_p++; return `<td><div class="att-cell ac-e" title="Evening">E</div></td>`; }
+          if (mv || ev) { return `<td><div class="att-cell ac-leave" title="Leave">V</div></td>`; }
+          return `<td><div class="att-cell ac-abs" title="Absent">A</div></td>`;
+        }).join('');
+        return `<tr>
+      <td class="sticky-col" style="padding:6px 10px">
+        <div style="display:flex;align-items:center;gap:7px">
+          <div class="av" style="width:26px;height:26px;font-size:11px">${emp.name[0]}</div>
+          <div><div style="font-size:12px;font-weight:600">${emp.name}</div><div style="font-size:10px;color:var(--txt3)">${emp.role || ''}</div></div>
+        </div>
+      </td>
+      ${cells}
+      <td style="font-weight:700;color:var(--green);font-size:12px">${days_p}</td>
+      <td style="font-weight:700;color:var(--blue);font-size:12px">${shifts_p}</td>
+    </tr>`;
+      }).join('');
+
+      wrap.innerHTML = `<table class="att-tbl">${thead}<tbody>${tbody}</tbody></table>`;
+    }
+
+    // ─── SALARY ─────────────────────────────────────────────────────────
+    function calcSalary(emp, month) {
+      const att = getAtt();
+      const adv = getAdv();
+      const [y, m] = month.split('-').map(Number);
+      const dim = new Date(y, m, 0).getDate();
+      const wd = emp.wdays || 26;
+      const perShift = emp.salary / (wd * 2);
+      let mp = 0, ep = 0;
+      for (let d = 1; d <= dim; d++) {
+        const ds = `${month}-${String(d).padStart(2, '0')}`;
+        const mr = att.find(a => a.empId === emp.id && a.date === ds && a.shift === 'morning');
+        const er = att.find(a => a.empId === emp.id && a.date === ds && a.shift === 'evening');
+        if (isPresentStatus(mr?.status)) mp++;
+        if (isPresentStatus(er?.status)) ep++;
+      }
+      const earned = (mp + ep) * perShift;
+      const totalAdv = adv.filter(a => a.empId === emp.id && a.month === month).reduce((s, a) => s + a.amount, 0);
+      return { mp, ep, shifts: mp + ep, days: (mp + ep) / 2, wd, perShift, earned, totalAdv, net: earned - totalAdv, base: emp.salary };
+    }
+
+    function renderSalary() {
+      const monthInput = document.getElementById('sal-month');
+      const month = monthInput.value || curMonth();
+      monthInput.value = month;
+      const emps = getEmp();
+      const c = document.getElementById('sal-grid');
+      if (!emps.length) { c.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="empty-icon">💰</div><h3>No employees</h3></div>`; return; }
+      const pays = getPay();
+      c.innerHTML = emps.map(emp => {
+        const s = calcSalary(emp, month);
+        const pay = pays.find(p => p.empId === emp.id && p.month === month);
+        return `
+      <div class="sal-card">
+        <div class="sal-head">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="av">${emp.name[0]}</div>
+            <div><div style="font-weight:700">${emp.name}</div><div style="font-size:11px;color:var(--txt3)">${emp.role || 'Staff'}</div></div>
+          </div>
+          <span class="badge ${pay ? 'bg-g' : 'bg-a'}">${pay ? '✓ Paid' : 'Pending'}</span>
+        </div>
+        <div class="sal-body">
+          <div class="sal-row"><span class="sal-lbl">Base Salary</span><span class="sal-val">₹${emp.salary.toLocaleString('en-IN')}</span></div>
+          <div class="sal-row"><span class="sal-lbl">🌅 Morning Shifts</span><span class="sal-val">${s.mp} shifts</span></div>
+          <div class="sal-row"><span class="sal-lbl">🌆 Evening Shifts</span><span class="sal-val">${s.ep} shifts</span></div>
+          <div class="sal-row"><span class="sal-lbl">Days Present</span><span class="sal-val">${s.days} / ${s.wd}</span></div>
+          <div class="sal-row"><span class="sal-lbl">Earned</span><span class="sal-val" style="color:var(--green)">₹${Math.round(s.earned).toLocaleString('en-IN')}</span></div>
+          <div class="sal-row"><span class="sal-lbl">Advance Deduction</span><span class="sal-val" style="color:var(--red)">- ₹${s.totalAdv.toLocaleString('en-IN')}</span></div>
+        </div>
+        <div class="sal-total">
+          <span style="font-weight:700">Net Payable</span>
+          <span style="font-size:20px;font-weight:800;color:var(--accent)">₹${Math.round(s.net).toLocaleString('en-IN')}</span>
+        </div>
+        <div class="sal-foot">
+          <button class="btn btn-s btn-sm" onclick="showSalDetail('${emp.id}','${month}')">Details</button>
+          <button class="btn btn-s btn-sm" onclick="printSlip('${emp.id}','${month}')">🖨 Slip</button>
+          ${!pay ? `<button class="btn btn-p btn-sm" onclick="markPaid('${emp.id}','${month}')">Mark Paid</button>` : `<span style="font-size:11px;color:var(--txt3)">Paid ${fmtDate(pay.paidDate)}</span>`}
+        </div>
+      </div>`;
+      }).join('');
+    }
+
+    async function saveExcelFile(fileName, sheets) {
+      if (window.api?.saveExcel) {
+        const result = await window.api.saveExcel(fileName, sheets);
+        toast(`Saved ${fileName} to report folder`, 'suc');
+        return result.filePath;
+      }
+      if (window.XLSX) {
+        const workbook = window.XLSX.utils.book_new();
+        sheets.forEach(sheet => {
+          const ws = window.XLSX.utils.json_to_sheet(sheet.rows, { header: sheet.headers });
+          window.XLSX.utils.book_append_sheet(workbook, ws, sheet.name || 'Sheet1');
+        });
+        const wbout = window.XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+        const blob = new Blob([wbout], { type: 'application/octet-stream' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        toast(`Downloaded ${fileName}`, 'suc');
+        return null;
+      }
+      toast('Unable to save report in this browser. Use the desktop app.', 'err');
+      return null;
+    }
+
+    function buildWeeklyReportRows() {
+      const todayDate = new Date();
+      const end = today();
+      const startDate = new Date(todayDate);
+      startDate.setDate(startDate.getDate() - 6);
+      const start = startDate.toISOString().slice(0, 10);
+      return getEmp().map(emp => {
+        const records = getAtt().filter(a => a.empId === emp.id && a.date >= start && a.date <= end);
+        const mp = records.filter(r => r.shift === 'morning' && isPresentStatus(r.status)).length;
+        const ep = records.filter(r => r.shift === 'evening' && isPresentStatus(r.status)).length;
+        const days = (mp + ep) / 2;
+        const earned = Math.round((mp + ep) * (emp.salary / ((emp.wdays || 26) * 2)));
+        const totalAdv = getAdv().filter(a => a.empId === emp.id && a.month === end.slice(0, 7)).reduce((sum, a) => sum + (a.amount || 0), 0);
+        return {
+          'Employee': emp.name,
+          'Role': emp.role || 'Staff',
+          'Period': `${start} to ${end}`,
+          'Morning Shifts': mp,
+          'Evening Shifts': ep,
+          'Present Days': days,
+          'Estimated Earned': earned,
+          'Advance Deduction': totalAdv,
+          'Net Estimate': earned - totalAdv
+        };
+      });
+    }
+
+    function buildMonthlyReportRows(month) {
+      return getEmp().map(emp => {
+        const s = calcSalary(emp, month);
+        const pay = getPay().find(p => p.empId === emp.id && p.month === month);
+        return {
+          'Employee': emp.name,
+          'Role': emp.role || 'Staff',
+          'Month': month,
+          'Base Salary': emp.salary,
+          'Working Days': s.wd,
+          'Present Days': s.days,
+          'Morning Shifts': s.mp,
+          'Evening Shifts': s.ep,
+          'Earned': Math.round(s.earned),
+          'Advance Deduction': s.totalAdv,
+          'Net Payable': Math.round(s.net),
+          'Payment Status': pay ? 'Paid' : 'Pending',
+          'Paid Date': pay ? fmtDate(pay.paidDate) : ''
+        };
+      });
+    }
+
+    async function saveWeeklyReport() {
+      const rows = buildWeeklyReportRows();
+      const fileName = `weekly-report-${today()}.xlsx`;
+      await saveExcelFile(fileName, [{ name: 'Weekly Summary', headers: Object.keys(rows[0] || {}), rows }]);
+    }
+
+    async function saveMonthlyReport() {
+      const month = document.getElementById('sal-month').value || curMonth();
+      const rows = buildMonthlyReportRows(month);
+      const fileName = `monthly-report-${month}.xlsx`;
+      await saveExcelFile(fileName, [{ name: 'Monthly Salary', headers: Object.keys(rows[0] || {}), rows }]);
+    }
+
+    async function openReportFolder() {
+      if (window.api?.openReportFolder) {
+        await window.api.openReportFolder();
+        toast('Opened report folder', 'suc');
+        return;
+      }
+      toast('Open folder is available only in the desktop app.', 'err');
+    }
+
+    function autoSaveReports() {
+      saveWeeklyReport();
+      saveMonthlyReport();
+    }
+
+    function markPaid(empId, month) {
+      const pays = getPay();
+      if (pays.find(p => p.empId === empId && p.month === month)) return;
+      const emp = getEmp().find(e => e.id === empId);
+      const s = calcSalary(emp, month);
+      pays.push({ id: uid(), empId, month, amount: Math.round(s.net), paidDate: today() });
+      save(K.pay, pays);
+      toast('Salary marked as paid ✓', 'suc');
+      renderSalary();
+    }
+
+    function showSalDetail(empId, month) {
+      const emp = getEmp().find(e => e.id === empId);
+      const s = calcSalary(emp, month);
+      const advs = getAdv().filter(a => a.empId === empId && a.month === month);
+      document.getElementById('sal-detail-title').textContent = `${emp.name} — ${fmtMon(month)}`;
+      document.getElementById('sal-detail-body').innerHTML = `
+    <div class="grid2" style="margin-bottom:16px">
+      <div class="card" style="padding:16px;text-align:center">
+        <div style="font-size:11px;color:var(--txt3)">Days Present</div>
+        <div style="font-size:32px;font-weight:800;color:var(--green)">${s.days}</div>
+        <div style="font-size:12px;color:var(--txt3)">of ${s.wd} working days</div>
+      </div>
+      <div class="card" style="padding:16px;text-align:center">
+        <div style="font-size:11px;color:var(--txt3)">Total Shifts</div>
+        <div style="font-size:32px;font-weight:800;color:var(--blue)">${s.shifts}</div>
+        <div style="font-size:12px;color:var(--txt3)">${s.mp}M + ${s.ep}E shifts</div>
+      </div>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      ${[
+          ['Base Monthly Salary', `₹${emp.salary.toLocaleString('en-IN')}`],
+          ['Working Days (Base)', `${s.wd} days`],
+          ['Per Day Value', `₹${(emp.salary / s.wd).toFixed(2)}`],
+          ['Per Shift Value', `₹${s.perShift.toFixed(2)}`],
+          ['Morning Shifts', `${s.mp} × ₹${s.perShift.toFixed(0)} = ₹${Math.round(s.mp * s.perShift).toLocaleString()}`],
+          ['Evening Shifts', `${s.ep} × ₹${s.perShift.toFixed(0)} = ₹${Math.round(s.ep * s.perShift).toLocaleString()}`],
+        ].map(([l, v]) => `<div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--txt2)">${l}</span><span>${v}</span></div>`).join('')}
+      <div style="display:flex;justify-content:space-between;padding:11px 16px;border-bottom:1px solid var(--border);font-weight:700;color:var(--green);font-size:14px"><span>Gross Earned</span><span>₹${Math.round(s.earned).toLocaleString('en-IN')}</span></div>
+      ${advs.map(a => `<div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);font-size:13px;color:var(--red)"><span>Advance — ${a.reason || 'Advance'} (${fmtDate(a.date)})</span><span>-₹${a.amount.toLocaleString()}</span></div>`).join('')}
+      <div style="display:flex;justify-content:space-between;padding:14px 16px;font-size:20px;font-weight:800;color:var(--accent)"><span>Net Payable</span><span>₹${Math.round(s.net).toLocaleString('en-IN')}</span></div>
+    </div>`;
+      openModal('sal-detail-modal');
+    }
+
+    function printSlip(empId, month) {
+      const emp = getEmp().find(e => e.id === empId);
+      const s = calcSalary(emp, month);
+      const advs = getAdv().filter(a => a.empId === empId && a.month === month);
+      document.getElementById('slip-body').innerHTML = `
+    <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden">
+      <div style="background:var(--accent);color:#000;padding:16px 20px;display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:20px;font-weight:800">💪 GymPro</div><div style="font-size:12px">Salary Slip — ${fmtMon(month)}</div></div>
+        <div style="text-align:right;font-size:12px"><div>Generated: ${fmtDate(today())}</div></div>
+      </div>
+      <div style="padding:16px 20px;background:var(--bg2);border-bottom:1px solid var(--border)">
+        <div style="font-size:16px;font-weight:700">${emp.name}</div>
+        <div style="font-size:13px;color:var(--txt2)">${emp.role || 'Staff'} • ${emp.phone || ''}</div>
+      </div>
+      <div style="padding:16px 20px">
+        ${[
+          ['🌅 Morning Shifts', `${s.mp} shifts`],
+          ['🌆 Evening Shifts', `${s.ep} shifts`],
+          ['Total Days Present', `${s.days} of ${s.wd}`],
+          ['Per Shift Rate', `₹${s.perShift.toFixed(2)}`],
+        ].map(([l, v]) => `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--txt2)">${l}</span><span>${v}</span></div>`).join('')}
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-weight:600;color:var(--green)"><span>Gross Earned</span><span>₹${Math.round(s.earned).toLocaleString('en-IN')}</span></div>
+        ${advs.map(a => `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--red)"><span>Advance — ${a.reason || ''} (${fmtDate(a.date)})</span><span>-₹${a.amount.toLocaleString()}</span></div>`).join('')}
+        <div style="display:flex;justify-content:space-between;padding:14px 0;font-size:22px;font-weight:800;color:var(--accent)"><span>Net Payable</span><span>₹${Math.round(s.net).toLocaleString('en-IN')}</span></div>
+      </div>
+      <div style="padding:12px 20px;background:var(--bg2);border-top:1px solid var(--border);font-size:11px;color:var(--txt3);text-align:center">Employee Signature _________________ &nbsp;&nbsp;&nbsp; Authorized Signature _________________</div>
+    </div>`;
+      openModal('slip-modal');
+    }
+
+    // ─── ADVANCES ────────────────────────────────────────────────────────
+    function openAdvModal(id = null) {
+      const emps = getEmp();
+      const advs = getAdv();
+      const adv = id ? advs.find(a => a.id === id) : null;
+      const sel = document.getElementById('a-emp');
+      sel.innerHTML = '<option value="">Select Employee</option>' + emps.map(e => `<option value="${e.id}" ${adv?.empId === e.id ? 'selected' : ''}>${e.name}</option>`).join('');
+      document.getElementById('a-id').value = adv?.id || '';
+      document.getElementById('a-date').value = adv?.date || today();
+      document.getElementById('a-month').value = adv?.month || curMonth();
+      document.getElementById('a-amount').value = adv?.amount || '';
+      document.getElementById('a-reason').value = adv?.reason || '';
+      document.getElementById('adv-modal-title').textContent = adv ? 'Edit Advance' : 'Add Salary Advance';
+      openModal('adv-modal');
+    }
+
+    function saveAdvance(e) {
+      e.preventDefault();
+      const advs = getAdv();
+      const id = document.getElementById('a-id').value;
+      const data = {
+        id: id || uid(),
+        empId: document.getElementById('a-emp').value,
+        date: document.getElementById('a-date').value,
+        month: document.getElementById('a-month').value,
+        amount: parseFloat(document.getElementById('a-amount').value),
+        reason: document.getElementById('a-reason').value.trim()
+      };
+      if (id) { const i = advs.findIndex(a => a.id === id); advs[i] = data; toast('Advance updated', 'suc'); }
+      else { advs.push(data); toast('Advance recorded', 'suc'); }
+      save(K.adv, advs);
+      closeModal('adv-modal');
+      renderAdvances();
+    }
+
+    function deleteAdv(id) {
+      if (!confirm('Delete this advance?')) return;
+      save(K.adv, getAdv().filter(a => a.id !== id));
+      toast('Advance deleted', 'suc');
+      renderAdvances();
+    }
+
+    function clearAdvFilters() {
+      document.getElementById('adv-f-emp').value = '';
+      document.getElementById('adv-f-month').value = '';
+      renderAdvances();
+    }
+
+    function renderAdvances() {
+      const emps = getEmp();
+      const fEmp = document.getElementById('adv-f-emp').value;
+      const fMon = document.getElementById('adv-f-month').value;
+      // update filter dropdown
+      const sel = document.getElementById('adv-f-emp');
+      const cur = sel.value;
+      sel.innerHTML = '<option value="">All Employees</option>' + emps.map(e => `<option value="${e.id}" ${cur === e.id ? 'selected' : ''}>${e.name}</option>`).join('');
+      sel.value = cur;
+
+      let advs = getAdv();
+      if (fEmp) advs = advs.filter(a => a.empId === fEmp);
+      if (fMon) advs = advs.filter(a => a.month === fMon);
+      advs.sort((a, b) => b.date.localeCompare(a.date));
+
+      const tb = document.getElementById('adv-tbody');
+      if (!advs.length) { tb.innerHTML = `<tr><td colspan="6"><div class="empty"><div class="empty-icon">💳</div><h3>No advance records</h3></div></td></tr>`; return; }
+      tb.innerHTML = advs.map(a => {
+        const emp = emps.find(e => e.id === a.empId);
+        return `<tr>
+      <td><div style="display:flex;align-items:center;gap:9px"><div class="av">${emp ? emp.name[0] : '?'}</div><span style="font-weight:600">${emp?.name || 'Unknown'}</span></div></td>
+      <td>${fmtDate(a.date)}</td>
+      <td style="font-weight:700;color:var(--red)">₹${a.amount.toLocaleString('en-IN')}</td>
+      <td><span class="badge bg-b">${fmtMon(a.month)}</span></td>
+      <td>${a.reason || '—'}</td>
+      <td><div style="display:flex;gap:6px">
+        <button class="btn btn-s btn-xs" onclick="openAdvModal('${a.id}')">Edit</button>
+        <button class="btn btn-r btn-xs" onclick="deleteAdv('${a.id}')">Del</button>
+      </div></td>
+    </tr>`;
+      }).join('');
+    }
+
+    // ─── DASHBOARD ───────────────────────────────────────────────────────
+    function renderDash() {
+      const emps = getEmp();
+      const att = getAtt();
+      const adv = getAdv();
+      const tod = today();
+      const mon = curMonth();
+      const todayAtt = att.filter(a => a.date === tod && isPresentStatus(a.status));
+      const presentIds = new Set(todayAtt.map(a => a.empId));
+      const morn = todayAtt.filter(a => a.shift === 'morning').length;
+      const eve = todayAtt.filter(a => a.shift === 'evening').length;
+      const monAdv = adv.filter(a => a.month === mon).reduce((s, a) => s + a.amount, 0);
+
+      document.getElementById('s-staff').textContent = emps.filter(e => e.status !== 'inactive').length;
+      document.getElementById('s-present').textContent = presentIds.size;
+      document.getElementById('s-morning').textContent = morn;
+      document.getElementById('s-evening').textContent = eve;
+      document.getElementById('s-advances').textContent = '₹' + monAdv.toLocaleString('en-IN');
+
+      // Today attendance list
+      const attEl = document.getElementById('dash-att');
+      const activeEmps = emps.filter(e => e.status !== 'inactive');
+      if (!activeEmps.length) { attEl.innerHTML = `<div class="empty" style="padding:24px"><p>No employees added</p></div>`; }
+      else {
+        attEl.innerHTML = activeEmps.map(emp => {
+          const m = att.find(a => a.empId === emp.id && a.date === tod && a.shift === 'morning');
+          const ev = att.find(a => a.empId === emp.id && a.date === tod && a.shift === 'evening');
+          const present = isPresentStatus(m?.status) || isPresentStatus(ev?.status);
+          const mText = m ? (m.status === 'late' ? '🌅 Late' : m.status === 'present' ? '🌅 Present' : '—') : '—';
+          const eText = ev ? (ev.status === 'late' ? '🌆 Late' : ev.status === 'present' ? '🌆 Present' : '—') : '—';
+          return `<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:9px">
+          <div class="av" style="width:30px;height:30px;font-size:12px">${emp.name[0]}</div>
+          <div>
+            <div style="font-size:13px;font-weight:600">${emp.name}</div>
+            <div style="font-size:10px;color:var(--txt3)">${mText} | ${eText}</div>
+          </div>
+        </div>
+        <span class="badge ${present ? 'bg-g' : 'bg-r'}">${present ? 'Present' : 'Absent'}</span>
+      </div>`;
+        }).join('');
+      }
+
+      // Recent punches
+      const recentEl = document.getElementById('dash-recent');
+      const recent = [...att].sort((a, b) => b.date.localeCompare(a.date) || (b.shift || '').localeCompare(a.shift || '')).slice(0, 8);
+      if (!recent.length) { recentEl.innerHTML = `<div class="empty" style="padding:24px"><p>No attendance records yet</p></div>`; }
+      else {
+        recentEl.innerHTML = recent.map(r => {
+          const emp = emps.find(e => e.id === r.empId);
+          const statusText = r.status === 'present' ? 'Present' : r.status === 'late' ? 'Late' : r.status === 'absent' ? 'Absent' : r.status;
+          return `<div style="display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--border)">
+        <div class="av" style="width:28px;height:28px;font-size:11px">${emp ? emp.name[0] : '?'}</div>
+        <div style="flex:1;font-size:12px">
+          <span style="font-weight:600">${emp?.name || '?'}</span>
+          <span style="color:var(--txt3)"> ${r.shift === 'morning' ? '🌅' : '🌆'} ${statusText}</span>
+        </div>
+        <div style="text-align:right;font-size:11px;color:var(--txt3)">
+          <div>${r.date === tod ? 'Today' : fmtDate(r.date)}</div>
+          <div>${statusText}</div>
+        </div>
+      </div>`;
+        }).join('');
+      }
+    }
+
+    // ─── INIT ────────────────────────────────────────────────────────────
+    function seedData() {
+      // No dummy data. App starts empty.
+    }
+
+    function init() {
+      const m = curMonth();
+      document.getElementById('att-month').value = m;
+      document.getElementById('sal-month').value = m;
+      tick();
+      setInterval(tick, 1000);
+      if (!localStorage.getItem(K.init)) {
+        clearAllData();
+        localStorage.setItem(K.init, '1');
+      }
+      const adminToggle = document.getElementById('admin-mode');
+      if (adminToggle) adminToggle.addEventListener('change', updateManualStatusOptions);
+      renderDash();
+      autoSaveReports();
+    }
+
+    init();
+  </script>
+</body>
+
+</html>

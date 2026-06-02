@@ -1,0 +1,15 @@
+{
+  "name": "gym-app-desktop",
+  "version": "1.0.0",
+  "description": "Desktop wrapper for Gym App with automatic Excel report export.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "electron": "^26.0.0"
+  }
+}
