@@ -977,6 +977,11 @@
       gap: 8px
     }
 
+    @keyframes loading-bar {
+      0% { transform: translateX(-120%); }
+      100% { transform: translateX(220%); }
+    }
+
     /* PRINT */
     @media print {
 
@@ -1376,6 +1381,16 @@
     </div>
   </main>
 
+  <!-- LOADING OVERLAY -->
+  <div id="loading-overlay" style="position:fixed;inset:0;background:rgba(10,10,10,0.97);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:14px">
+    <div style="font-size:40px">💪</div>
+    <div style="font-size:20px;font-weight:800;color:#f59e0b;letter-spacing:-0.5px">GymPro</div>
+    <div style="font-size:13px;color:#6b7280">Connecting to cloud...</div>
+    <div style="width:180px;height:3px;background:#2a2a2a;border-radius:2px;overflow:hidden;margin-top:6px">
+      <div style="width:50%;height:100%;background:#f59e0b;border-radius:2px;animation:loading-bar 1s linear infinite"></div>
+    </div>
+  </div>
+
   <!-- TOAST -->
   <div class="toast-wrap" id="toasts"></div>
 
@@ -1619,13 +1634,82 @@
     </div>
   </div>
 
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
   <script>
+    // ─── FIREBASE INIT ───────────────────────────────────────────────────
+    const firebaseConfig = {
+      apiKey: "AIzaSyCeF7lqNDU28omkaF2tTKZSd2PBN0vVlKw",
+      authDomain: "gympro-3459f.firebaseapp.com",
+      databaseURL: "https://gympro-3459f-default-rtdb.firebaseio.com",
+      projectId: "gympro-3459f",
+      storageBucket: "gympro-3459f.firebasestorage.app",
+      messagingSenderId: "630686270326",
+      appId: "1:630686270326:web:7047e9aaeca06c107df057"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const _db = firebase.database();
+
     // ─── STORAGE ────────────────────────────────────────────────────────
     const K = { emp: 'gp_emp', att: 'gp_att', adv: 'gp_adv', pay: 'gp_pay', pt: 'gp_pt', leave: 'gp_leave', auth: 'gp_auth', init: 'gp_init' };
-    const load = k => { try { return JSON.parse(localStorage.getItem(k)) || []; } catch { return []; } };
-    const loadObj = k => { try { return JSON.parse(localStorage.getItem(k)) || {}; } catch { return {}; } };
-    const save = (k, d) => localStorage.setItem(k, JSON.stringify(d));
+    const _cache = {};
+
+    const load = k => { const v = _cache[k]; return Array.isArray(v) ? v : []; };
+    const loadObj = k => { const v = _cache[k]; return (v && typeof v === 'object' && !Array.isArray(v)) ? v : {}; };
+
+    function save(k, d) {
+      _cache[k] = d;
+      _db.ref('gymdata/' + k).set({ _json: JSON.stringify(d) }).catch(e => console.warn('Firebase write error:', e));
+      try { localStorage.setItem(k, JSON.stringify(d)); } catch(e) {}
+    }
+
+    async function loadFromFirebase() {
+      try {
+        const snap = await _db.ref('gymdata').get();
+        if (snap.exists()) {
+          const data = snap.val();
+          Object.entries(data).forEach(([k, v]) => {
+            try { _cache[k] = (v && v._json) ? JSON.parse(v._json) : v; } catch(e) {}
+          });
+        } else {
+          // First time — migrate existing localStorage data up to Firebase
+          const toUpload = {};
+          Object.values(K).forEach(k => {
+            const raw = localStorage.getItem(k);
+            if (raw) { try { _cache[k] = JSON.parse(raw); toUpload[k] = { _json: raw }; } catch(e) {} }
+          });
+          if (Object.keys(toUpload).length) await _db.ref('gymdata').set(toUpload);
+        }
+      } catch(err) {
+        console.warn('Firebase unavailable, falling back to localStorage:', err);
+        Object.values(K).forEach(k => {
+          const raw = localStorage.getItem(k);
+          if (raw) { try { _cache[k] = JSON.parse(raw); } catch(e) {} }
+        });
+      }
+      // Real-time listener — syncs changes from other devices instantly
+      _db.ref('gymdata').on('value', snap => {
+        if (!snap.exists()) return;
+        const data = snap.val();
+        let changed = false;
+        Object.entries(data).forEach(([k, v]) => {
+          try {
+            const next = (v && v._json) ? JSON.parse(v._json) : v;
+            if (JSON.stringify(_cache[k]) !== JSON.stringify(next)) {
+              _cache[k] = next;
+              try { localStorage.setItem(k, JSON.stringify(next)); } catch(e) {}
+              changed = true;
+            }
+          } catch(e) {}
+        });
+        if (changed && typeof curPage !== 'undefined') {
+          const renders = { dashboard: renderDash, profile: renderProfile, employees: renderEmp, punch: renderPunch, monthly: renderMonthly, leave: renderLeavePage, salary: renderSalary, pt: renderPt, advances: renderAdvances };
+          try { if (renders[curPage]) renders[curPage](); } catch(e) {}
+        }
+      });
+    }
+
     const getEmp = () => load(K.emp);
     const getAtt = () => load(K.att);
     const getAdv = () => load(K.adv);
@@ -1642,7 +1726,11 @@
     };
     const getLeaveTemplates = () => load(K.leave);
     function clearAllData() {
-      [K.emp, K.att, K.adv, K.pay, K.pt, K.leave].forEach(key => localStorage.removeItem(key));
+      [K.emp, K.att, K.adv, K.pay, K.pt, K.leave].forEach(key => {
+        localStorage.removeItem(key);
+        delete _cache[key];
+        _db.ref('gymdata/' + key).remove().catch(e => {});
+      });
     }
     function resetDataKeepEmployees() {
       if (!confirm('Reset all data except employees? This cannot be undone.')) return;
@@ -2834,16 +2922,15 @@
       // No dummy data. App starts empty.
     }
 
-    function init() {
+    async function init() {
       const m = curMonth();
       document.getElementById('att-month').value = m;
       document.getElementById('sal-month').value = m;
       tick();
       setInterval(tick, 1000);
-      if (!localStorage.getItem(K.init)) {
-        clearAllData();
-        localStorage.setItem(K.init, '1');
-      }
+      await loadFromFirebase();
+      const lo = document.getElementById('loading-overlay');
+      if (lo) lo.style.display = 'none';
       const adminToggle = document.getElementById('admin-mode');
       if (adminToggle) adminToggle.addEventListener('change', updateManualStatusOptions);
       const loginForm = document.getElementById('login-form');
