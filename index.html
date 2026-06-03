@@ -199,6 +199,69 @@
       display: block
     }
 
+    .login-screen {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(10, 10, 10, .95);
+      z-index: 250;
+      padding: 18px;
+    }
+
+    .login-screen.active {
+      display: flex;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .login-card {
+      width: min(100%, 420px);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 32px 28px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, .3);
+    }
+
+    .login-card h2 {
+      margin-bottom: 12px;
+      font-size: 22px;
+      color: var(--accent);
+    }
+
+    .login-card p {
+      margin-bottom: 22px;
+      color: var(--txt3);
+      font-size: 13px;
+    }
+
+    .login-card .login-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .login-card .login-actions button,
+    .login-card .login-actions a {
+      margin-top: 8px;
+    }
+
+    .login-card a {
+      color: var(--accent);
+      font-size: 13px;
+      text-decoration: none;
+    }
+
+    .login-card a:hover {
+      text-decoration: underline;
+    }
+
     /* STATS */
     .stats {
       display: grid;
@@ -688,6 +751,11 @@
       color: var(--purple)
     }
 
+    .ac-lop {
+      background: rgba(239, 68, 68, .14);
+      color: var(--red)
+    }
+
     .ac-abs {
       background: rgba(239, 68, 68, .08);
       color: var(--red)
@@ -931,6 +999,22 @@
 </head>
 
 <body>
+  <div id="login-screen" class="login-screen active">
+    <div class="login-card">
+      <h2>GymPro Login</h2>
+      <p>Enter your username and password to access the management system.</p>
+      <form id="login-form">
+        <div class="fg"><label class="fl">Username</label><input class="fc" id="login-user" placeholder="admin"
+            required></div>
+        <div class="fg"><label class="fl">Password</label><input type="password" class="fc" id="login-pass"
+            placeholder="Password" required></div>
+        <div class="login-actions">
+          <button type="submit" class="btn btn-p">Login</button>
+          <a href="#" id="login-reset">Reset Password</a>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <!-- SIDEBAR -->
   <nav class="sidebar">
@@ -941,6 +1025,7 @@
     <div>
       <div class="nav-section">Main</div>
       <div class="nav-item active" onclick="nav('dashboard')"><span class="nav-icon">📊</span>Dashboard</div>
+      <div class="nav-item" onclick="nav('profile')"><span class="nav-icon">👤</span>Profile</div>
       <div class="nav-item" onclick="nav('employees')"><span class="nav-icon">👥</span>Employees</div>
       <div class="nav-section">Attendance</div>
       <div class="nav-item" onclick="nav('punch')"><span class="nav-icon">👊</span>Attendance</div>
@@ -948,6 +1033,7 @@
       <div class="nav-item" onclick="nav('leave')"><span class="nav-icon">📝</span>Leave</div>
       <div class="nav-section">Finance</div>
       <div class="nav-item" onclick="nav('salary')"><span class="nav-icon">💰</span>Salary</div>
+      <div class="nav-item" onclick="nav('pt')"><span class="nav-icon">🏋️</span>PT Sessions</div>
       <div class="nav-item" onclick="nav('advances')"><span class="nav-icon">💳</span>Advances</div>
     </div>
     <div class="sidebar-bottom">
@@ -1002,6 +1088,13 @@
               <p>Advances This Month</p>
             </div>
           </div>
+          <div class="stat">
+            <div class="stat-icon ic-blue">🏋️</div>
+            <div class="stat-info">
+              <h3 id="s-pt">₹0</h3>
+              <p>PT Commission</p>
+            </div>
+          </div>
         </div>
         <div class="grid2">
           <div class="card">
@@ -1036,12 +1129,44 @@
                   <th>Join Date</th>
                   <th>Salary/Month</th>
                   <th>Working Days</th>
+                  <th>Paid Leave</th>
                   <th>Status</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody id="emp-tbody"></tbody>
             </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROFILE -->
+      <div id="page-profile" class="page">
+        <div class="ph">
+          <div>
+            <h2>Profile</h2>
+            <div class="ph-sub">Manage login and password</div>
+          </div>
+          <button class="btn btn-r" onclick="logout()">Logout</button>
+        </div>
+        <div class="card">
+          <div class="fg"><label class="fl">Username</label><input class="fc" id="p-username" readonly></div>
+          <div class="fg"><label class="fl">Current Password</label><input type="password" class="fc" id="p-current"
+              placeholder="Enter current password"></div>
+          <div class="fg"><label class="fl">New Password</label><input type="password" class="fc" id="p-new"
+              placeholder="Enter new password"></div>
+          <div class="fg"><label class="fl">Confirm New Password</label><input type="password" class="fc" id="p-confirm"
+              placeholder="Confirm new password"></div>
+          <div class="fa"><button class="btn btn-p" onclick="saveProfile(event)">Update Password</button></div>
+        </div>
+        <div class="card" style="margin-top:18px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+            <div>
+              <div style="font-weight:700">Reset App Data</div>
+              <div style="font-size:13px;color:var(--txt3);margin-top:6px">This will remove attendance, advances,
+                salary, PT and leave data but keep employee records.</div>
+            </div>
+            <button class="btn btn-r" onclick="resetDataKeepEmployees()">Reset Data</button>
           </div>
         </div>
       </div>
@@ -1163,6 +1288,56 @@
         <div id="sal-grid" class="grid3"></div>
       </div>
 
+      <!-- PT SESSIONS -->
+      <div id="page-pt" class="page">
+        <div class="ph">
+          <div>
+            <h2>PT Sessions</h2>
+            <div class="ph-sub">Log personal training sessions and commissions</div>
+          </div>
+          <button class="btn btn-p" onclick="openPtModal()">+ Add PT Session</button>
+        </div>
+        <div class="filters">
+          <select class="fc" style="width:190px" id="pt-f-trainer" onchange="renderPt()">
+            <option value="">All Trainers</option>
+          </select>
+          <input type="month" id="pt-f-month" class="fc" style="width:150px" onchange="renderPt()">
+          <button class="btn btn-s btn-sm" onclick="clearPtFilters()">Clear</button>
+        </div>
+        <div class="grid3" style="gap:12px;margin-bottom:16px">
+          <div class="card" style="padding:18px;text-align:center">
+            <div style="font-size:11px;color:var(--txt3)">Total Sessions</div>
+            <div id="pt-total-sessions" style="font-size:26px;font-weight:800;color:var(--accent)">0</div>
+          </div>
+          <div class="card" style="padding:18px;text-align:center">
+            <div style="font-size:11px;color:var(--txt3)">Total PT Revenue</div>
+            <div id="pt-total-revenue" style="font-size:26px;font-weight:800;color:var(--green)">₹0</div>
+          </div>
+          <div class="card" style="padding:18px;text-align:center">
+            <div style="font-size:11px;color:var(--txt3)">Total Commission</div>
+            <div id="pt-total-commission" style="font-size:26px;font-weight:800;color:var(--blue)">₹0</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Trainer</th>
+                  <th>Date</th>
+                  <th>Shift</th>
+                  <th>Amount</th>
+                  <th>Commission</th>
+                  <th>Notes</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="pt-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
       <!-- ADVANCES -->
       <div id="page-advances" class="page">
         <div class="ph">
@@ -1239,6 +1414,11 @@
               placeholder="15000" min="0"></div>
           <div class="fg"><label class="fl">Working Days/Month</label><input type="number" class="fc" id="e-wdays"
               value="26" min="1" max="31"></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Paid Leave Allowance</label><input type="number" class="fc"
+              id="e-leave-allowance" value="2" min="0" placeholder="2"></div>
+          <div class="fg"></div>
         </div>
         <div class="fg"><label class="fl">Status</label>
           <select class="fc" id="e-status">
@@ -1359,6 +1539,61 @@
     </div>
   </div>
 
+  <!-- MODAL: Reset Password -->
+  <div class="overlay" id="reset-modal">
+    <div class="modal">
+      <div class="mh">
+        <h3>Reset Password</h3><button class="mx" onclick="closeModal('reset-modal')">✕</button>
+      </div>
+      <form id="reset-form">
+        <div class="fg"><label class="fl">Current Password</label><input type="password" class="fc" id="r-current"
+            required></div>
+        <div class="fg"><label class="fl">New Password</label><input type="password" class="fc" id="r-new" required>
+        </div>
+        <div class="fg"><label class="fl">Confirm New Password</label><input type="password" class="fc" id="r-confirm"
+            required></div>
+        <div class="fa">
+          <button type="button" class="btn btn-s" onclick="closeModal('reset-modal')">Cancel</button>
+          <button type="submit" class="btn btn-p">Update Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: PT Session -->
+  <div class="overlay" id="pt-modal">
+    <div class="modal">
+      <div class="mh">
+        <h3 id="pt-modal-title">Add PT Session</h3><button class="mx" onclick="closeModal('pt-modal')">✕</button>
+      </div>
+      <form onsubmit="savePt(event)">
+        <div class="fg"><label class="fl">Trainer *</label>
+          <select class="fc" id="pt-trainer" required>
+            <option value="">Select Trainer</option>
+          </select>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Date *</label><input type="date" class="fc" id="pt-date" required></div>
+          <div class="fg"><label class="fl">Shift *</label>
+            <select class="fc" id="pt-shift" required>
+              <option value="morning">🌅 Morning</option>
+              <option value="evening">🌆 Evening</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg"><label class="fl">Amount (₹) *</label><input type="number" class="fc" id="pt-amount" required
+            min="1" placeholder="12000"></div>
+        <div class="fg"><label class="fl">Notes</label><input class="fc" id="pt-notes"
+            placeholder="Client name or details"></div>
+        <input type="hidden" id="pt-id">
+        <div class="fa">
+          <button type="button" class="btn btn-s" onclick="closeModal('pt-modal')">Cancel</button>
+          <button type="submit" class="btn btn-p">Save PT Session</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- MODAL: Salary Detail -->
   <div class="overlay" id="sal-detail-modal">
     <div class="modal modal-lg">
@@ -1387,7 +1622,7 @@
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
   <script>
     // ─── STORAGE ────────────────────────────────────────────────────────
-    const K = { emp: 'gp_emp', att: 'gp_att', adv: 'gp_adv', pay: 'gp_pay', leave: 'gp_leave', init: 'gp_init' };
+    const K = { emp: 'gp_emp', att: 'gp_att', adv: 'gp_adv', pay: 'gp_pay', pt: 'gp_pt', leave: 'gp_leave', auth: 'gp_auth', init: 'gp_init' };
     const load = k => { try { return JSON.parse(localStorage.getItem(k)) || []; } catch { return []; } };
     const loadObj = k => { try { return JSON.parse(localStorage.getItem(k)) || {}; } catch { return {}; } };
     const save = (k, d) => localStorage.setItem(k, JSON.stringify(d));
@@ -1395,9 +1630,110 @@
     const getAtt = () => load(K.att);
     const getAdv = () => load(K.adv);
     const getPay = () => load(K.pay);
+    const getPt = () => load(K.pt);
+    const getAuth = () => {
+      const stored = loadObj(K.auth);
+      if (!stored.username || !stored.password) {
+        const defaultAuth = { username: 'admin', password: 'admin' };
+        save(K.auth, defaultAuth);
+        return defaultAuth;
+      }
+      return stored;
+    };
     const getLeaveTemplates = () => load(K.leave);
     function clearAllData() {
-      [K.emp, K.att, K.adv, K.pay, K.leave].forEach(key => localStorage.removeItem(key));
+      [K.emp, K.att, K.adv, K.pay, K.pt, K.leave].forEach(key => localStorage.removeItem(key));
+    }
+    function resetDataKeepEmployees() {
+      if (!confirm('Reset all data except employees? This cannot be undone.')) return;
+      const employees = getEmp();
+      clearAllData();
+      save(K.emp, employees);
+      toast('Data reset completed, employee records preserved', 'suc');
+      if (curPage === 'salary') renderSalary();
+      if (curPage === 'advances') renderAdvances();
+      if (curPage === 'pt') renderPt();
+      if (curPage === 'punch') renderPunch();
+      if (curPage === 'monthly') renderMonthly();
+      if (curPage === 'dashboard') renderDash();
+    }
+    function isLoggedIn() {
+      const token = localStorage.getItem('gp_logged_in');
+      const loginTs = parseInt(localStorage.getItem('gp_login_ts') || '0', 10);
+      return token === '1' && Date.now() - loginTs < 2 * 60 * 60 * 1000;
+    }
+    function updateLoginTimestamp() {
+      localStorage.setItem('gp_logged_in', '1');
+      localStorage.setItem('gp_login_ts', Date.now().toString());
+    }
+    function logout() {
+      localStorage.removeItem('gp_logged_in');
+      localStorage.removeItem('gp_login_ts');
+      localStorage.removeItem('gp_user');
+      showLogin();
+      toast('Logged out due to inactivity or user action', 'inf');
+    }
+    function showLogin() {
+      document.body.classList.add('login-active');
+      document.getElementById('login-screen').classList.add('active');
+      document.querySelector('.sidebar').classList.add('hidden');
+      document.querySelector('.main').classList.add('hidden');
+      document.getElementById('login-user').focus();
+    }
+    function showApp() {
+      document.body.classList.remove('login-active');
+      document.getElementById('login-screen').classList.remove('active');
+      document.querySelector('.sidebar').classList.remove('hidden');
+      document.querySelector('.main').classList.remove('hidden');
+      nav(curPage);
+    }
+    function handleLogin(e) {
+      e.preventDefault();
+      const auth = getAuth();
+      const username = document.getElementById('login-user').value.trim();
+      const password = document.getElementById('login-pass').value;
+      if (username === auth.username && password === auth.password) {
+        updateLoginTimestamp();
+        localStorage.setItem('gp_user', username);
+        toast('Login successful', 'suc');
+        showApp();
+        renderDash();
+        return;
+      }
+      toast('Invalid username or password', 'err');
+    }
+    function resetPassword(e) {
+      e.preventDefault();
+      const auth = getAuth();
+      const current = document.getElementById('r-current').value;
+      const next = document.getElementById('r-new').value;
+      const confirm = document.getElementById('r-confirm').value;
+      if (current !== auth.password) { toast('Current password is incorrect', 'err'); return; }
+      if (!next || next !== confirm) { toast('New passwords do not match', 'err'); return; }
+      save(K.auth, { username: auth.username, password: next });
+      closeModal('reset-modal');
+      toast('Password updated successfully', 'suc');
+    }
+    function saveProfile(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      const auth = getAuth();
+      const current = document.getElementById('p-current').value;
+      const next = document.getElementById('p-new').value;
+      const confirm = document.getElementById('p-confirm').value;
+      if (current !== auth.password) { toast('Current password is incorrect', 'err'); return; }
+      if (!next || next !== confirm) { toast('New passwords do not match', 'err'); return; }
+      save(K.auth, { username: auth.username, password: next });
+      document.getElementById('p-current').value = '';
+      document.getElementById('p-new').value = '';
+      document.getElementById('p-confirm').value = '';
+      toast('Password updated successfully', 'suc');
+    }
+    function renderProfile() {
+      const auth = getAuth();
+      document.getElementById('p-username').value = auth.username;
+      document.getElementById('p-current').value = '';
+      document.getElementById('p-new').value = '';
+      document.getElementById('p-confirm').value = '';
     }
     const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
     const today = () => new Date().toISOString().slice(0, 10);
@@ -1493,10 +1829,11 @@
     }
 
     // ─── NAVIGATION ─────────────────────────────────────────────────────
-    const PAGE_TITLES = { dashboard: 'Dashboard', employees: 'Employees', punch: 'Attendance', monthly: 'Monthly Attendance', leave: 'Leave Templates', salary: 'Salary Management', advances: 'Salary Advances' };
+    const PAGE_TITLES = { dashboard: 'Dashboard', profile: 'Profile', employees: 'Employees', punch: 'Attendance', monthly: 'Monthly Attendance', leave: 'Leave Templates', salary: 'Salary Management', pt: 'PT Sessions', advances: 'Salary Advances' };
     let curPage = 'dashboard';
 
     function nav(page) {
+      if (!isLoggedIn()) { showLogin(); return; }
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       document.getElementById('page-' + page).classList.add('active');
@@ -1505,7 +1842,7 @@
       });
       document.getElementById('page-title').textContent = PAGE_TITLES[page];
       curPage = page;
-      const renders = { dashboard: renderDash, employees: renderEmp, punch: renderPunch, monthly: renderMonthly, leave: renderLeavePage, salary: renderSalary, advances: renderAdvances };
+      const renders = { dashboard: renderDash, profile: renderProfile, employees: renderEmp, punch: renderPunch, monthly: renderMonthly, leave: renderLeavePage, salary: renderSalary, pt: renderPt, advances: renderAdvances };
       if (renders[page]) renders[page]();
     }
 
@@ -1520,6 +1857,9 @@
       document.getElementById('topbar-date').textContent = full;
       const ps = document.getElementById('punch-sub');
       if (ps) ps.textContent = full;
+      if (!isLoggedIn() && !document.body.classList.contains('login-active')) {
+        logout();
+      }
     }
 
     // ─── TOAST ──────────────────────────────────────────────────────────
@@ -1557,6 +1897,7 @@
       document.getElementById('e-evening-to').value = emp?.eveningTo || '';
       document.getElementById('e-sal').value = emp?.salary || '';
       document.getElementById('e-wdays').value = emp?.wdays || 26;
+      document.getElementById('e-leave-allowance').value = emp?.leaveAllowance ?? 2;
       document.getElementById('e-status').value = emp?.status || 'active';
       openModal('emp-modal');
     }
@@ -1567,6 +1908,7 @@
       const id = document.getElementById('e-id').value;
       const name = document.getElementById('e-name').value.trim();
       const salary = parseFloat(document.getElementById('e-sal').value);
+      const leaveAllowanceInput = parseInt(document.getElementById('e-leave-allowance').value, 10);
       const morningFrom = document.getElementById('e-morning-from').value;
       const morningTo = document.getElementById('e-morning-to').value;
       const eveningFrom = document.getElementById('e-evening-from').value;
@@ -1592,17 +1934,20 @@
         shift,
         salary,
         wdays: parseInt(document.getElementById('e-wdays').value) || 26,
+        leaveAllowance: Number.isFinite(leaveAllowanceInput) ? leaveAllowanceInput : 2,
         status: document.getElementById('e-status').value,
         createdAt: id ? emps.find(x => x.id === id)?.createdAt : new Date().toISOString()
       };
       if (id) { const i = emps.findIndex(x => x.id === id); emps[i] = data; toast('Employee updated', 'suc'); }
       else { emps.push(data); toast('Employee added', 'suc'); }
       save(K.emp, emps);
+      normalizeLeaveStatusesForEmployee(data.id);
       closeModal('emp-modal');
       renderEmp();
       if (curPage === 'leave') renderLeavePage();
       if (curPage === 'punch') renderPunch();
       if (curPage === 'dashboard') renderDash();
+      if (curPage === 'pt') renderPt();
     }
 
     function deleteEmp(id) {
@@ -1611,12 +1956,13 @@
       toast('Employee deleted', 'suc');
       renderEmp();
       if (curPage === 'leave') renderLeavePage();
+      if (curPage === 'pt') renderPt();
     }
 
     function renderEmp() {
       const emps = getEmp();
       const tb = document.getElementById('emp-tbody');
-      if (!emps.length) { tb.innerHTML = `<tr><td colspan="9"><div class="empty"><div class="empty-icon">👥</div><h3>No employees yet</h3><p>Add your first employee to get started</p></div></td></tr>`; return; }
+      if (!emps.length) { tb.innerHTML = `<tr><td colspan="10"><div class="empty"><div class="empty-icon">👥</div><h3>No employees yet</h3><p>Add your first employee to get started</p></div></td></tr>`; return; }
       tb.innerHTML = emps.map(e => `
     <tr>
       <td><div style="display:flex;align-items:center;gap:10px"><div class="av">${e.name[0].toUpperCase()}</div><div><div style="font-weight:600">${e.name}</div><div style="font-size:11px;color:var(--txt3)">${e.phone || '—'}</div></div></div></td>
@@ -1626,6 +1972,7 @@
       <td>${fmtDate(e.joinDate)}</td>
       <td style="font-weight:700">₹${(e.salary || 0).toLocaleString('en-IN')}</td>
       <td>${e.wdays || 26} days</td>
+      <td>${e.leaveAllowance ?? 2} days</td>
       <td><span class="badge ${e.status === 'active' ? 'bg-g' : 'bg-r'}">${e.status || 'active'}</span></td>
       <td><div style="display:flex;gap:6px">
         <button class="btn btn-s btn-xs" onclick="openEmpModal('${e.id}')">Edit</button>
@@ -1643,6 +1990,31 @@
       return status === 'present' || status === 'late';
     }
 
+    function normalizeLeaveStatuses(empId, month) {
+      const att = getAtt();
+      const emp = getEmp().find(e => e.id === empId);
+      const allowanceShifts = (emp?.leaveAllowance ?? 2) * 2;
+      const records = att
+        .filter(a => a.empId === empId && a.date.startsWith(month) && (a.status === 'leave' || a.status === 'lop'))
+        .sort((a, b) => a.date === b.date ? a.shift.localeCompare(b.shift) : a.date.localeCompare(b.date));
+      let count = 0;
+      let changed = false;
+      records.forEach(rec => {
+        const expected = count < allowanceShifts ? 'leave' : 'lop';
+        if (rec.status !== expected) {
+          rec.status = expected;
+          changed = true;
+        }
+        count++;
+      });
+      if (changed) save(K.att, att);
+    }
+
+    function normalizeLeaveStatusesForEmployee(empId) {
+      const months = [...new Set(getAtt().filter(a => a.empId === empId && (a.status === 'leave' || a.status === 'lop')).map(a => a.date.slice(0, 7)))];
+      months.forEach(month => normalizeLeaveStatuses(empId, month));
+    }
+
     function markAttendance(empId, shift, status) {
       const date = today();
       const att = getAtt();
@@ -1650,7 +2022,8 @@
       const rec = { id: idx >= 0 ? att[idx].id : uid(), empId, date, shift, punchIn: null, punchOut: null, status };
       if (idx >= 0) att[idx] = rec; else att.push(rec);
       save(K.att, att);
-      const label = status === 'present' ? 'Present' : status === 'late' ? 'Late' : 'Absent';
+      if (status === 'leave' || status === 'lop') normalizeLeaveStatuses(empId, date.slice(0, 7));
+      const label = status === 'present' ? 'Present' : status === 'late' ? 'Late' : status === 'leave' ? 'Leave' : status === 'lop' ? 'LOP' : 'Absent';
       toast(`Marked ${label} — ${shift} shift`, 'suc');
       renderPunch();
       if (curPage === 'dashboard') renderDash();
@@ -1764,6 +2137,8 @@
           right = `<span class="badge bg-p" title="${rec.reason || 'Late'}">Late</span>`;
         } else if (rec.status === 'leave') {
           right = `<span class="badge bg-b">Leave</span>`;
+        } else if (rec.status === 'lop') {
+          right = `<span class="badge bg-r">LOP</span>`;
         } else if (rec.status === 'absent') {
           right = `<span class="badge bg-r">Absent</span>`;
         } else {
@@ -1826,6 +2201,7 @@
       const rec = { id: idx >= 0 ? att[idx].id : uid(), empId, date, shift, punchIn: null, punchOut: null, status, reason };
       if (idx >= 0) att[idx] = rec; else att.push(rec);
       save(K.att, att);
+      if (status === 'leave' || status === 'lop') normalizeLeaveStatuses(empId, date.slice(0, 7));
       toast('Attendance saved', 'suc');
       closeModal('manual-modal');
       if (curPage === 'punch') renderPunch();
@@ -1877,11 +2253,14 @@
           const he = isPresentStatus(er?.status);
           const mv = mr?.status === 'leave';
           const ev = er?.status === 'leave';
+          const ml = mr?.status === 'lop';
+          const el = er?.status === 'lop';
           if (ds > todayStr) return `<td><div class="att-cell ac-fut">·</div></td>`;
           if (hm && he) { days_p++; shifts_p += 2; return `<td><div class="att-cell ac-full" title="Full day">F</div></td>`; }
           if (hm) { days_p += 0.5; shifts_p++; return `<td><div class="att-cell ac-m" title="Morning">M</div></td>`; }
           if (he) { days_p += 0.5; shifts_p++; return `<td><div class="att-cell ac-e" title="Evening">E</div></td>`; }
-          if (mv || ev) { return `<td><div class="att-cell ac-leave" title="Leave">V</div></td>`; }
+          if (ml || el) { return `<td><div class="att-cell ac-lop" title="Loss of Pay">L</div></td>`; }
+          if (mv || ev) { days_p += 0.5; shifts_p++; return `<td><div class="att-cell ac-leave" title="Leave">V</div></td>`; }
           return `<td><div class="att-cell ac-abs" title="Absent">A</div></td>`;
         }).join('');
         return `<tr>
@@ -1902,23 +2281,55 @@
 
     // ─── SALARY ─────────────────────────────────────────────────────────
     function calcSalary(emp, month) {
+      normalizeLeaveStatuses(emp.id, month);
       const att = getAtt();
       const adv = getAdv();
       const [y, m] = month.split('-').map(Number);
       const dim = new Date(y, m, 0).getDate();
       const wd = emp.wdays || 26;
       const perShift = emp.salary / (wd * 2);
-      let mp = 0, ep = 0;
+      let mp = 0, ep = 0, leaveShifts = 0, absentShifts = 0;
+      const leaveAllowanceShifts = (emp.leaveAllowance ?? 2) * 2;
       for (let d = 1; d <= dim; d++) {
         const ds = `${month}-${String(d).padStart(2, '0')}`;
         const mr = att.find(a => a.empId === emp.id && a.date === ds && a.shift === 'morning');
         const er = att.find(a => a.empId === emp.id && a.date === ds && a.shift === 'evening');
         if (isPresentStatus(mr?.status)) mp++;
         if (isPresentStatus(er?.status)) ep++;
+        if (mr?.status === 'leave' || mr?.status === 'lop') leaveShifts++;
+        if (er?.status === 'leave' || er?.status === 'lop') leaveShifts++;
+        if (mr?.status === 'absent') absentShifts++;
+        if (er?.status === 'absent') absentShifts++;
       }
-      const earned = (mp + ep) * perShift;
+      const paidLeaveShifts = Math.min(leaveShifts, leaveAllowanceShifts);
+      const lopShifts = Math.max(0, leaveShifts - paidLeaveShifts);
+      const earned = (mp + ep + paidLeaveShifts) * perShift;
+      const absentDeduction = absentShifts * perShift;
+      const lopDeduction = lopShifts * perShift;
       const totalAdv = adv.filter(a => a.empId === emp.id && a.month === month).reduce((s, a) => s + a.amount, 0);
-      return { mp, ep, shifts: mp + ep, days: (mp + ep) / 2, wd, perShift, earned, totalAdv, net: earned - totalAdv, base: emp.salary };
+      const ptRecords = getPt().filter(p => p.trainerId === emp.id && p.month === month);
+      const ptRevenue = ptRecords.reduce((s, p) => s + (p.amount || 0), 0);
+      const ptCommission = ptRecords.reduce((s, p) => s + (p.commission || 0), 0);
+      return {
+        mp,
+        ep,
+        leaveShifts,
+        paidLeaveShifts,
+        lopShifts,
+        absentShifts,
+        shifts: mp + ep,
+        days: (mp + ep) / 2,
+        wd,
+        perShift,
+        earned,
+        absentDeduction,
+        lopDeduction,
+        totalAdv,
+        ptRevenue,
+        ptCommission,
+        net: earned - totalAdv + ptCommission,
+        base: emp.salary
+      };
     }
 
     function renderSalary() {
@@ -1947,7 +2358,11 @@
           <div class="sal-row"><span class="sal-lbl">🌆 Evening Shifts</span><span class="sal-val">${s.ep} shifts</span></div>
           <div class="sal-row"><span class="sal-lbl">Days Present</span><span class="sal-val">${s.days} / ${s.wd}</span></div>
           <div class="sal-row"><span class="sal-lbl">Earned</span><span class="sal-val" style="color:var(--green)">₹${Math.round(s.earned).toLocaleString('en-IN')}</span></div>
+          <div class="sal-row"><span class="sal-lbl">Paid Leave Shifts</span><span class="sal-val">${s.paidLeaveShifts} shifts</span></div>
+          <div class="sal-row"><span class="sal-lbl">LOP Shifts</span><span class="sal-val">${s.lopShifts} shifts</span></div>
+          <div class="sal-row"><span class="sal-lbl">Absent Shifts</span><span class="sal-val">${s.absentShifts} shifts</span></div>
           <div class="sal-row"><span class="sal-lbl">Advance Deduction</span><span class="sal-val" style="color:var(--red)">- ₹${s.totalAdv.toLocaleString('en-IN')}</span></div>
+          <div class="sal-row"><span class="sal-lbl">PT Commission</span><span class="sal-val" style="color:var(--blue)">₹${Math.round(s.ptCommission || 0).toLocaleString('en-IN')}</span></div>
         </div>
         <div class="sal-total">
           <span style="font-weight:700">Net Payable</span>
@@ -2004,6 +2419,8 @@
         const days = (mp + ep) / 2;
         const earned = Math.round((mp + ep) * (emp.salary / ((emp.wdays || 26) * 2)));
         const totalAdv = getAdv().filter(a => a.empId === emp.id && a.month === end.slice(0, 7)).reduce((sum, a) => sum + (a.amount || 0), 0);
+        const ptCommission = getPt().filter(p => p.trainerId === emp.id && p.month === end.slice(0, 7)).reduce((sum, p) => sum + (p.commission || 0), 0);
+        const ptRevenue = getPt().filter(p => p.trainerId === emp.id && p.month === end.slice(0, 7)).reduce((sum, p) => sum + (p.amount || 0), 0);
         return {
           'Employee': emp.name,
           'Role': emp.role || 'Staff',
@@ -2012,8 +2429,10 @@
           'Evening Shifts': ep,
           'Present Days': days,
           'Estimated Earned': earned,
+          'PT Revenue': ptRevenue,
+          'PT Commission': ptCommission,
           'Advance Deduction': totalAdv,
-          'Net Estimate': earned - totalAdv
+          'Net Estimate': earned - totalAdv + ptCommission
         };
       });
     }
@@ -2032,6 +2451,8 @@
           'Morning Shifts': s.mp,
           'Evening Shifts': s.ep,
           'Earned': Math.round(s.earned),
+          'PT Revenue': s.ptRevenue || 0,
+          'PT Commission': s.ptCommission || 0,
           'Advance Deduction': s.totalAdv,
           'Net Payable': Math.round(s.net),
           'Payment Status': pay ? 'Paid' : 'Pending',
@@ -2104,9 +2525,15 @@
           ['Per Shift Value', `₹${s.perShift.toFixed(2)}`],
           ['Morning Shifts', `${s.mp} × ₹${s.perShift.toFixed(0)} = ₹${Math.round(s.mp * s.perShift).toLocaleString()}`],
           ['Evening Shifts', `${s.ep} × ₹${s.perShift.toFixed(0)} = ₹${Math.round(s.ep * s.perShift).toLocaleString()}`],
+          ['Paid Leave Shifts', `${s.paidLeaveShifts} × ₹${s.perShift.toFixed(0)} = ₹${Math.round(s.paidLeaveShifts * s.perShift).toLocaleString()}`],
+          ['LOP Shifts', `${s.lopShifts} shifts`],
+          ['Absent Shifts', `${s.absentShifts} shifts`],
         ].map(([l, v]) => `<div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--txt2)">${l}</span><span>${v}</span></div>`).join('')}
       <div style="display:flex;justify-content:space-between;padding:11px 16px;border-bottom:1px solid var(--border);font-weight:700;color:var(--green);font-size:14px"><span>Gross Earned</span><span>₹${Math.round(s.earned).toLocaleString('en-IN')}</span></div>
       ${advs.map(a => `<div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);font-size:13px;color:var(--red)"><span>Advance — ${a.reason || 'Advance'} (${fmtDate(a.date)})</span><span>-₹${a.amount.toLocaleString()}</span></div>`).join('')}
+      <div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);font-size:13px;color:var(--red)"><span>LOP deduction</span><span>-₹${Math.round(s.lopDeduction).toLocaleString('en-IN')}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);font-size:13px;color:var(--red)"><span>Absent deduction</span><span>-₹${Math.round(s.absentDeduction).toLocaleString('en-IN')}</span></div>
+      ${s.ptCommission ? `<div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);font-size:13px;color:var(--blue)"><span>PT Commission</span><span>₹${Math.round(s.ptCommission).toLocaleString('en-IN')}</span></div>` : ''}
       <div style="display:flex;justify-content:space-between;padding:14px 16px;font-size:20px;font-weight:800;color:var(--accent)"><span>Net Payable</span><span>₹${Math.round(s.net).toLocaleString('en-IN')}</span></div>
     </div>`;
       openModal('sal-detail-modal');
@@ -2135,6 +2562,9 @@
         ].map(([l, v]) => `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--txt2)">${l}</span><span>${v}</span></div>`).join('')}
         <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-weight:600;color:var(--green)"><span>Gross Earned</span><span>₹${Math.round(s.earned).toLocaleString('en-IN')}</span></div>
         ${advs.map(a => `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--red)"><span>Advance — ${a.reason || ''} (${fmtDate(a.date)})</span><span>-₹${a.amount.toLocaleString()}</span></div>`).join('')}
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--red)"><span>LOP deduction</span><span>-₹${Math.round(s.lopDeduction).toLocaleString('en-IN')}</span></div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--red)"><span>Absent deduction</span><span>-₹${Math.round(s.absentDeduction).toLocaleString('en-IN')}</span></div>
+        ${s.ptCommission ? `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--blue)"><span>PT Commission</span><span>₹${Math.round(s.ptCommission).toLocaleString('en-IN')}</span></div>` : ''}
         <div style="display:flex;justify-content:space-between;padding:14px 0;font-size:22px;font-weight:800;color:var(--accent)"><span>Net Payable</span><span>₹${Math.round(s.net).toLocaleString('en-IN')}</span></div>
       </div>
       <div style="padding:12px 20px;background:var(--bg2);border-top:1px solid var(--border);font-size:11px;color:var(--txt3);text-align:center">Employee Signature _________________ &nbsp;&nbsp;&nbsp; Authorized Signature _________________</div>
@@ -2223,6 +2653,114 @@
       }).join('');
     }
 
+    function ptCommissionRate(amount) {
+      return amount < 15000 ? 0.2 : 0.3;
+    }
+
+    function openPtModal(id = null) {
+      const emps = getEmp().filter(e => e.status !== 'inactive');
+      const pt = id ? getPt().find(p => p.id === id) : null;
+      const sel = document.getElementById('pt-trainer');
+      sel.innerHTML = '<option value="">Select Trainer</option>' + emps.map(e => `<option value="${e.id}" ${pt?.trainerId === e.id ? 'selected' : ''}>${e.name}</option>`).join('');
+      document.getElementById('pt-id').value = pt?.id || '';
+      document.getElementById('pt-date').value = pt?.date || today();
+      document.getElementById('pt-shift').value = pt?.shift || 'morning';
+      document.getElementById('pt-amount').value = pt?.amount || '';
+      document.getElementById('pt-notes').value = pt?.notes || '';
+      document.getElementById('pt-modal-title').textContent = pt ? 'Edit PT Session' : 'Add PT Session';
+      openModal('pt-modal');
+    }
+
+    function savePt(e) {
+      e.preventDefault();
+      const pts = getPt();
+      const id = document.getElementById('pt-id').value;
+      const trainerId = document.getElementById('pt-trainer').value;
+      const date = document.getElementById('pt-date').value;
+      const shift = document.getElementById('pt-shift').value;
+      const amount = parseFloat(document.getElementById('pt-amount').value);
+      const notes = document.getElementById('pt-notes').value.trim();
+      if (!trainerId) { toast('Select a trainer', 'err'); return; }
+      if (!date) { toast('Select a date', 'err'); return; }
+      if (Number.isNaN(amount) || amount <= 0) { toast('Enter a valid amount', 'err'); return; }
+      const commissionRate = ptCommissionRate(amount);
+      const commission = Math.round(amount * commissionRate);
+      const data = { id: id || uid(), trainerId, date, shift, amount, notes, commission, month: date.slice(0, 7) };
+      if (id) {
+        const idx = pts.findIndex(p => p.id === id);
+        if (idx >= 0) {
+          pts[idx] = data;
+          toast('PT session updated', 'suc');
+        } else {
+          pts.push(data);
+          toast('PT session saved', 'suc');
+        }
+      } else {
+        pts.push(data);
+        toast('PT session saved', 'suc');
+      }
+      save(K.pt, pts);
+      closeModal('pt-modal');
+      renderPt();
+      if (curPage === 'salary') renderSalary();
+      if (curPage === 'dashboard') renderDash();
+    }
+
+    function deletePt(id) {
+      if (!confirm('Delete this PT session?')) return;
+      save(K.pt, getPt().filter(p => p.id !== id));
+      toast('PT session deleted', 'suc');
+      renderPt();
+      if (curPage === 'salary') renderSalary();
+      if (curPage === 'dashboard') renderDash();
+    }
+
+    function clearPtFilters() {
+      document.getElementById('pt-f-trainer').value = '';
+      document.getElementById('pt-f-month').value = '';
+      renderPt();
+    }
+
+    function renderPt() {
+      const emps = getEmp();
+      const fTrainer = document.getElementById('pt-f-trainer').value;
+      const fMonth = document.getElementById('pt-f-month').value;
+      const sel = document.getElementById('pt-f-trainer');
+      const cur = sel.value;
+      sel.innerHTML = '<option value="">All Trainers</option>' + emps.map(e => `<option value="${e.id}" ${cur === e.id ? 'selected' : ''}>${e.name}</option>`).join('');
+      sel.value = cur;
+      let pts = getPt().slice();
+      if (fTrainer) pts = pts.filter(p => p.trainerId === fTrainer);
+      if (fMonth) pts = pts.filter(p => p.month === fMonth);
+      pts.sort((a, b) => b.date.localeCompare(a.date) || a.shift.localeCompare(b.shift));
+      const totalSessions = pts.length;
+      const totalRevenue = pts.reduce((sum, p) => sum + (p.amount || 0), 0);
+      const totalCommission = pts.reduce((sum, p) => sum + (p.commission || 0), 0);
+      document.getElementById('pt-total-sessions').textContent = totalSessions;
+      document.getElementById('pt-total-revenue').textContent = `₹${totalRevenue.toLocaleString('en-IN')}`;
+      document.getElementById('pt-total-commission').textContent = `₹${totalCommission.toLocaleString('en-IN')}`;
+      const tb = document.getElementById('pt-tbody');
+      if (!pts.length) {
+        tb.innerHTML = `<tr><td colspan="7"><div class="empty"><div class="empty-icon">🏋️</div><h3>No PT sessions yet</h3><p>Add a session to track commissions.</p></div></td></tr>`;
+        return;
+      }
+      tb.innerHTML = pts.map(p => {
+        const emp = emps.find(e => e.id === p.trainerId);
+        return `<tr>
+      <td><div style="display:flex;align-items:center;gap:9px"><div class="av">${emp ? emp.name[0] : '?'}</div><span style="font-weight:600">${emp?.name || 'Unknown'}</span></div></td>
+      <td>${fmtDate(p.date)}</td>
+      <td>${p.shift === 'morning' ? '🌅 Morning' : '🌆 Evening'}</td>
+      <td style="font-weight:700;color:var(--green)">₹${p.amount.toLocaleString('en-IN')}</td>
+      <td style="font-weight:700;color:var(--blue)">₹${p.commission.toLocaleString('en-IN')}</td>
+      <td>${p.notes || '—'}</td>
+      <td><div style="display:flex;gap:6px">
+        <button class="btn btn-s btn-xs" onclick="openPtModal('${p.id}')">Edit</button>
+        <button class="btn btn-r btn-xs" onclick="deletePt('${p.id}')">Del</button>
+      </div></td>
+    </tr>`;
+      }).join('');
+    }
+
     // ─── DASHBOARD ───────────────────────────────────────────────────────
     function renderDash() {
       const emps = getEmp();
@@ -2235,12 +2773,14 @@
       const morn = todayAtt.filter(a => a.shift === 'morning').length;
       const eve = todayAtt.filter(a => a.shift === 'evening').length;
       const monAdv = adv.filter(a => a.month === mon).reduce((s, a) => s + a.amount, 0);
+      const monPtCommission = getPt().filter(p => p.month === mon).reduce((s, p) => s + (p.commission || 0), 0);
 
       document.getElementById('s-staff').textContent = emps.filter(e => e.status !== 'inactive').length;
       document.getElementById('s-present').textContent = presentIds.size;
       document.getElementById('s-morning').textContent = morn;
       document.getElementById('s-evening').textContent = eve;
       document.getElementById('s-advances').textContent = '₹' + monAdv.toLocaleString('en-IN');
+      document.getElementById('s-pt').textContent = '₹' + monPtCommission.toLocaleString('en-IN');
 
       // Today attendance list
       const attEl = document.getElementById('dash-att');
@@ -2306,7 +2846,19 @@
       }
       const adminToggle = document.getElementById('admin-mode');
       if (adminToggle) adminToggle.addEventListener('change', updateManualStatusOptions);
-      renderDash();
+      const loginForm = document.getElementById('login-form');
+      if (loginForm) loginForm.addEventListener('submit', handleLogin);
+      const loginReset = document.getElementById('login-reset');
+      if (loginReset) loginReset.addEventListener('click', e => { e.preventDefault(); openModal('reset-modal'); });
+      const resetForm = document.getElementById('reset-form');
+      if (resetForm) resetForm.addEventListener('submit', resetPassword);
+      if (isLoggedIn()) {
+        updateLoginTimestamp();
+        showApp();
+        renderDash();
+      } else {
+        showLogin();
+      }
       autoSaveReports();
     }
 
