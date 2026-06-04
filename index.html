@@ -977,9 +977,146 @@
       gap: 8px
     }
 
+    .att-tip {
+      position: fixed;
+      background: var(--card);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 12px;
+      z-index: 9000;
+      pointer-events: none;
+      min-width: 210px;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.45);
+      display: none;
+      line-height: 1.7;
+    }
+    .att-tip-date { font-weight: 700; font-size: 13px; margin-bottom: 8px; padding-bottom: 7px; border-bottom: 1px solid var(--border); color: var(--txt); }
+    .att-tip-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 2px 0; }
+    .att-tip-reason { font-size: 11px; color: var(--txt3); padding-left: 4px; margin-top: -2px; }
+
     @keyframes loading-bar {
       0% { transform: translateX(-120%); }
       100% { transform: translateX(220%); }
+    }
+
+    /* ─── HAMBURGER & BACKDROP ──────────────────────────────────── */
+    .hamburger {
+      display: none;
+      background: none;
+      border: 1px solid var(--border2);
+      border-radius: 7px;
+      cursor: pointer;
+      padding: 6px 10px;
+      color: var(--txt);
+      font-size: 18px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .sidebar-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.65);
+      z-index: 99;
+      backdrop-filter: blur(2px);
+    }
+    .sidebar-backdrop.open { display: block; }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .hamburger { display: flex; align-items: center; }
+
+      .sidebar {
+        width: 265px;
+        transform: translateX(-265px);
+        transition: transform .25s ease;
+        z-index: 300;
+      }
+      .sidebar.open {
+        transform: translateX(0);
+        box-shadow: 8px 0 32px rgba(0,0,0,.55);
+      }
+
+      .main { margin-left: 0 !important; }
+
+      .topbar { padding: 11px 14px; gap: 8px; }
+      .topbar h2 { font-size: 15px; }
+      #topbar-date { display: none; }
+
+      .content { padding: 14px 12px; }
+
+      .stats { grid-template-columns: repeat(2,1fr); gap: 10px; margin-bottom: 14px; }
+      .stat { padding: 13px; gap: 10px; }
+      .stat-icon { width: 38px; height: 38px; font-size: 17px; }
+      .stat-info h3 { font-size: 22px; }
+
+      .grid2, .grid3 { grid-template-columns: 1fr !important; gap: 12px; }
+      .fr2 { grid-template-columns: 1fr !important; gap: 10px; }
+
+      .ph { flex-direction: column; align-items: flex-start; gap: 10px; margin-bottom: 14px; }
+      .ph h2 { font-size: 17px; }
+
+      .card { padding: 14px; }
+      .card-title { font-size: 14px; margin-bottom: 12px; }
+
+      .modal {
+        width: 96%;
+        max-width: 100% !important;
+        padding: 18px 14px;
+        max-height: 90vh;
+        border-radius: 12px;
+      }
+
+      .punch-grid { grid-template-columns: 1fr !important; }
+      .shift-bar { flex-wrap: wrap; gap: 10px; padding: 12px 14px; }
+
+      .filters { gap: 8px; }
+      .filters .fc,
+      .filters select { width: 100% !important; }
+
+      .mnav { gap: 5px; }
+      .mnav .fc { width: 130px !important; }
+
+      .fa { flex-wrap: wrap; gap: 8px; }
+      .sal-foot { flex-wrap: wrap; gap: 6px; }
+      .sal-head { flex-wrap: wrap; gap: 8px; }
+
+      .login-card { padding: 24px 16px; border-radius: 14px; }
+      .login-card .login-actions { flex-direction: column; align-items: flex-start; }
+
+      .legend { gap: 8px; }
+      .leg-item { font-size: 10px; }
+
+      .toast-wrap { bottom: 14px; right: 10px; left: 10px; }
+      .toast { min-width: unset; width: 100%; }
+
+      th { padding: 8px 10px; font-size: 10px; }
+      td { padding: 10px 10px; font-size: 12px; }
+
+      .btn { padding: 7px 12px; font-size: 12px; }
+      .btn-sm { padding: 5px 9px; font-size: 11px; }
+
+      #page-salary .ph { flex-wrap: wrap; }
+      #page-salary .ph .fa { margin-top: 0; width: 100%; }
+      #page-salary .ph .fa .btn { flex: 1; justify-content: center; font-size: 11px; }
+
+      .sal-card { border-radius: 12px; }
+      .sal-total { padding: 10px 14px; }
+      .sal-total span:last-child { font-size: 17px; }
+
+      .overlay { padding: 12px; align-items: flex-end; }
+      .modal { margin-bottom: 0; border-bottom-left-radius: 0 !important; border-bottom-right-radius: 0 !important; max-height: 85vh; }
+
+      .att-tbl th, .att-tbl td { padding: 4px 2px; min-width: 26px; font-size: 9px; }
+      .att-cell { width: 22px; height: 22px; font-size: 8px; }
+    }
+
+    @media (max-width: 480px) {
+      .stats { grid-template-columns: 1fr; }
+      .topbar h2 { font-size: 14px; }
+      .content { padding: 12px 10px; }
+      .btn-xs { padding: 3px 7px; font-size: 10px; }
     }
 
     /* PRINT */
@@ -1050,7 +1187,10 @@
   <!-- MAIN -->
   <main class="main">
     <header class="topbar">
-      <h2 id="page-title">Dashboard</h2>
+      <div style="display:flex;align-items:center;gap:11px">
+        <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+        <h2 id="page-title">Dashboard</h2>
+      </div>
       <div id="topbar-date" style="font-size:13px;color:var(--txt3)"></div>
     </header>
     <div class="content">
@@ -1377,6 +1517,9 @@
 
     </div>
   </main>
+
+  <div id="sidebar-backdrop" class="sidebar-backdrop" onclick="closeSidebar()"></div>
+  <div id="att-tip" class="att-tip"></div>
 
   <!-- LOADING OVERLAY -->
   <div id="loading-overlay" style="position:fixed;inset:0;background:rgba(10,10,10,0.97);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:14px">
@@ -2108,12 +2251,23 @@
       return parts.length ? parts.join('<br>') : 'No schedule';
     }
 
+    // ─── SIDEBAR TOGGLE (MOBILE) ────────────────────────────────────────
+    function toggleSidebar() {
+      document.querySelector('.sidebar').classList.toggle('open');
+      document.getElementById('sidebar-backdrop').classList.toggle('open');
+    }
+    function closeSidebar() {
+      document.querySelector('.sidebar').classList.remove('open');
+      document.getElementById('sidebar-backdrop').classList.remove('open');
+    }
+
     // ─── NAVIGATION ─────────────────────────────────────────────────────
-    const PAGE_TITLES = { dashboard: 'Dashboard', profile: 'Profile', employees: 'Employees', punch: 'Attendance', monthly: 'Monthly Attendance', leave: 'Leave Templates', salary: 'Salary Management', pt: 'PT Sessions', advances: 'Salary Advances' };
+    const PAGE_TITLES = { dashboard: 'Dashboard', profile: 'Profile', employees: 'Employees', punch: 'Attendance', monthly: 'Monthly Attendance', leave: 'Leave Management', salary: 'Salary Management', pt: 'PT Sessions', advances: 'Salary Advances' };
     let curPage = 'dashboard';
 
     function nav(page) {
       if (!isLoggedIn()) { showLogin(); return; }
+      closeSidebar();
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       document.getElementById('page-' + page).classList.add('active');
@@ -2541,7 +2695,7 @@
       const tbody = emps.map(emp => {
         let days_p = 0, shifts_p = 0;
         const cells = days.map(({ ds, sun }) => {
-          if (sun) return `<td><div class="att-cell ac-sun" title="Sunday">—</div></td>`;
+          if (sun) return `<td><div class="att-cell ac-sun">—</div></td>`;
           const mr = att.find(a => a.empId === emp.id && a.date === ds && a.shift === 'morning');
           const er = att.find(a => a.empId === emp.id && a.date === ds && a.shift === 'evening');
           const hm = isPresentStatus(mr?.status);
@@ -2551,12 +2705,17 @@
           const ml = mr?.status === 'lop';
           const el = er?.status === 'lop';
           if (ds > todayStr) return `<td><div class="att-cell ac-fut">·</div></td>`;
-          if (hm && he) { days_p++; shifts_p += 2; return `<td><div class="att-cell ac-full" title="Full day">F</div></td>`; }
-          if (hm) { days_p += 0.5; shifts_p++; return `<td><div class="att-cell ac-m" title="Morning">M</div></td>`; }
-          if (he) { days_p += 0.5; shifts_p++; return `<td><div class="att-cell ac-e" title="Evening">E</div></td>`; }
-          if (ml || el) { return `<td><div class="att-cell ac-lop" title="Loss of Pay">L</div></td>`; }
-          if (mv || ev) { days_p += 0.5; shifts_p++; return `<td><div class="att-cell ac-leave" title="Leave">V</div></td>`; }
-          return `<td><div class="att-cell ac-abs" title="Absent">A</div></td>`;
+          const tip = JSON.stringify({
+            date: ds, hasMorning: hasMorning(emp), hasEvening: hasEvening(emp),
+            morning: mr ? { status: mr.status, reason: mr.reason || '' } : null,
+            evening: er ? { status: er.status, reason: er.reason || '' } : null
+          }).replace(/"/g, '&quot;');
+          if (hm && he) { days_p++; shifts_p += 2; return `<td><div class="att-cell ac-full" data-tip="${tip}">F</div></td>`; }
+          if (hm) { days_p += 0.5; shifts_p++; return `<td><div class="att-cell ac-m" data-tip="${tip}">M</div></td>`; }
+          if (he) { days_p += 0.5; shifts_p++; return `<td><div class="att-cell ac-e" data-tip="${tip}">E</div></td>`; }
+          if (ml || el) { return `<td><div class="att-cell ac-lop" data-tip="${tip}">L</div></td>`; }
+          if (mv || ev) { days_p += 0.5; shifts_p++; return `<td><div class="att-cell ac-leave" data-tip="${tip}">V</div></td>`; }
+          return `<td><div class="att-cell ac-abs" data-tip="${tip}">A</div></td>`;
         }).join('');
         return `<tr>
       <td class="sticky-col" style="padding:6px 10px">
@@ -3154,6 +3313,59 @@
     function seedData() {
       // No dummy data. App starts empty.
     }
+
+    // ─── ATTENDANCE TOOLTIP ──────────────────────────────────────────────
+    const _attTip = document.getElementById('att-tip');
+    const _statusMeta = {
+      present:  { icon: '✅', label: 'Present',   color: 'var(--green)' },
+      late:     { icon: '🕐', label: 'Late',      color: 'var(--accent)' },
+      absent:   { icon: '❌', label: 'Absent',    color: 'var(--red)' },
+      leave:    { icon: '📋', label: 'Leave',     color: 'var(--blue)' },
+      lop:      { icon: '⚠️', label: 'LOP',       color: 'var(--red)' },
+      'half-day':{ icon: '◑', label: 'Half Day', color: 'var(--accent)' }
+    };
+
+    function _shiftRow(label, rec, hasShift) {
+      if (!hasShift) return '';
+      const s = rec?.status || 'absent';
+      const m = _statusMeta[s] || { icon: '•', label: s, color: 'var(--txt2)' };
+      return `<div class="att-tip-row">
+        <span style="color:var(--txt2)">${label}</span>
+        <span style="font-weight:700;color:${m.color}">${m.icon} ${m.label}</span>
+      </div>${rec?.reason ? `<div class="att-tip-reason">↳ ${rec.reason}</div>` : ''}`;
+    }
+
+    function _showAttTip(e, el) {
+      try {
+        const d = JSON.parse(el.getAttribute('data-tip').replace(/&quot;/g, '"'));
+        const dow = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date(d.date + 'T00:00:00').getDay()];
+        _attTip.innerHTML = `
+          <div class="att-tip-date">📅 ${fmtDate(d.date)} <span style="color:var(--txt3);font-weight:400">${dow}</span></div>
+          ${_shiftRow('🌅 Morning', d.morning, d.hasMorning)}
+          ${_shiftRow('🌆 Evening', d.evening, d.hasEvening)}
+        `;
+        _attTip.style.display = 'block';
+        _positionAttTip(e);
+      } catch(err) {}
+    }
+
+    function _positionAttTip(e) {
+      const tw = _attTip.offsetWidth, th = _attTip.offsetHeight;
+      const x = e.clientX + 16, y = e.clientY + 16;
+      _attTip.style.left = (x + tw > window.innerWidth  ? e.clientX - tw - 12 : x) + 'px';
+      _attTip.style.top  = (y + th > window.innerHeight ? e.clientY - th - 12 : y) + 'px';
+    }
+
+    document.addEventListener('mouseover', e => {
+      const el = e.target.closest('[data-tip]');
+      if (el) _showAttTip(e, el); else _attTip.style.display = 'none';
+    });
+    document.addEventListener('mousemove', e => {
+      if (_attTip.style.display === 'block') _positionAttTip(e);
+    });
+    document.addEventListener('mouseout', e => {
+      if (!e.relatedTarget?.closest('[data-tip]')) _attTip.style.display = 'none';
+    });
 
     async function init() {
       const m = curMonth();
