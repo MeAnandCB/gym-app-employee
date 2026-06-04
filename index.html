@@ -1134,7 +1134,7 @@
                   <th>Join Date</th>
                   <th>Salary/Month</th>
                   <th>Working Days</th>
-                  <th>Paid Leave</th>
+                  <th>Leave Balance</th>
                   <th>Status</th>
                   <th>Actions</th>
                 </tr>
@@ -1248,27 +1248,24 @@
       <div id="page-leave" class="page">
         <div class="ph">
           <div>
-            <h2>Leave Templates</h2>
-            <div class="ph-sub">Create leave templates for selected employees</div>
+            <h2>Leave Management</h2>
+            <div class="ph-sub">7 days paid leave per 6 months · Extra leaves deducted as LOP</div>
           </div>
+          <button class="btn btn-p" onclick="openApplyLeaveModal()">+ Apply Leave</button>
+        </div>
+        <div id="leave-balance-grid" class="grid3" style="margin-bottom:20px"></div>
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-title">⏳ Pending Requests</div>
+          <div id="pending-leaves"></div>
         </div>
         <div class="card">
-          <div class="fg"><label class="fl">Template Name *</label><input class="fc" id="lt-name"
-              placeholder="Enter leave template name"></div>
-          <div class="fr2">
-            <div class="fg"><label class="fl">Days *</label><input type="number" class="fc" id="lt-days" min="1"
-                placeholder="Number of days"></div>
-            <div class="fg"><label class="fl">Reasons</label><textarea class="fc" id="lt-reasons" rows="2"
-                placeholder="Reason(s) for this leave"></textarea></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+            <div class="card-title" style="margin-bottom:0">📋 Leave History</div>
+            <select class="fc" style="width:190px" id="lh-f-emp" onchange="renderLeavePage()">
+              <option value="">All Employees</option>
+            </select>
           </div>
-          <div class="fg"><label class="fl">Applicable Employees</label>
-            <select class="fc" id="lt-employees" multiple size="6"></select>
-          </div>
-          <div class="fa"><button class="btn btn-p" onclick="saveLeaveTemplate(event)">Save Template</button></div>
-        </div>
-        <div class="card">
-          <div class="card-title">Saved Leave Templates</div>
-          <div id="lt-list"></div>
+          <div id="leave-history"></div>
         </div>
       </div>
 
@@ -1429,11 +1426,6 @@
               placeholder="15000" min="0"></div>
           <div class="fg"><label class="fl">Working Days/Month</label><input type="number" class="fc" id="e-wdays"
               value="26" min="1" max="31"></div>
-        </div>
-        <div class="fr2">
-          <div class="fg"><label class="fl">Paid Leave Allowance</label><input type="number" class="fc"
-              id="e-leave-allowance" value="2" min="0" placeholder="2"></div>
-          <div class="fg"></div>
         </div>
         <div class="fg"><label class="fl">Status</label>
           <select class="fc" id="e-status">
@@ -1597,7 +1589,15 @@
           </div>
         </div>
         <div class="fg"><label class="fl">Amount (₹) *</label><input type="number" class="fc" id="pt-amount" required
-            min="1" placeholder="12000"></div>
+            min="1" placeholder="12000" oninput="autoFillCommissionRate()"></div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Commission %</label>
+            <input type="number" class="fc" id="pt-commission-rate" min="0" max="100" placeholder="30" oninput="updateCommissionPreview()">
+          </div>
+          <div class="fg"><label class="fl">Commission Amount</label>
+            <div class="fc" id="pt-commission-preview" style="background:var(--bg);cursor:default;color:var(--green);font-weight:700">₹0</div>
+          </div>
+        </div>
         <div class="fg"><label class="fl">Notes</label><input class="fc" id="pt-notes"
             placeholder="Client name or details"></div>
         <input type="hidden" id="pt-id">
@@ -1617,6 +1617,39 @@
           onclick="closeModal('sal-detail-modal')">✕</button>
       </div>
       <div id="sal-detail-body"></div>
+    </div>
+  </div>
+
+  <!-- MODAL: Apply Leave -->
+  <div class="overlay" id="apply-leave-modal">
+    <div class="modal">
+      <div class="mh">
+        <h3>Apply Leave</h3><button class="mx" onclick="closeModal('apply-leave-modal')">✕</button>
+      </div>
+      <form onsubmit="saveLeaveApplication(event)">
+        <div class="fg"><label class="fl">Employee *</label>
+          <select class="fc" id="al-emp" required onchange="updateLeaveBalanceInfo()">
+            <option value="">Select Employee</option>
+          </select>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">From Date *</label><input type="date" class="fc" id="al-from" required onchange="updateLeaveDays()"></div>
+          <div class="fg"><label class="fl">To Date *</label><input type="date" class="fc" id="al-to" required onchange="updateLeaveDays()"></div>
+        </div>
+        <div class="fg">
+          <label class="fl">Working Days</label>
+          <div class="fc" id="al-days-display" style="background:var(--bg);cursor:default;color:var(--txt2)">0 days</div>
+        </div>
+        <div id="al-balance-info" style="font-size:12px;padding:6px 0 10px;font-weight:600"></div>
+        <div class="fg"><label class="fl">Reason *</label>
+          <textarea class="fc" id="al-reason" rows="2" required placeholder="Reason for leave (medical, personal, etc.)"></textarea>
+        </div>
+        <input type="hidden" id="al-days">
+        <div class="fa">
+          <button type="button" class="btn btn-s" onclick="closeModal('apply-leave-modal')">Cancel</button>
+          <button type="submit" class="btn btn-p">Submit Application</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -1652,7 +1685,7 @@
     const _db = firebase.database();
 
     // ─── STORAGE ────────────────────────────────────────────────────────
-    const K = { emp: 'gp_emp', att: 'gp_att', adv: 'gp_adv', pay: 'gp_pay', pt: 'gp_pt', leave: 'gp_leave', auth: 'gp_auth', init: 'gp_init' };
+    const K = { emp: 'gp_emp', att: 'gp_att', adv: 'gp_adv', pay: 'gp_pay', pt: 'gp_pt', leave: 'gp_leave', leaveApp: 'gp_leave_app', auth: 'gp_auth', init: 'gp_init' };
     const _cache = {};
 
     const load = k => { const v = _cache[k]; return Array.isArray(v) ? v : []; };
@@ -1725,6 +1758,7 @@
       return stored;
     };
     const getLeaveTemplates = () => load(K.leave);
+    const getLeaveApps = () => load(K.leaveApp);
     function clearAllData() {
       [K.emp, K.att, K.adv, K.pay, K.pt, K.leave].forEach(key => {
         localStorage.removeItem(key);
@@ -1835,58 +1869,216 @@
       return getLeaveTemplates().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }
 
-    function saveLeaveTemplate(e) {
-      if (e && e.preventDefault) e.preventDefault();
-      const name = document.getElementById('lt-name').value.trim();
-      const days = parseInt(document.getElementById('lt-days').value, 10) || 0;
-      const reasons = document.getElementById('lt-reasons').value.trim();
-      const applicableEmpIds = Array.from(document.getElementById('lt-employees').selectedOptions).map(opt => opt.value);
-      if (!name) { toast('Template name is required', 'err'); return; }
-      if (!days || days < 1) { toast('Enter a valid number of days', 'err'); return; }
-      const templates = getLeaveTemplates();
-      templates.push({ id: uid(), name, days, reasons, applicableEmpIds, createdAt: new Date().toISOString() });
-      save(K.leave, templates);
-      document.getElementById('lt-name').value = '';
-      document.getElementById('lt-days').value = '';
-      document.getElementById('lt-reasons').value = '';
-      Array.from(document.getElementById('lt-employees').options).forEach(opt => opt.selected = false);
-      toast('Leave template saved', 'suc');
+    // ─── LEAVE APPLICATION SYSTEM ────────────────────────────────────────
+
+    function openApplyLeaveModal() {
+      const emps = getEmp().filter(e => e.status !== 'inactive');
+      const sel = document.getElementById('al-emp');
+      sel.innerHTML = '<option value="">Select Employee</option>' + emps.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
+      document.getElementById('al-from').value = today();
+      document.getElementById('al-to').value = today();
+      document.getElementById('al-days').value = '';
+      document.getElementById('al-days-display').textContent = '0 days';
+      document.getElementById('al-balance-info').textContent = '';
+      document.getElementById('al-reason').value = '';
+      updateLeaveDays();
+      openModal('apply-leave-modal');
+    }
+
+    function updateLeaveDays() {
+      const from = document.getElementById('al-from').value;
+      const to = document.getElementById('al-to').value;
+      if (!from || !to || to < from) {
+        document.getElementById('al-days').value = 0;
+        document.getElementById('al-days-display').textContent = '—';
+        return;
+      }
+      let count = 0;
+      let d = new Date(from + 'T00:00:00');
+      const end = new Date(to + 'T00:00:00');
+      while (d <= end) { if (d.getDay() !== 0) count++; d.setDate(d.getDate() + 1); }
+      document.getElementById('al-days').value = count;
+      document.getElementById('al-days-display').textContent = `${count} day${count !== 1 ? 's' : ''} (Sundays excluded)`;
+      updateLeaveBalanceInfo();
+    }
+
+    function updateLeaveBalanceInfo() {
+      const empId = document.getElementById('al-emp').value;
+      const from = document.getElementById('al-from').value;
+      const days = parseInt(document.getElementById('al-days').value) || 0;
+      const info = document.getElementById('al-balance-info');
+      if (!empId || !from) { info.textContent = ''; return; }
+      const bal = getLeaveBalance(empId, from.slice(0, 7));
+      const newUsed = bal.used + days;
+      const overLimit = Math.max(0, newUsed - bal.total);
+      const paid = days - overLimit;
+      info.style.color = overLimit > 0 ? 'var(--red)' : 'var(--green)';
+      info.textContent = `Period: ${bal.label} | Used: ${bal.used}/${bal.total} days | ${paid} day(s) paid leave${overLimit > 0 ? ` + ${overLimit} day(s) LOP` : ''}`;
+    }
+
+    function saveLeaveApplication(e) {
+      e.preventDefault();
+      const empId = document.getElementById('al-emp').value;
+      const fromDate = document.getElementById('al-from').value;
+      const toDate = document.getElementById('al-to').value;
+      const days = parseInt(document.getElementById('al-days').value) || 0;
+      const reason = document.getElementById('al-reason').value.trim();
+      if (!empId) { toast('Select an employee', 'err'); return; }
+      if (!fromDate || !toDate || toDate < fromDate) { toast('Select valid dates', 'err'); return; }
+      if (days <= 0) { toast('Date range has 0 working days', 'err'); return; }
+      if (!reason) { toast('Enter a reason', 'err'); return; }
+      const apps = getLeaveApps();
+      apps.push({ id: uid(), empId, fromDate, toDate, days, reason, status: 'pending', appliedAt: new Date().toISOString(), reviewedAt: null });
+      save(K.leaveApp, apps);
+      closeModal('apply-leave-modal');
+      toast('Leave application submitted', 'suc');
       renderLeavePage();
     }
 
-    function deleteLeaveTemplate(id) {
-      if (!confirm('Delete this leave template?')) return;
-      const templates = getLeaveTemplates().filter(t => t.id !== id);
-      save(K.leave, templates);
-      toast('Leave template deleted', 'suc');
+    function approveLeave(id) {
+      const apps = getLeaveApps();
+      const app = apps.find(a => a.id === id);
+      if (!app) return;
+      const emp = getEmp().find(e => e.id === app.empId);
+      if (!emp) return;
+      const att = getAtt();
+      let d = new Date(app.fromDate + 'T00:00:00');
+      const endD = new Date(app.toDate + 'T00:00:00');
+      while (d <= endD) {
+        const dateStr = d.toISOString().slice(0, 10);
+        if (d.getDay() !== 0) {
+          const shifts = [];
+          if (hasMorning(emp)) shifts.push('morning');
+          if (hasEvening(emp)) shifts.push('evening');
+          shifts.forEach(shift => {
+            const idx = att.findIndex(a => a.empId === app.empId && a.date === dateStr && a.shift === shift);
+            const rec = { id: idx >= 0 ? att[idx].id : uid(), empId: app.empId, date: dateStr, shift, status: 'leave', punchIn: null, punchOut: null };
+            if (idx >= 0) att[idx] = rec; else att.push(rec);
+          });
+        }
+        d.setDate(d.getDate() + 1);
+      }
+      save(K.att, att);
+      const months = new Set();
+      let dd = new Date(app.fromDate + 'T00:00:00');
+      while (dd <= new Date(app.toDate + 'T00:00:00')) { months.add(dd.toISOString().slice(0, 7)); dd.setDate(dd.getDate() + 1); }
+      months.forEach(m => normalizeLeaveStatuses(app.empId, m));
+      const idx = apps.findIndex(a => a.id === id);
+      apps[idx] = { ...app, status: 'approved', reviewedAt: new Date().toISOString() };
+      save(K.leaveApp, apps);
+      toast('Leave approved ✓', 'suc');
+      renderLeavePage();
+      if (curPage === 'salary') renderSalary();
+      if (curPage === 'punch') renderPunch();
+      if (curPage === 'monthly') renderMonthly();
+      if (curPage === 'dashboard') renderDash();
+    }
+
+    function rejectLeave(id) {
+      if (!confirm('Reject this leave application?')) return;
+      const apps = getLeaveApps();
+      const idx = apps.findIndex(a => a.id === id);
+      if (idx < 0) return;
+      apps[idx] = { ...apps[idx], status: 'rejected', reviewedAt: new Date().toISOString() };
+      save(K.leaveApp, apps);
+      toast('Leave rejected', 'inf');
       renderLeavePage();
     }
 
     function renderLeavePage() {
-      const employees = getEmp();
-      const select = document.getElementById('lt-employees');
-      select.innerHTML = employees.length
-        ? employees.map(emp => `<option value="${emp.id}">${emp.name}</option>`).join('')
-        : `<option value="" disabled>No employees found</option>`;
-      const templates = getLeaveTemplatesList();
-      const list = document.getElementById('lt-list');
-      if (!templates.length) {
-        list.innerHTML = '<div class="empty"><div class="empty-icon">📝</div><h3>No leave templates yet</h3><p>Create one using the form above.</p></div>';
-      } else {
-        list.innerHTML = templates.map(t => {
-          const names = employees.filter(emp => t.applicableEmpIds.includes(emp.id)).map(emp => emp.name).join(', ') || 'None';
-          return `<div class="card" style="padding:14px;margin-bottom:12px">
-            <div style="display:flex;justify-content:space-between;align-items:start;gap:10px">
-              <div>
-                <div style="font-weight:700">${t.name}</div>
-                <div style="font-size:12px;color:var(--txt3);margin-top:4px">${t.reasons || 'No reason provided'}</div>
-              </div>
-              <button class="btn btn-r btn-xs" onclick="deleteLeaveTemplate('${t.id}')">Delete</button>
+      const emps = getEmp();
+      const apps = getLeaveApps();
+      const month = curMonth();
+
+      // Populate history filter
+      const fEmp = document.getElementById('lh-f-emp');
+      if (fEmp) {
+        const cur = fEmp.value;
+        fEmp.innerHTML = '<option value="">All Employees</option>' + emps.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
+        fEmp.value = cur;
+      }
+
+      // Leave balance cards
+      const balGrid = document.getElementById('leave-balance-grid');
+      if (balGrid) {
+        const active = emps.filter(e => e.status !== 'inactive');
+        balGrid.innerHTML = !active.length ? '' : active.map(emp => {
+          const bal = getLeaveBalance(emp.id, month);
+          const pct = Math.min(100, (bal.used / bal.total) * 100);
+          const color = bal.remaining > 3 ? 'var(--green)' : bal.remaining > 0 ? 'var(--accent)' : 'var(--red)';
+          return `<div class="card" style="padding:16px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+              <div class="av">${emp.name[0]}</div>
+              <div><div style="font-weight:700;font-size:14px">${emp.name}</div><div style="font-size:11px;color:var(--txt3)">${bal.label}</div></div>
             </div>
-            <div style="margin-top:12px;font-size:13px">Days: <strong>${t.days}</strong></div>
-            <div style="margin-top:8px;font-size:13px">Applies to: <strong>${names}</strong></div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px">
+              <span style="color:var(--txt2)">Leave Balance</span>
+              <span style="font-weight:700;color:${color}">${bal.remaining} / ${bal.total} days left</span>
+            </div>
+            <div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden">
+              <div style="width:${pct}%;height:100%;background:${color};border-radius:3px"></div>
+            </div>
+            <div style="margin-top:8px;font-size:11px;color:var(--txt3)">Used: ${bal.used} days${bal.lop > 0 ? ` | <span style="color:var(--red)">${bal.lop} LOP</span>` : ''}</div>
           </div>`;
         }).join('');
+      }
+
+      // Pending requests
+      const pendingEl = document.getElementById('pending-leaves');
+      if (pendingEl) {
+        const pending = apps.filter(a => a.status === 'pending').sort((a, b) => b.appliedAt.localeCompare(a.appliedAt));
+        if (!pending.length) {
+          pendingEl.innerHTML = '<div class="empty" style="padding:20px"><div class="empty-icon">✅</div><h3>No pending requests</h3></div>';
+        } else {
+          pendingEl.innerHTML = `<div class="tbl-wrap"><table><thead><tr>
+            <th>Employee</th><th>From</th><th>To</th><th>Days</th><th>Reason</th><th>Leave Impact</th><th>Actions</th>
+          </tr></thead><tbody>${pending.map(a => {
+            const emp = emps.find(e => e.id === a.empId);
+            const bal = getLeaveBalance(a.empId, a.fromDate.slice(0, 7));
+            const overLimit = Math.max(0, (bal.used + a.days) - bal.total);
+            const paid = a.days - overLimit;
+            return `<tr>
+              <td><div style="display:flex;align-items:center;gap:8px"><div class="av">${emp ? emp.name[0] : '?'}</div><span style="font-weight:600">${emp?.name || 'Unknown'}</span></div></td>
+              <td>${fmtDate(a.fromDate)}</td><td>${fmtDate(a.toDate)}</td>
+              <td style="font-weight:700">${a.days}d</td>
+              <td style="max-width:160px;font-size:12px">${a.reason}</td>
+              <td>${overLimit > 0
+                ? `<span style="color:var(--accent);font-size:12px">${paid}d paid + <span style="color:var(--red)">${overLimit}d LOP</span></span>`
+                : `<span style="color:var(--green);font-size:12px">${a.days}d paid (${bal.remaining - a.days >= 0 ? bal.remaining - a.days : 0} left)</span>`}
+              </td>
+              <td><div style="display:flex;gap:6px">
+                <button class="btn btn-g btn-xs" onclick="approveLeave('${a.id}')">✓ Approve</button>
+                <button class="btn btn-r btn-xs" onclick="rejectLeave('${a.id}')">✗ Reject</button>
+              </div></td>
+            </tr>`;
+          }).join('')}</tbody></table></div>`;
+        }
+      }
+
+      // Leave history
+      const histEl = document.getElementById('leave-history');
+      if (histEl) {
+        const fVal = document.getElementById('lh-f-emp')?.value || '';
+        let history = apps.filter(a => a.status !== 'pending');
+        if (fVal) history = history.filter(a => a.empId === fVal);
+        history.sort((a, b) => b.appliedAt.localeCompare(a.appliedAt));
+        if (!history.length) {
+          histEl.innerHTML = '<div class="empty" style="padding:20px"><div class="empty-icon">📋</div><h3>No leave history yet</h3></div>';
+        } else {
+          histEl.innerHTML = `<div class="tbl-wrap"><table><thead><tr>
+            <th>Employee</th><th>From</th><th>To</th><th>Days</th><th>Reason</th><th>Status</th><th>Reviewed</th>
+          </tr></thead><tbody>${history.map(a => {
+            const emp = emps.find(e => e.id === a.empId);
+            return `<tr>
+              <td><div style="display:flex;align-items:center;gap:8px"><div class="av">${emp ? emp.name[0] : '?'}</div><span style="font-weight:600">${emp?.name || 'Unknown'}</span></div></td>
+              <td>${fmtDate(a.fromDate)}</td><td>${fmtDate(a.toDate)}</td>
+              <td style="font-weight:700">${a.days}d</td>
+              <td style="max-width:160px;font-size:12px">${a.reason}</td>
+              <td><span class="badge ${a.status === 'approved' ? 'bg-g' : 'bg-r'}">${a.status === 'approved' ? '✓ Approved' : '✗ Rejected'}</span></td>
+              <td style="color:var(--txt3);font-size:11px">${a.reviewedAt ? fmtDate(a.reviewedAt.slice(0,10)) : '—'}</td>
+            </tr>`;
+          }).join('')}</tbody></table></div>`;
+        }
       }
     }
 
@@ -1985,7 +2177,6 @@
       document.getElementById('e-evening-to').value = emp?.eveningTo || '';
       document.getElementById('e-sal').value = emp?.salary || '';
       document.getElementById('e-wdays').value = emp?.wdays || 26;
-      document.getElementById('e-leave-allowance').value = emp?.leaveAllowance ?? 2;
       document.getElementById('e-status').value = emp?.status || 'active';
       openModal('emp-modal');
     }
@@ -1996,7 +2187,6 @@
       const id = document.getElementById('e-id').value;
       const name = document.getElementById('e-name').value.trim();
       const salary = parseFloat(document.getElementById('e-sal').value);
-      const leaveAllowanceInput = parseInt(document.getElementById('e-leave-allowance').value, 10);
       const morningFrom = document.getElementById('e-morning-from').value;
       const morningTo = document.getElementById('e-morning-to').value;
       const eveningFrom = document.getElementById('e-evening-from').value;
@@ -2022,7 +2212,6 @@
         shift,
         salary,
         wdays: parseInt(document.getElementById('e-wdays').value) || 26,
-        leaveAllowance: Number.isFinite(leaveAllowanceInput) ? leaveAllowanceInput : 2,
         status: document.getElementById('e-status').value,
         createdAt: id ? emps.find(x => x.id === id)?.createdAt : new Date().toISOString()
       };
@@ -2060,7 +2249,7 @@
       <td>${fmtDate(e.joinDate)}</td>
       <td style="font-weight:700">₹${(e.salary || 0).toLocaleString('en-IN')}</td>
       <td>${e.wdays || 26} days</td>
-      <td>${e.leaveAllowance ?? 2} days</td>
+      <td>${(() => { const b = getLeaveBalance(e.id, curMonth()); return `<span style="font-weight:700;color:${b.remaining > 0 ? 'var(--green)' : 'var(--red)'}">${b.remaining}/${b.total}</span><div style="font-size:10px;color:var(--txt3)">${b.label}</div>`; })()}</td>
       <td><span class="badge ${e.status === 'active' ? 'bg-g' : 'bg-r'}">${e.status || 'active'}</span></td>
       <td><div style="display:flex;gap:6px">
         <button class="btn btn-s btn-xs" onclick="openEmpModal('${e.id}')">Edit</button>
@@ -2078,21 +2267,39 @@
       return status === 'present' || status === 'late';
     }
 
+    const PERIOD_LEAVE_DAYS = 7;
+    const PERIOD_LEAVE_SHIFTS = PERIOD_LEAVE_DAYS * 2;
+
+    function getLeavePeriod(month) {
+      const [y, m] = month.split('-').map(Number);
+      if (m <= 6) return { start: `${y}-01`, end: `${y}-06`, label: `Jan–Jun ${y}` };
+      return { start: `${y}-07`, end: `${y}-12`, label: `Jul–Dec ${y}` };
+    }
+
+    function getLeaveBalance(empId, month) {
+      const period = getLeavePeriod(month);
+      const apps = getLeaveApps().filter(a =>
+        a.empId === empId && a.status === 'approved' &&
+        a.fromDate.slice(0, 7) >= period.start &&
+        a.fromDate.slice(0, 7) <= period.end
+      );
+      const used = apps.reduce((sum, a) => sum + a.days, 0);
+      return { used, total: PERIOD_LEAVE_DAYS, remaining: Math.max(0, PERIOD_LEAVE_DAYS - used), lop: Math.max(0, used - PERIOD_LEAVE_DAYS), label: period.label };
+    }
+
     function normalizeLeaveStatuses(empId, month) {
       const att = getAtt();
-      const emp = getEmp().find(e => e.id === empId);
-      const allowanceShifts = (emp?.leaveAllowance ?? 2) * 2;
+      const period = getLeavePeriod(month);
       const records = att
-        .filter(a => a.empId === empId && a.date.startsWith(month) && (a.status === 'leave' || a.status === 'lop'))
-        .sort((a, b) => a.date === b.date ? a.shift.localeCompare(b.shift) : a.date.localeCompare(b.date));
-      let count = 0;
-      let changed = false;
+        .filter(a => a.empId === empId &&
+          a.date.slice(0, 7) >= period.start &&
+          a.date.slice(0, 7) <= period.end &&
+          (a.status === 'leave' || a.status === 'lop'))
+        .sort((a, b) => a.date.localeCompare(b.date) || a.shift.localeCompare(b.shift));
+      let count = 0, changed = false;
       records.forEach(rec => {
-        const expected = count < allowanceShifts ? 'leave' : 'lop';
-        if (rec.status !== expected) {
-          rec.status = expected;
-          changed = true;
-        }
+        const expected = count < PERIOD_LEAVE_SHIFTS ? 'leave' : 'lop';
+        if (rec.status !== expected) { rec.status = expected; changed = true; }
         count++;
       });
       if (changed) save(K.att, att);
@@ -2376,21 +2583,21 @@
       const dim = new Date(y, m, 0).getDate();
       const wd = emp.wdays || 26;
       const perShift = emp.salary / (wd * 2);
-      let mp = 0, ep = 0, leaveShifts = 0, absentShifts = 0;
-      const leaveAllowanceShifts = (emp.leaveAllowance ?? 2) * 2;
+      let mp = 0, ep = 0, paidLeaveShifts = 0, lopShifts = 0, absentShifts = 0;
       for (let d = 1; d <= dim; d++) {
         const ds = `${month}-${String(d).padStart(2, '0')}`;
         const mr = att.find(a => a.empId === emp.id && a.date === ds && a.shift === 'morning');
         const er = att.find(a => a.empId === emp.id && a.date === ds && a.shift === 'evening');
         if (isPresentStatus(mr?.status)) mp++;
         if (isPresentStatus(er?.status)) ep++;
-        if (mr?.status === 'leave' || mr?.status === 'lop') leaveShifts++;
-        if (er?.status === 'leave' || er?.status === 'lop') leaveShifts++;
+        if (mr?.status === 'leave') paidLeaveShifts++;
+        if (er?.status === 'leave') paidLeaveShifts++;
+        if (mr?.status === 'lop') lopShifts++;
+        if (er?.status === 'lop') lopShifts++;
         if (mr?.status === 'absent') absentShifts++;
         if (er?.status === 'absent') absentShifts++;
       }
-      const paidLeaveShifts = Math.min(leaveShifts, leaveAllowanceShifts);
-      const lopShifts = Math.max(0, leaveShifts - paidLeaveShifts);
+      const leaveShifts = paidLeaveShifts + lopShifts;
       const earned = (mp + ep + paidLeaveShifts) * perShift;
       const absentDeduction = absentShifts * perShift;
       const lopDeduction = lopShifts * perShift;
@@ -2398,25 +2605,14 @@
       const ptRecords = getPt().filter(p => p.trainerId === emp.id && p.month === month);
       const ptRevenue = ptRecords.reduce((s, p) => s + (p.amount || 0), 0);
       const ptCommission = ptRecords.reduce((s, p) => s + (p.commission || 0), 0);
+      const leaveBalance = getLeaveBalance(emp.id, month);
       return {
-        mp,
-        ep,
-        leaveShifts,
-        paidLeaveShifts,
-        lopShifts,
-        absentShifts,
-        shifts: mp + ep,
-        days: (mp + ep) / 2,
-        wd,
-        perShift,
-        earned,
-        absentDeduction,
-        lopDeduction,
-        totalAdv,
-        ptRevenue,
-        ptCommission,
+        mp, ep, leaveShifts, paidLeaveShifts, lopShifts, absentShifts,
+        shifts: mp + ep, days: (mp + ep) / 2,
+        wd, perShift, earned, absentDeduction, lopDeduction,
+        totalAdv, ptRevenue, ptCommission,
         net: earned - totalAdv + ptCommission,
-        base: emp.salary
+        base: emp.salary, leaveBalance
       };
     }
 
@@ -2623,6 +2819,18 @@
       <div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);font-size:13px;color:var(--red)"><span>Absent deduction</span><span>-₹${Math.round(s.absentDeduction).toLocaleString('en-IN')}</span></div>
       ${s.ptCommission ? `<div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);font-size:13px;color:var(--blue)"><span>PT Commission</span><span>₹${Math.round(s.ptCommission).toLocaleString('en-IN')}</span></div>` : ''}
       <div style="display:flex;justify-content:space-between;padding:14px 16px;font-size:20px;font-weight:800;color:var(--accent)"><span>Net Payable</span><span>₹${Math.round(s.net).toLocaleString('en-IN')}</span></div>
+    </div>
+    <div style="margin-top:14px;padding:14px 16px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);border-radius:10px">
+      <div style="font-weight:700;margin-bottom:10px;color:var(--purple)">Leave Balance — ${s.leaveBalance?.label}</div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:13px">
+        <div><span style="color:var(--txt2)">Allowed: </span><strong>${s.leaveBalance?.total} days</strong></div>
+        <div><span style="color:var(--txt2)">Used: </span><strong>${s.leaveBalance?.used} days</strong></div>
+        <div><span style="color:${(s.leaveBalance?.remaining ?? 0) > 0 ? 'var(--green)' : 'var(--red)'}"><strong>${s.leaveBalance?.remaining ?? 0} days remaining</strong></span></div>
+        ${(s.leaveBalance?.lop ?? 0) > 0 ? `<div style="color:var(--red)"><strong>${s.leaveBalance.lop} days LOP</strong></div>` : ''}
+      </div>
+      <div style="margin-top:10px;height:6px;background:var(--border);border-radius:3px;overflow:hidden">
+        <div style="width:${Math.min(100, ((s.leaveBalance?.used ?? 0) / (s.leaveBalance?.total ?? 7)) * 100)}%;height:100%;background:${(s.leaveBalance?.remaining ?? 1) > 0 ? 'var(--purple)' : 'var(--red)'};border-radius:3px"></div>
+      </div>
     </div>`;
       openModal('sal-detail-modal');
     }
@@ -2742,7 +2950,23 @@
     }
 
     function ptCommissionRate(amount) {
-      return amount < 15000 ? 0.2 : 0.3;
+      if (amount > 30000) return 0.4;
+      if (amount >= 15000) return 0.3;
+      return 0.2;
+    }
+
+    function autoFillCommissionRate() {
+      const amount = parseFloat(document.getElementById('pt-amount').value) || 0;
+      const rate = Math.round(ptCommissionRate(amount) * 100);
+      document.getElementById('pt-commission-rate').value = rate;
+      updateCommissionPreview();
+    }
+
+    function updateCommissionPreview() {
+      const amount = parseFloat(document.getElementById('pt-amount').value) || 0;
+      const rate = parseFloat(document.getElementById('pt-commission-rate').value) || 0;
+      const commission = Math.round(amount * rate / 100);
+      document.getElementById('pt-commission-preview').textContent = '₹' + commission.toLocaleString('en-IN');
     }
 
     function openPtModal(id = null) {
@@ -2756,6 +2980,14 @@
       document.getElementById('pt-amount').value = pt?.amount || '';
       document.getElementById('pt-notes').value = pt?.notes || '';
       document.getElementById('pt-modal-title').textContent = pt ? 'Edit PT Session' : 'Add PT Session';
+      if (pt) {
+        const savedRate = pt.amount ? Math.round((pt.commission / pt.amount) * 100) : 0;
+        document.getElementById('pt-commission-rate').value = savedRate;
+        document.getElementById('pt-commission-preview').textContent = '₹' + (pt.commission || 0).toLocaleString('en-IN');
+      } else {
+        document.getElementById('pt-commission-rate').value = '';
+        document.getElementById('pt-commission-preview').textContent = '₹0';
+      }
       openModal('pt-modal');
     }
 
@@ -2768,10 +3000,11 @@
       const shift = document.getElementById('pt-shift').value;
       const amount = parseFloat(document.getElementById('pt-amount').value);
       const notes = document.getElementById('pt-notes').value.trim();
+      const customRate = parseFloat(document.getElementById('pt-commission-rate').value);
       if (!trainerId) { toast('Select a trainer', 'err'); return; }
       if (!date) { toast('Select a date', 'err'); return; }
       if (Number.isNaN(amount) || amount <= 0) { toast('Enter a valid amount', 'err'); return; }
-      const commissionRate = ptCommissionRate(amount);
+      const commissionRate = !Number.isNaN(customRate) ? customRate / 100 : ptCommissionRate(amount);
       const commission = Math.round(amount * commissionRate);
       const data = { id: id || uid(), trainerId, date, shift, amount, notes, commission, month: date.slice(0, 7) };
       if (id) {
@@ -2946,7 +3179,6 @@
       } else {
         showLogin();
       }
-      autoSaveReports();
     }
 
     init();
