@@ -1425,10 +1425,18 @@
           <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
             <div>
               <div style="font-weight:700">Reset App Data</div>
-              <div style="font-size:13px;color:var(--txt3);margin-top:6px">This will remove attendance, advances,
-                salary, PT and leave data but keep employee records.</div>
+              <div style="font-size:13px;color:var(--txt3);margin-top:6px">Removes attendance, advances, salary, PT and leave data but keeps employee records.</div>
             </div>
             <button class="btn btn-r" onclick="resetDataKeepEmployees()">Reset Data</button>
+          </div>
+        </div>
+        <div class="card" style="margin-top:18px;border-color:rgba(239,68,68,.3)">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+            <div>
+              <div style="font-weight:700;color:var(--red)">⚠️ Clear Entire Database</div>
+              <div style="font-size:13px;color:var(--txt3);margin-top:6px">Permanently deletes ALL data from Firebase including employees, attendance, salary, PT and leave records. Cannot be undone.</div>
+            </div>
+            <button class="btn btn-r" onclick="openClearDbModal()">Clear Database</button>
           </div>
         </div>
       </div>
@@ -1935,6 +1943,29 @@
     </div>
   </div>
 
+  <!-- MODAL: Clear Database -->
+  <div class="overlay" id="clear-db-modal">
+    <div class="modal">
+      <div class="mh">
+        <h3 style="color:var(--red)">⚠️ Clear Entire Database</h3>
+        <button class="mx" onclick="closeModal('clear-db-modal')">✕</button>
+      </div>
+      <div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--txt2);margin-bottom:18px">
+        This will permanently delete <strong>all data</strong> from Firebase — employees, attendance, salary, PT sessions, advances and leave records. This action <strong>cannot be undone</strong>.
+      </div>
+      <form onsubmit="confirmClearDatabase(event)">
+        <div class="fg">
+          <label class="fl">Enter your password to confirm</label>
+          <input type="password" class="fc" id="cdb-password" required placeholder="Enter your password" autocomplete="off">
+        </div>
+        <div class="fa">
+          <button type="button" class="btn btn-s" onclick="closeModal('clear-db-modal')">Cancel</button>
+          <button type="submit" class="btn btn-r">Yes, Delete Everything</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- MODAL: Apply Leave -->
   <div class="overlay" id="apply-leave-modal">
     <div class="modal">
@@ -2081,6 +2112,33 @@
         _db.ref('gymdata/' + key).remove().catch(e => {});
       });
     }
+    function openClearDbModal() {
+      document.getElementById('cdb-password').value = '';
+      openModal('clear-db-modal');
+    }
+
+    function confirmClearDatabase(e) {
+      e.preventDefault();
+      const entered = document.getElementById('cdb-password').value;
+      const auth = getAuth();
+      if (entered !== auth.password) {
+        toast('Incorrect password', 'err');
+        return;
+      }
+      // Clear everything from cache and localStorage
+      Object.values(K).forEach(key => {
+        delete _cache[key];
+        try { localStorage.removeItem(key); } catch(err) {}
+      });
+      // Wipe entire Firebase gymdata node
+      _db.ref('gymdata').remove()
+        .then(() => toast('Database cleared successfully', 'suc'))
+        .catch(() => toast('Firebase error — local data cleared', 'err'));
+      closeModal('clear-db-modal');
+      // Reset UI to fresh state
+      nav('dashboard');
+    }
+
     function resetDataKeepEmployees() {
       if (!confirm('Reset all data except employees? This cannot be undone.')) return;
       const employees = getEmp();
@@ -2575,12 +2633,29 @@
     }
 
     function deleteEmp(id) {
-      if (!confirm('Delete this employee and all their records?')) return;
-      save(K.emp, getEmp().filter(e => e.id !== id));
-      toast('Employee deleted', 'suc');
+      const emp = getEmp().find(e => e.id === id);
+      if (!emp) return;
+      if (!confirm(`Delete ${emp.name} and ALL their records?\n\nThis removes attendance, salary, advances, PT sessions and leave data from Firebase permanently.`)) return;
+
+      save(K.emp,      getEmp().filter(e => e.id !== id));
+      save(K.att,      getAtt().filter(a => a.empId !== id));
+      save(K.adv,      getAdv().filter(a => a.empId !== id));
+      save(K.pay,      getPay().filter(p => p.empId !== id));
+      save(K.pt,       getPt().filter(p => p.trainerId !== id));
+      save(K.leaveApp, getLeaveApps().filter(a => a.empId !== id));
+      save(K.leave,    getLeaveTemplates().map(t => ({
+        ...t, applicableEmpIds: (t.applicableEmpIds || []).filter(eid => eid !== id)
+      })));
+
+      toast(`${emp.name} and all related data deleted`, 'suc');
       renderEmp();
-      if (curPage === 'leave') renderLeavePage();
-      if (curPage === 'pt') renderPt();
+      if (curPage === 'dashboard') renderDash();
+      if (curPage === 'salary')    renderSalary();
+      if (curPage === 'advances')  renderAdvances();
+      if (curPage === 'punch')     renderPunch();
+      if (curPage === 'monthly')   renderMonthly();
+      if (curPage === 'leave')     renderLeavePage();
+      if (curPage === 'pt')        renderPt();
     }
 
     function renderEmp() {
@@ -3441,12 +3516,13 @@
       const adv = getAdv();
       const tod = today();
       const mon = curMonth();
-      const todayAtt = att.filter(a => a.date === tod && isPresentStatus(a.status));
+      const empIds = new Set(emps.map(e => e.id));
+      const todayAtt = att.filter(a => a.date === tod && isPresentStatus(a.status) && empIds.has(a.empId));
       const presentIds = new Set(todayAtt.map(a => a.empId));
       const morn = todayAtt.filter(a => a.shift === 'morning').length;
       const eve = todayAtt.filter(a => a.shift === 'evening').length;
-      const monAdv = adv.filter(a => a.month === mon).reduce((s, a) => s + a.amount, 0);
-      const monPtCommission = getPt().filter(p => p.month === mon).reduce((s, p) => s + (p.commission || 0), 0);
+      const monAdv = adv.filter(a => a.month === mon && empIds.has(a.empId)).reduce((s, a) => s + a.amount, 0);
+      const monPtCommission = getPt().filter(p => p.month === mon && empIds.has(p.trainerId)).reduce((s, p) => s + (p.commission || 0), 0);
 
       document.getElementById('s-staff').textContent = emps.filter(e => e.status !== 'inactive').length;
       document.getElementById('s-present').textContent = presentIds.size;
@@ -3481,7 +3557,7 @@
 
       // Recent punches
       const recentEl = document.getElementById('dash-recent');
-      const recent = [...att].sort((a, b) => b.date.localeCompare(a.date) || (b.shift || '').localeCompare(a.shift || '')).slice(0, 8);
+      const recent = [...att].filter(a => empIds.has(a.empId)).sort((a, b) => b.date.localeCompare(a.date) || (b.shift || '').localeCompare(a.shift || '')).slice(0, 8);
       if (!recent.length) { recentEl.innerHTML = `<div class="empty" style="padding:24px"><p>No attendance records yet</p></div>`; }
       else {
         recentEl.innerHTML = recent.map(r => {
