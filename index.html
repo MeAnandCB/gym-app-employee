@@ -618,6 +618,92 @@
       color: var(--txt)
     }
 
+    /* TOGGLE SWITCH */
+    .toggle-sw { position:relative; width:42px; height:24px; cursor:pointer; flex-shrink:0; }
+    .toggle-sw input { display:none; }
+    .toggle-track {
+      position:absolute; inset:0;
+      background:var(--border2); border-radius:24px; transition:.2s;
+    }
+    .toggle-track::before {
+      content:''; position:absolute;
+      width:18px; height:18px; left:3px; top:3px;
+      background:#fff; border-radius:50%; transition:.2s;
+      box-shadow:0 1px 4px rgba(0,0,0,.3);
+    }
+    .toggle-sw input:checked + .toggle-track { background:var(--accent); }
+    .toggle-sw input:checked + .toggle-track::before { transform:translateX(18px); }
+
+    /* SHIFT CARD */
+    .shift-card {
+      border:1px solid var(--border); border-radius:14px;
+      padding:14px; margin-bottom:10px;
+      transition:border-color .2s, background .2s;
+    }
+    .shift-card.on { border-color:var(--accent); background:rgba(245,158,11,.04); }
+    .shift-card-hdr { display:flex; align-items:center; justify-content:space-between; }
+
+    /* TIME RANGE INPUTS */
+    .time-range-row {
+      display:flex; align-items:center; gap:10px; margin-top:14px;
+    }
+    .time-box { flex:1; text-align:center; }
+    .time-box-lbl {
+      font-size:10px; font-weight:700; text-transform:uppercase;
+      letter-spacing:.8px; color:var(--txt3); margin-bottom:6px;
+    }
+    .time-input-big {
+      width:100%; background:var(--bg);
+      border:2px solid var(--border2); border-radius:12px;
+      padding:11px 6px; font-size:19px; font-weight:800;
+      color:var(--txt); text-align:center;
+      font-family:'Segoe UI',monospace;
+      transition:border-color .15s, box-shadow .15s;
+      -webkit-appearance:none; appearance:none; cursor:pointer;
+    }
+    .time-input-big:focus {
+      outline:none; border-color:var(--accent);
+      box-shadow:0 0 0 3px rgba(245,158,11,.15);
+    }
+    .time-arrow {
+      font-size:20px; color:var(--accent);
+      font-weight:800; flex-shrink:0;
+    }
+    /* DURATION BAR */
+    .dur-bar-wrap { margin-top:12px; }
+    .dur-bar {
+      height:6px; background:var(--border);
+      border-radius:3px; overflow:hidden; margin-bottom:5px;
+    }
+    .dur-fill {
+      height:100%; border-radius:3px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2));
+      transition:width .35s ease;
+      min-width:4px;
+    }
+    .dur-info {
+      display:flex; justify-content:space-between;
+      font-size:11px; color:var(--txt3);
+    }
+
+    /* EMPLOYEE TABS */
+    .emp-tabs { display:flex; gap:0; margin-bottom:16px; border-bottom:1px solid var(--border); }
+    .emp-tab {
+      background: none; border: none; padding: 10px 20px;
+      cursor: pointer; font-size: 13px; font-weight: 600;
+      color: var(--txt3); border-bottom: 2px solid transparent;
+      margin-bottom: -1px; transition: all .15s;
+    }
+    .emp-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .emp-tab:hover:not(.active) { color: var(--txt2); }
+    .emp-tab-count {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--border2); color: var(--txt2);
+      font-size: 10px; font-weight: 700; border-radius: 10px;
+      padding: 1px 6px; margin-left: 6px;
+    }
+    .emp-tab.active .emp-tab-count { background: rgba(245,158,11,.2); color: var(--accent); }
+
     /* PUNCH CARDS */
     .punch-grid {
       display: grid;
@@ -723,7 +809,31 @@
       margin: 0 auto;
       font-size: 9px;
       font-weight: 800;
-      cursor: default
+      cursor: default;
+      position: relative;
+    }
+
+    .att-cell.ac-edit {
+      cursor: pointer;
+    }
+
+    .att-cell.ac-edit::after {
+      content: '✎';
+      position: absolute;
+      bottom: -4px;
+      right: -4px;
+      font-size: 7px;
+      line-height: 1;
+      opacity: 0;
+      transition: opacity .15s;
+    }
+
+    .att-cell.ac-edit:hover::after {
+      opacity: 1;
+    }
+
+    @media (hover: none) {
+      .att-cell.ac-edit::after { opacity: .45; }
     }
 
     .ac-full {
@@ -761,6 +871,11 @@
       color: var(--red)
     }
 
+    .ac-pending {
+      background: rgba(245, 158, 11, .18);
+      color: var(--accent)
+    }
+
     .ac-fut {
       background: transparent;
       color: var(--border2)
@@ -783,6 +898,36 @@
       left: 0;
       background: var(--bg2);
       z-index: 6
+    }
+
+    /* PT TRAINER CARDS */
+    .pt-trainer-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .15s ease;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, .05);
+    }
+
+    .pt-trainer-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, .08);
+    }
+
+    .pt-trainer-card .pt-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--txt3);
+      margin-top: 6px;
+    }
+
+    .pt-trainer-card .pt-row strong {
+      color: var(--txt);
+      font-weight: 700;
     }
 
     /* SALARY CARDS */
@@ -1375,29 +1520,62 @@
         <div class="ph">
           <div>
             <h2>Employees</h2>
-            <div class="ph-sub">Manage your gym staff</div>
+            <div class="ph-sub" id="emp-ph-sub">Manage your gym staff</div>
           </div>
           <button id="btn-add-emp" type="button" class="btn btn-p" onclick="openEmpModal()">+ Add Employee</button>
         </div>
-        <div class="card">
-          <div class="tbl-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Employee</th>
-                  <th>Role</th>
-                  <th>Schedule</th>
-                  <th>Phone</th>
-                  <th>Join Date</th>
-                  <th>Salary/Month</th>
-                  <th>Working Days</th>
-                  <th>Leave Balance</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="emp-tbody"></tbody>
-            </table>
+        <!-- Tabs -->
+        <div class="emp-tabs">
+          <button class="emp-tab active" id="emp-tab-btn-active" onclick="switchEmpTab('active')">
+            Active Staff <span class="emp-tab-count" id="emp-count-active">0</span>
+          </button>
+          <button class="emp-tab" id="emp-tab-btn-former" onclick="switchEmpTab('former')">
+            Former Staff <span class="emp-tab-count" id="emp-count-former">0</span>
+          </button>
+        </div>
+        <!-- Active Staff Table -->
+        <div id="emp-tab-active">
+          <div class="card">
+            <div class="tbl-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Employee</th>
+                    <th>Role</th>
+                    <th>Schedule</th>
+                    <th>Phone</th>
+                    <th>Join Date</th>
+                    <th>Salary/Month</th>
+                    <th>Working Days</th>
+                    <th>Leave Balance</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="emp-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <!-- Former Staff Table -->
+        <div id="emp-tab-former" style="display:none">
+          <div class="card">
+            <div style="font-size:13px;color:var(--txt3);margin-bottom:14px">These employees are no longer active. Their attendance and salary history is preserved for records.</div>
+            <div class="tbl-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Employee</th>
+                    <th>Role</th>
+                    <th>Phone</th>
+                    <th>Join Date</th>
+                    <th>Last Working Day</th>
+                    <th>Salary/Month</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="emp-former-tbody"></tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -1495,10 +1673,16 @@
             <div class="leg-dot" style="background:rgba(59,130,246,.3)"></div>Late
           </div>
           <div class="leg-item">
-            <div class="leg-dot" style="background:rgba(139,92,246,.15)"></div>Leave
+            <div class="leg-dot" style="background:rgba(139,92,246,.15)"></div>Leave (L) / Half Leave (HL)
+          </div>
+          <div class="leg-item">
+            <div class="leg-dot" style="background:rgba(239,68,68,.18)"></div>LOP (X)
           </div>
           <div class="leg-item">
             <div class="leg-dot" style="background:rgba(239,68,68,.12)"></div>Absent
+          </div>
+          <div class="leg-item">
+            <div class="leg-dot" style="background:rgba(245,158,11,.25)"></div>Pending Leave
           </div>
           <div class="leg-item">
             <div class="leg-dot" style="background:rgba(139,92,246,.15)"></div>Sunday
@@ -1516,7 +1700,10 @@
             <h2>Leave Management</h2>
             <div class="ph-sub">7 days paid leave per 6 months · Extra leaves deducted as LOP</div>
           </div>
-          <button class="btn btn-p" onclick="openApplyLeaveModal()">+ Apply Leave</button>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-s" onclick="openUpdateLeaveModal()">📋 Update Leave</button>
+            <button class="btn btn-p" onclick="openApplyLeaveModal()">+ Apply Leave</button>
+          </div>
         </div>
         <div id="leave-balance-grid" class="grid3" style="margin-bottom:20px"></div>
         <div class="card" style="margin-bottom:16px">
@@ -1560,14 +1747,11 @@
         <div class="ph">
           <div>
             <h2>PT Sessions</h2>
-            <div class="ph-sub">Log personal training sessions and commissions</div>
+            <div class="ph-sub">Commission is calculated on each trainer's total PT amount for the month</div>
           </div>
           <button class="btn btn-p" onclick="openPtModal()">+ Add PT Session</button>
         </div>
         <div class="filters">
-          <select class="fc" style="width:190px" id="pt-f-trainer" onchange="renderPt()">
-            <option value="">All Trainers</option>
-          </select>
           <input type="month" id="pt-f-month" class="fc" style="width:150px" onchange="renderPt()">
           <button class="btn btn-s btn-sm" onclick="clearPtFilters()">Clear</button>
         </div>
@@ -1585,24 +1769,7 @@
             <div id="pt-total-commission" style="font-size:26px;font-weight:800;color:var(--blue)">₹0</div>
           </div>
         </div>
-        <div class="card">
-          <div class="tbl-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Trainer</th>
-                  <th>Date</th>
-                  <th>Shift</th>
-                  <th>Amount</th>
-                  <th>Commission</th>
-                  <th>Notes</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="pt-tbody"></tbody>
-            </table>
-          </div>
-        </div>
+        <div id="pt-trainer-grid" class="grid3" style="gap:12px"></div>
       </div>
 
       <!-- ADVANCES -->
@@ -1724,7 +1891,7 @@
         <div class="fr2">
           <div class="fg"><label class="fl">Full Name *</label><input class="fc" id="e-name" required
               placeholder="e.g. Ravi Kumar"></div>
-          <div class="fg"><label class="fl">Mobile No</label><input class="fc" id="e-phone" placeholder="9876543210">
+          <div class="fg"><label class="fl">Mobile No</label><input class="fc" id="e-phone" placeholder="9876543210" inputmode="numeric" maxlength="10" pattern="[0-9]{10}" oninput="this.value=this.value.replace(/\D/g,'').slice(0,10)">
           </div>
         </div>
         <div class="fr2">
@@ -1732,21 +1899,82 @@
               placeholder="Trainer, Receptionist…"></div>
           <div class="fg"><label class="fl">Join Date *</label><input type="date" class="fc" id="e-join" required></div>
         </div>
-        <div class="fr2">
-          <div class="fg"><label class="fl">Morning Start</label><input type="time" class="fc" id="e-morning-from"
-              placeholder="05:30"></div>
-          <div class="fg"><label class="fl">Morning End</label><input type="time" class="fc" id="e-morning-to"
-              placeholder="09:00"></div>
+        <!-- Morning Shift Card -->
+        <div class="shift-card" id="e-morning-card">
+          <div class="shift-card-hdr">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:22px">🌅</span>
+              <div>
+                <div style="font-weight:700;font-size:13px">Morning Shift</div>
+                <div id="e-morning-hdr-sub" style="font-size:11px;color:var(--txt3);margin-top:1px">Tap to enable</div>
+              </div>
+            </div>
+            <label class="toggle-sw">
+              <input type="checkbox" id="e-morning-toggle" onchange="toggleShiftCard('morning')">
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+          <div id="e-morning-body" style="display:none">
+            <div class="time-range-row">
+              <div class="time-box">
+                <div class="time-box-lbl">Start</div>
+                <input type="time" class="time-input-big" id="e-morning-from" oninput="updateShiftDuration('morning')">
+              </div>
+              <div class="time-arrow">→</div>
+              <div class="time-box">
+                <div class="time-box-lbl">End</div>
+                <input type="time" class="time-input-big" id="e-morning-to" oninput="updateShiftDuration('morning')">
+              </div>
+            </div>
+            <div class="dur-bar-wrap" id="e-morning-bar-wrap" style="display:none">
+              <div class="dur-bar"><div class="dur-fill" id="e-morning-bar-fill" style="width:0%"></div></div>
+              <div class="dur-info">
+                <span id="e-morning-dur-label"></span>
+                <span id="e-morning-dur-hours" style="font-weight:600;color:var(--accent)"></span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="fr2">
-          <div class="fg"><label class="fl">Evening Start</label><input type="time" class="fc" id="e-evening-from"
-              placeholder="16:00"></div>
-          <div class="fg"><label class="fl">Evening End</label><input type="time" class="fc" id="e-evening-to"
-              placeholder="22:30"></div>
+
+        <!-- Evening Shift Card -->
+        <div class="shift-card" id="e-evening-card">
+          <div class="shift-card-hdr">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:22px">🌆</span>
+              <div>
+                <div style="font-weight:700;font-size:13px">Evening Shift</div>
+                <div id="e-evening-hdr-sub" style="font-size:11px;color:var(--txt3);margin-top:1px">Tap to enable</div>
+              </div>
+            </div>
+            <label class="toggle-sw">
+              <input type="checkbox" id="e-evening-toggle" onchange="toggleShiftCard('evening')">
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+          <div id="e-evening-body" style="display:none">
+            <div class="time-range-row">
+              <div class="time-box">
+                <div class="time-box-lbl">Start</div>
+                <input type="time" class="time-input-big" id="e-evening-from" oninput="updateShiftDuration('evening')">
+              </div>
+              <div class="time-arrow">→</div>
+              <div class="time-box">
+                <div class="time-box-lbl">End</div>
+                <input type="time" class="time-input-big" id="e-evening-to" oninput="updateShiftDuration('evening')">
+              </div>
+            </div>
+            <div class="dur-bar-wrap" id="e-evening-bar-wrap" style="display:none">
+              <div class="dur-bar"><div class="dur-fill" id="e-evening-bar-fill" style="width:0%"></div></div>
+              <div class="dur-info">
+                <span id="e-evening-dur-label"></span>
+                <span id="e-evening-dur-hours" style="font-weight:600;color:var(--accent)"></span>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="fr2">
           <div class="fg"><label class="fl">Salary (₹) *</label><input type="number" class="fc" id="e-sal" required
-              placeholder="15000" min="0"></div>
+              placeholder="15000" min="0" max="999999" oninput="if(this.value.length>6)this.value=this.value.slice(0,6)"></div>
           <div class="fg"><label class="fl">Working Days/Month</label><input type="number" class="fc" id="e-wdays"
               value="26" min="1" max="31"></div>
         </div>
@@ -1774,15 +2002,15 @@
       <form onsubmit="saveManual(event)">
         <div class="fr2">
           <div class="fg"><label class="fl">Employee *</label>
-            <select class="fc" id="m-emp" required onchange="updateManualShiftOptions()">
+            <select class="fc" id="m-emp" required onchange="updateManualShiftOptions(); prefillManualFromAtt()">
               <option value="">Select Employee</option>
             </select>
           </div>
-          <div class="fg"><label class="fl">Date *</label><input type="date" class="fc" id="m-date" required></div>
+          <div class="fg"><label class="fl">Date *</label><input type="date" class="fc" id="m-date" required onchange="prefillManualFromAtt()"></div>
         </div>
         <div class="fr2">
           <div class="fg"><label class="fl">Shift *</label>
-            <select class="fc" id="m-shift" required>
+            <select class="fc" id="m-shift" required onchange="prefillManualFromAtt()">
               <option value="morning">🌅 Morning</option>
               <option value="evening">🌆 Evening</option>
             </select>
@@ -1857,7 +2085,7 @@
           </div>
         </div>
         <div class="fg"><label class="fl">Amount (₹) *</label><input type="number" class="fc" id="a-amount" required
-            placeholder="2000" min="1"></div>
+            placeholder="2000" min="1" max="999999" oninput="if(this.value.length>6)this.value=this.value.slice(0,6)"></div>
         <div class="fg"><label class="fl">Reason</label><input class="fc" id="a-reason"
             placeholder="Emergency, Medical, etc."></div>
         <input type="hidden" id="a-id">
@@ -1912,15 +2140,7 @@
           </div>
         </div>
         <div class="fg"><label class="fl">Amount (₹) *</label><input type="number" class="fc" id="pt-amount" required
-            min="1" placeholder="12000" oninput="autoFillCommissionRate()"></div>
-        <div class="fr2">
-          <div class="fg"><label class="fl">Commission %</label>
-            <input type="number" class="fc" id="pt-commission-rate" min="0" max="100" placeholder="30" oninput="updateCommissionPreview()">
-          </div>
-          <div class="fg"><label class="fl">Commission Amount</label>
-            <div class="fc" id="pt-commission-preview" style="background:var(--bg);cursor:default;color:var(--green);font-weight:700">₹0</div>
-          </div>
-        </div>
+            min="1" max="999999" placeholder="12000" oninput="if(this.value.length>6)this.value=this.value.slice(0,6)"></div>
         <div class="fg"><label class="fl">Notes</label><input class="fc" id="pt-notes"
             placeholder="Client name or details"></div>
         <input type="hidden" id="pt-id">
@@ -1929,6 +2149,16 @@
           <button type="submit" class="btn btn-p">Save PT Session</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- MODAL: PT Trainer Detail -->
+  <div class="overlay" id="pt-trainer-modal">
+    <div class="modal modal-lg">
+      <div class="mh">
+        <h3 id="pt-trainer-modal-title">Trainer</h3><button class="mx" onclick="closeModal('pt-trainer-modal')">✕</button>
+      </div>
+      <div id="pt-trainer-modal-body"></div>
     </div>
   </div>
 
@@ -1966,6 +2196,108 @@
     </div>
   </div>
 
+  <!-- MODAL: Update Leave Balance -->
+  <div class="overlay" id="update-leave-modal">
+    <div class="modal">
+      <div class="mh">
+        <h3>Update Leave Balance</h3>
+        <button class="mx" onclick="closeModal('update-leave-modal')">✕</button>
+      </div>
+      <form onsubmit="saveLeaveAdjustment(event)">
+        <div class="fg">
+          <label class="fl">Employee *</label>
+          <select class="fc" id="ul-emp" required onchange="refreshUlBalance()">
+            <option value="">Select Employee</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl">Period *</label>
+          <select class="fc" id="ul-period" onchange="refreshUlBalance()"></select>
+        </div>
+        <!-- Current balance info -->
+        <div id="ul-balance-card" style="display:none;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:14px">
+          <div style="font-size:11px;color:var(--txt3);margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px">Current Balance</div>
+          <div style="display:flex;gap:18px;font-size:13px;flex-wrap:wrap">
+            <span>Allowed: <strong id="ul-bal-total">—</strong></span>
+            <span>Used: <strong id="ul-bal-used">—</strong></span>
+            <span>Remaining: <strong id="ul-bal-rem">—</strong></span>
+          </div>
+        </div>
+        <div class="fr2">
+          <div class="fg">
+            <label class="fl">Adjustment Type *</label>
+            <select class="fc" id="ul-type" onchange="refreshUlPreview()">
+              <option value="add">➕ Add Days (grant extra leave)</option>
+              <option value="deduct">➖ Deduct Days (reduce balance)</option>
+              <option value="set">📌 Set Total Allowed Days</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="fl">Days *</label>
+            <input type="number" class="fc" id="ul-days" min="1" max="365" placeholder="e.g. 2" required oninput="refreshUlPreview()">
+          </div>
+        </div>
+        <div id="ul-preview" style="font-size:13px;font-weight:600;padding:8px 12px;border-radius:8px;margin-bottom:14px;display:none"></div>
+        <div class="fg">
+          <label class="fl">Reason *</label>
+          <input class="fc" id="ul-reason" required placeholder="e.g. Carry over from last period, Bonus leave, Correction…">
+        </div>
+        <div class="fa">
+          <button type="button" class="btn btn-s" onclick="closeModal('update-leave-modal')">Cancel</button>
+          <button type="submit" class="btn btn-p">Save Adjustment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: Edit Leave -->
+  <div class="overlay" id="edit-leave-modal">
+    <div class="modal">
+      <div class="mh">
+        <h3>Edit Leave</h3><button class="mx" onclick="closeModal('edit-leave-modal')">✕</button>
+      </div>
+      <form onsubmit="saveEditedLeave(event)">
+        <div class="fg">
+          <label class="fl">Employee</label>
+          <div class="fc" id="el-emp-name" style="background:var(--bg);cursor:default;color:var(--txt2)"></div>
+        </div>
+        <div class="fg"><label class="fl">Leave Type *</label>
+          <select class="fc" id="el-type" required onchange="updateEditLeaveDays()">
+            <option value="full">Full Day Leave</option>
+            <option value="half">Half Day Leave</option>
+          </select>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">From Date *</label><input type="date" class="fc" id="el-from" required onchange="updateEditLeaveDays()"></div>
+          <div class="fg"><label class="fl">To Date *</label><input type="date" class="fc" id="el-to" required onchange="updateEditLeaveDays()"></div>
+        </div>
+        <div class="fg">
+          <label class="fl">Working Days</label>
+          <div class="fc" id="el-days-display" style="background:var(--bg);cursor:default;color:var(--green);font-weight:600"></div>
+        </div>
+        <div class="fg" id="el-balance-info" style="font-size:12px;font-weight:600;padding:4px 0 8px"></div>
+        <div class="fg"><label class="fl">Reason *</label>
+          <textarea class="fc" id="el-reason" rows="2" required placeholder="Reason for leave"></textarea>
+        </div>
+        <div class="fg"><label class="fl">Status</label>
+          <select class="fc" id="el-status">
+            <option value="pending">⏳ Pending</option>
+            <option value="approved">✓ Approved (marks attendance as paid leave)</option>
+            <option value="rejected">✗ Rejected (removes leave from attendance)</option>
+          </select>
+        </div>
+        <div id="el-status-note" style="font-size:12px;color:var(--txt3);padding:4px 0 10px"></div>
+        <input type="hidden" id="el-id">
+        <input type="hidden" id="el-emp-id">
+        <input type="hidden" id="el-days">
+        <div class="fa">
+          <button type="button" class="btn btn-s" onclick="closeModal('edit-leave-modal')">Cancel</button>
+          <button type="submit" class="btn btn-p">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- MODAL: Apply Leave -->
   <div class="overlay" id="apply-leave-modal">
     <div class="modal">
@@ -1976,6 +2308,12 @@
         <div class="fg"><label class="fl">Employee *</label>
           <select class="fc" id="al-emp" required onchange="updateLeaveBalanceInfo()">
             <option value="">Select Employee</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">Leave Type *</label>
+          <select class="fc" id="al-type" required onchange="updateLeaveDays()">
+            <option value="full">Full Day Leave</option>
+            <option value="half">Half Day Leave</option>
           </select>
         </div>
         <div class="fr2">
@@ -1991,6 +2329,7 @@
           <textarea class="fc" id="al-reason" rows="2" required placeholder="Reason for leave (medical, personal, etc.)"></textarea>
         </div>
         <input type="hidden" id="al-days">
+        <input type="hidden" id="al-id">
         <div class="fa">
           <button type="button" class="btn btn-s" onclick="closeModal('apply-leave-modal')">Cancel</button>
           <button type="submit" class="btn btn-p">Submit Application</button>
@@ -2031,7 +2370,7 @@
     const _db = firebase.database();
 
     // ─── STORAGE ────────────────────────────────────────────────────────
-    const K = { emp: 'gp_emp', att: 'gp_att', adv: 'gp_adv', pay: 'gp_pay', pt: 'gp_pt', leave: 'gp_leave', leaveApp: 'gp_leave_app', auth: 'gp_auth', init: 'gp_init' };
+    const K = { emp: 'gp_emp', att: 'gp_att', adv: 'gp_adv', pay: 'gp_pay', pt: 'gp_pt', ptRate: 'gp_pt_rate', leave: 'gp_leave', leaveApp: 'gp_leave_app', leaveAdj: 'gp_leave_adj', auth: 'gp_auth', init: 'gp_init' };
     const _cache = {};
 
     const load = k => { const v = _cache[k]; return Array.isArray(v) ? v : []; };
@@ -2094,6 +2433,43 @@
     const getAdv = () => load(K.adv);
     const getPay = () => load(K.pay);
     const getPt = () => load(K.pt);
+    const getPtRates = () => load(K.ptRate);
+
+    // PT commission is calculated on the trainer's TOTAL PT amount for the month,
+    // not per individual session.
+    function getPtTotal(trainerId, month) {
+      return getPt().filter(p => p.trainerId === trainerId && p.month === month).reduce((s, p) => s + (p.amount || 0), 0);
+    }
+
+    function getPtRateOverride(trainerId, month) {
+      return getPtRates().find(r => r.trainerId === trainerId && r.month === month) || null;
+    }
+
+    // Effective commission % (0-100) for a trainer's month: manual override if set, else auto tier based on total
+    function getPtRate(trainerId, month) {
+      const override = getPtRateOverride(trainerId, month);
+      if (override) return override.rate;
+      const total = getPtTotal(trainerId, month);
+      return Math.round(ptCommissionRate(total) * 100);
+    }
+
+    function getPtCommissionAmount(trainerId, month) {
+      const total = getPtTotal(trainerId, month);
+      const rate = getPtRate(trainerId, month);
+      return Math.round(total * rate / 100);
+    }
+
+    function savePtRate(trainerId, month, rate) {
+      const rates = getPtRates();
+      const idx = rates.findIndex(r => r.trainerId === trainerId && r.month === month);
+      if (idx >= 0) rates[idx] = { ...rates[idx], rate };
+      else rates.push({ id: uid(), trainerId, month, rate });
+      save(K.ptRate, rates);
+    }
+
+    function resetPtRate(trainerId, month) {
+      save(K.ptRate, getPtRates().filter(r => !(r.trainerId === trainerId && r.month === month)));
+    }
     const getAuth = () => {
       const stored = loadObj(K.auth);
       if (!stored.username || !stored.password) {
@@ -2105,8 +2481,9 @@
     };
     const getLeaveTemplates = () => load(K.leave);
     const getLeaveApps = () => load(K.leaveApp);
+    const getLeaveAdjs = () => load(K.leaveAdj);
     function clearAllData() {
-      [K.emp, K.att, K.adv, K.pay, K.pt, K.leave].forEach(key => {
+      [K.emp, K.att, K.adv, K.pay, K.pt, K.leave, K.leaveApp, K.leaveAdj].forEach(key => {
         localStorage.removeItem(key);
         delete _cache[key];
         _db.ref('gymdata/' + key).remove().catch(e => {});
@@ -2244,16 +2621,230 @@
 
     // ─── LEAVE APPLICATION SYSTEM ────────────────────────────────────────
 
-    function openApplyLeaveModal() {
+    // ─── UPDATE LEAVE BALANCE ────────────────────────────────────────────
+    function openUpdateLeaveModal(prefillEmpId = null) {
+      const emps = getEmp().filter(e => e.status !== 'inactive');
+      const sel = document.getElementById('ul-emp');
+      sel.innerHTML = '<option value="">Select Employee</option>' + emps.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
+      if (prefillEmpId) sel.value = prefillEmpId;
+
+      // Build period options: last 4 half-years
+      const periodSel = document.getElementById('ul-period');
+      const now = new Date();
+      const periods = [];
+      for (let i = 0; i < 4; i++) {
+        let y = now.getFullYear(), m = now.getMonth() + 1;
+        const shift = Math.floor(i / 1);
+        const half = m <= 6 ? 0 : 1;
+        const periodHalf = (half - i % 2 + 4) % 2;
+        const baseY = y - Math.floor(i / 2);
+        const pStart = periodHalf === 0 ? `${baseY}-01` : `${baseY}-07`;
+        const pLabel = periodHalf === 0 ? `Jan–Jun ${baseY}` : `Jul–Dec ${baseY}`;
+        if (!periods.find(p => p.start === pStart)) periods.push({ start: pStart, label: pLabel });
+      }
+      // Ensure current period is first
+      const curPeriod = getLeavePeriod(curMonth());
+      if (!periods.find(p => p.start === curPeriod.start)) periods.unshift({ start: curPeriod.start, label: curPeriod.label });
+      periods.sort((a, b) => b.start.localeCompare(a.start));
+      periodSel.innerHTML = periods.map(p => `<option value="${p.start}">${p.label}</option>`).join('');
+
+      document.getElementById('ul-days').value = '';
+      document.getElementById('ul-type').value = 'add';
+      document.getElementById('ul-reason').value = '';
+      document.getElementById('ul-preview').style.display = 'none';
+      document.getElementById('ul-balance-card').style.display = 'none';
+      refreshUlBalance();
+      openModal('update-leave-modal');
+    }
+
+    function refreshUlBalance() {
+      const empId = document.getElementById('ul-emp').value;
+      const period = document.getElementById('ul-period').value;
+      const card = document.getElementById('ul-balance-card');
+      if (!empId || !period) { card.style.display = 'none'; return; }
+      const bal = getLeaveBalance(empId, period + '-01');
+      document.getElementById('ul-bal-total').textContent = `${bal.total} days`;
+      document.getElementById('ul-bal-used').textContent = `${bal.used} days`;
+      const remEl = document.getElementById('ul-bal-rem');
+      remEl.textContent = `${bal.remaining} days`;
+      remEl.style.color = bal.remaining > 0 ? 'var(--green)' : 'var(--red)';
+      card.style.display = 'block';
+      refreshUlPreview();
+    }
+
+    function refreshUlPreview() {
+      const empId = document.getElementById('ul-emp').value;
+      const period = document.getElementById('ul-period').value;
+      const type = document.getElementById('ul-type').value;
+      const days = parseInt(document.getElementById('ul-days').value) || 0;
+      const prev = document.getElementById('ul-preview');
+      if (!empId || !period || !days) { prev.style.display = 'none'; return; }
+      const bal = getLeaveBalance(empId, period + '-01');
+      let newTotal = bal.total, msg = '', color = 'var(--green)';
+      if (type === 'add')    { newTotal = bal.total + days; msg = `Allowed days: ${bal.total} → ${newTotal} (+${days})`; }
+      if (type === 'deduct') { newTotal = Math.max(0, bal.total - days); msg = `Allowed days: ${bal.total} → ${newTotal} (-${days})`; color = newTotal < bal.used ? 'var(--red)' : 'var(--accent)'; }
+      if (type === 'set')    { newTotal = days; msg = `Allowed days set to: ${newTotal} (was ${bal.total})`; color = days < bal.used ? 'var(--red)' : 'var(--blue)'; }
+      const newRem = Math.max(0, newTotal - bal.used);
+      prev.style.display = 'block';
+      prev.style.background = `rgba(${type === 'add' ? '16,185,129' : type === 'deduct' ? '245,158,11' : '59,130,246'},.1)`;
+      prev.style.color = color;
+      prev.style.border = `1px solid ${color}`;
+      prev.innerHTML = `${msg} &nbsp;|&nbsp; New remaining: <strong>${newRem} days</strong>`;
+    }
+
+    function saveLeaveAdjustment(e) {
+      e.preventDefault();
+      const empId = document.getElementById('ul-emp').value;
+      const period = document.getElementById('ul-period').value;
+      const type = document.getElementById('ul-type').value;
+      const inputDays = parseInt(document.getElementById('ul-days').value) || 0;
+      const reason = document.getElementById('ul-reason').value.trim();
+      if (!empId) { toast('Select an employee', 'err'); return; }
+      if (!inputDays) { toast('Enter number of days', 'err'); return; }
+      if (!reason) { toast('Enter a reason', 'err'); return; }
+
+      const bal = getLeaveBalance(empId, period + '-01');
+      let adjDays;
+      if (type === 'add')    adjDays = inputDays;
+      if (type === 'deduct') adjDays = -inputDays;
+      if (type === 'set')    adjDays = inputDays - PERIOD_LEAVE_DAYS - bal.adjs.reduce((s, a) => s + a.days, 0);
+
+      const adjs = getLeaveAdjs();
+      adjs.push({ id: uid(), empId, period, days: adjDays, type, inputDays, reason, createdAt: new Date().toISOString() });
+      save(K.leaveAdj, adjs);
+      closeModal('update-leave-modal');
+      toast('Leave balance updated', 'suc');
+      renderLeavePage();
+      if (curPage === 'salary') renderSalary();
+      if (curPage === 'employees') renderEmp();
+    }
+
+    function deleteLeaveAdj(id) {
+      if (!confirm('Remove this leave adjustment?')) return;
+      save(K.leaveAdj, getLeaveAdjs().filter(a => a.id !== id));
+      toast('Adjustment removed', 'suc');
+      renderLeavePage();
+      if (curPage === 'salary') renderSalary();
+      if (curPage === 'employees') renderEmp();
+    }
+
+    function openEditLeaveModal(id) {
+      const app = getLeaveApps().find(a => a.id === id);
+      if (!app) return;
+      const emp = getEmp().find(e => e.id === app.empId);
+      document.getElementById('el-id').value = id;
+      document.getElementById('el-emp-id').value = app.empId;
+      document.getElementById('el-emp-name').textContent = emp ? `${emp.name} (${emp.role || 'Staff'})` : 'Unknown';
+      document.getElementById('el-type').value = app.leaveType || 'full';
+      document.getElementById('el-from').value = app.fromDate;
+      document.getElementById('el-to').value = app.toDate;
+      document.getElementById('el-reason').value = app.reason;
+      document.getElementById('el-status').value = app.status;
+      _calcEditLeaveDays(app.fromDate, app.toDate, app.empId);
+      _updateElStatusNote();
+      openModal('edit-leave-modal');
+    }
+
+    function _calcEditLeaveDays(from, to, empId) {
+      const type = document.getElementById('el-type').value;
+      if (!from || !to || to < from) {
+        document.getElementById('el-days').value = 0;
+        document.getElementById('el-days-display').textContent = '—';
+        document.getElementById('el-balance-info').textContent = '';
+        return;
+      }
+      let count = 0, d = new Date(from + 'T00:00:00'), end = new Date(to + 'T00:00:00');
+      while (d <= end) { if (d.getDay() !== 0) count++; d.setDate(d.getDate() + 1); }
+      const days = type === 'half' ? count * 0.5 : count;
+      document.getElementById('el-days').value = days;
+      const suffix = type === 'half' ? ' (Half Day)' : '';
+      document.getElementById('el-days-display').textContent = `${days} day${days !== 1 ? 's' : ''}${suffix} (Sundays excluded)`;
+      const bal = getLeaveBalance(empId || document.getElementById('el-emp-id').value, from.slice(0, 7));
+      const info = document.getElementById('el-balance-info');
+      const overLimit = Math.max(0, (bal.used + days) - bal.total);
+      const paid = days - overLimit;
+      info.style.color = overLimit > 0 ? 'var(--red)' : 'var(--green)';
+      info.textContent = `Period: ${bal.label} | ${paid}d paid leave${overLimit > 0 ? ` + ${overLimit}d LOP` : ''}`;
+    }
+
+    function updateEditLeaveDays() {
+      _calcEditLeaveDays(
+        document.getElementById('el-from').value,
+        document.getElementById('el-to').value,
+        document.getElementById('el-emp-id').value
+      );
+    }
+
+    function _updateElStatusNote() {
+      const status = document.getElementById('el-status').value;
+      const note = document.getElementById('el-status-note');
+      if (status === 'approved') note.textContent = '✓ Attendance will be marked as paid leave for these days.';
+      else if (status === 'rejected') note.textContent = '✗ Leave marks will be removed from attendance. Days count as absent.';
+      else note.textContent = 'Awaiting admin approval. No attendance change.';
+    }
+
+    // el-status listener wired in init()
+
+    function saveEditedLeave(e) {
+      e.preventDefault();
+      const id = document.getElementById('el-id').value;
+      const empId = document.getElementById('el-emp-id').value;
+      const leaveType = document.getElementById('el-type').value;
+      const fromDate = document.getElementById('el-from').value;
+      const toDate = document.getElementById('el-to').value;
+      const days = parseFloat(document.getElementById('el-days').value) || 0;
+      const reason = document.getElementById('el-reason').value.trim();
+      const newStatus = document.getElementById('el-status').value;
+      if (!fromDate || !toDate || toDate < fromDate) { toast('Select valid dates', 'err'); return; }
+      if (days <= 0) { toast('Date range has 0 working days', 'err'); return; }
+      if (!reason) { toast('Enter a reason', 'err'); return; }
+
+      const apps = getLeaveApps();
+      const idx = apps.findIndex(a => a.id === id);
+      if (idx < 0) return;
+
+      const oldApp = apps[idx];
+      // Undo old attendance marks if previously approved
+      if (oldApp.status === 'approved') _undoLeaveAttendance(oldApp);
+
+      // Save updated app
+      apps[idx] = {
+        ...oldApp, fromDate, toDate, leaveType, days, reason, status: newStatus,
+        reviewedAt: newStatus !== 'pending' ? new Date().toISOString() : null
+      };
+      save(K.leaveApp, apps);
+
+      // Apply attendance marks if newly approved
+      if (newStatus === 'approved') {
+        approveLeave(id); // handles attendance marking + normalize + re-render
+        closeModal('edit-leave-modal');
+        toast('Leave updated & approved ✓', 'suc');
+        return;
+      }
+
+      closeModal('edit-leave-modal');
+      toast('Leave updated', 'suc');
+      renderLeavePage();
+      if (curPage === 'salary') renderSalary();
+      if (curPage === 'monthly') renderMonthly();
+      if (curPage === 'dashboard') renderDash();
+    }
+
+    function openApplyLeaveModal(editId = null) {
       const emps = getEmp().filter(e => e.status !== 'inactive');
       const sel = document.getElementById('al-emp');
       sel.innerHTML = '<option value="">Select Employee</option>' + emps.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
-      document.getElementById('al-from').value = today();
-      document.getElementById('al-to').value = today();
+      const existing = editId ? getLeaveApps().find(a => a.id === editId) : null;
+      document.getElementById('al-id').value = editId || '';
+      document.getElementById('al-emp').value = existing?.empId || '';
+      document.getElementById('al-type').value = existing?.leaveType || 'full';
+      document.getElementById('al-from').value = existing?.fromDate || today();
+      document.getElementById('al-to').value = existing?.toDate || today();
+      document.getElementById('al-reason').value = existing?.reason || '';
       document.getElementById('al-days').value = '';
       document.getElementById('al-days-display').textContent = '0 days';
       document.getElementById('al-balance-info').textContent = '';
-      document.getElementById('al-reason').value = '';
+      document.querySelector('#apply-leave-modal .mh h3').textContent = editId ? 'Edit Leave Application' : 'Apply Leave';
       updateLeaveDays();
       openModal('apply-leave-modal');
     }
@@ -2261,6 +2852,7 @@
     function updateLeaveDays() {
       const from = document.getElementById('al-from').value;
       const to = document.getElementById('al-to').value;
+      const type = document.getElementById('al-type').value;
       if (!from || !to || to < from) {
         document.getElementById('al-days').value = 0;
         document.getElementById('al-days-display').textContent = '—';
@@ -2270,15 +2862,17 @@
       let d = new Date(from + 'T00:00:00');
       const end = new Date(to + 'T00:00:00');
       while (d <= end) { if (d.getDay() !== 0) count++; d.setDate(d.getDate() + 1); }
-      document.getElementById('al-days').value = count;
-      document.getElementById('al-days-display').textContent = `${count} day${count !== 1 ? 's' : ''} (Sundays excluded)`;
+      const days = type === 'half' ? count * 0.5 : count;
+      document.getElementById('al-days').value = days;
+      const suffix = type === 'half' ? ' (Half Day)' : '';
+      document.getElementById('al-days-display').textContent = `${days} day${days !== 1 ? 's' : ''}${suffix} (Sundays excluded)`;
       updateLeaveBalanceInfo();
     }
 
     function updateLeaveBalanceInfo() {
       const empId = document.getElementById('al-emp').value;
       const from = document.getElementById('al-from').value;
-      const days = parseInt(document.getElementById('al-days').value) || 0;
+      const days = parseFloat(document.getElementById('al-days').value) || 0;
       const info = document.getElementById('al-balance-info');
       if (!empId || !from) { info.textContent = ''; return; }
       const bal = getLeaveBalance(empId, from.slice(0, 7));
@@ -2291,21 +2885,68 @@
 
     function saveLeaveApplication(e) {
       e.preventDefault();
+      const editId = document.getElementById('al-id').value;
       const empId = document.getElementById('al-emp').value;
+      const leaveType = document.getElementById('al-type').value;
       const fromDate = document.getElementById('al-from').value;
       const toDate = document.getElementById('al-to').value;
-      const days = parseInt(document.getElementById('al-days').value) || 0;
+      const days = parseFloat(document.getElementById('al-days').value) || 0;
       const reason = document.getElementById('al-reason').value.trim();
       if (!empId) { toast('Select an employee', 'err'); return; }
       if (!fromDate || !toDate || toDate < fromDate) { toast('Select valid dates', 'err'); return; }
       if (days <= 0) { toast('Date range has 0 working days', 'err'); return; }
       if (!reason) { toast('Enter a reason', 'err'); return; }
       const apps = getLeaveApps();
-      apps.push({ id: uid(), empId, fromDate, toDate, days, reason, status: 'pending', appliedAt: new Date().toISOString(), reviewedAt: null });
+      if (editId) {
+        const idx = apps.findIndex(a => a.id === editId);
+        if (idx >= 0) {
+          const wasApproved = apps[idx].status === 'approved';
+          if (wasApproved) _undoLeaveAttendance(apps[idx]); // remove old attendance marks
+          apps[idx] = { ...apps[idx], empId, leaveType, fromDate, toDate, days, reason, status: 'pending', reviewedAt: null };
+          save(K.leaveApp, apps);
+          closeModal('apply-leave-modal');
+          toast('Leave updated — re-approve to apply attendance', 'inf');
+          renderLeavePage();
+          return;
+        }
+      } else {
+        apps.push({ id: uid(), empId, leaveType, fromDate, toDate, days, reason, status: 'pending', appliedAt: new Date().toISOString(), reviewedAt: null });
+        toast('Leave application submitted', 'suc');
+      }
       save(K.leaveApp, apps);
       closeModal('apply-leave-modal');
-      toast('Leave application submitted', 'suc');
       renderLeavePage();
+    }
+
+    function deleteLeaveApp(id) {
+      if (!confirm('Delete this leave application?')) return;
+      const app = getLeaveApps().find(a => a.id === id);
+      // If it was approved, remove the attendance marks
+      if (app?.status === 'approved') _undoLeaveAttendance(app);
+      save(K.leaveApp, getLeaveApps().filter(a => a.id !== id));
+      toast('Leave application deleted', 'suc');
+      renderLeavePage();
+      if (curPage === 'salary') renderSalary();
+      if (curPage === 'monthly') renderMonthly();
+    }
+
+    function _undoLeaveAttendance(app) {
+      const emp = getEmp().find(e => e.id === app.empId);
+      if (!emp) return;
+      const att = getAtt();
+      let d = new Date(app.fromDate + 'T00:00:00');
+      const end = new Date(app.toDate + 'T00:00:00');
+      while (d <= end) {
+        const ds = d.toISOString().slice(0, 10);
+        if (d.getDay() !== 0) {
+          ['morning', 'evening'].forEach(shift => {
+            const idx = att.findIndex(a => a.empId === app.empId && a.date === ds && a.shift === shift && (a.status === 'leave' || a.status === 'lop'));
+            if (idx >= 0) att.splice(idx, 1);
+          });
+        }
+        d.setDate(d.getDate() + 1);
+      }
+      save(K.att, att);
     }
 
     function approveLeave(id) {
@@ -2320,9 +2961,12 @@
       while (d <= endD) {
         const dateStr = d.toISOString().slice(0, 10);
         if (d.getDay() !== 0) {
-          const shifts = [];
+          let shifts = [];
           if (hasMorning(emp)) shifts.push('morning');
           if (hasEvening(emp)) shifts.push('evening');
+          if (!shifts.length) shifts.push('morning');
+          // Half day leave: only mark the first shift as leave; the other shift is unaffected
+          if (app.leaveType === 'half') shifts = shifts.slice(0, 1);
           shifts.forEach(shift => {
             const idx = att.findIndex(a => a.empId === app.empId && a.date === dateStr && a.shift === shift);
             const rec = { id: idx >= 0 ? att[idx].id : uid(), empId: app.empId, date: dateStr, shift, status: 'leave', punchIn: null, punchOut: null };
@@ -2359,7 +3003,7 @@
     }
 
     function renderLeavePage() {
-      const emps = getEmp();
+      const emps = getEmp().filter(e => e.status !== 'inactive');
       const apps = getLeaveApps();
       const month = curMonth();
 
@@ -2379,19 +3023,31 @@
           const bal = getLeaveBalance(emp.id, month);
           const pct = Math.min(100, (bal.used / bal.total) * 100);
           const color = bal.remaining > 3 ? 'var(--green)' : bal.remaining > 0 ? 'var(--accent)' : 'var(--red)';
+          const adjHtml = bal.adjs && bal.adjs.length
+            ? bal.adjs.map(a => `<div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;padding:3px 0;border-top:1px solid var(--border);margin-top:4px">
+                <span style="color:${a.days > 0 ? 'var(--green)' : 'var(--red)'}">
+                  ${a.days > 0 ? '➕' : '➖'} ${Math.abs(a.days)}d — ${a.reason}
+                </span>
+                <button class="btn btn-r btn-xs" style="padding:2px 6px;font-size:10px" onclick="deleteLeaveAdj('${a.id}')">✕</button>
+              </div>`).join('')
+            : '';
           return `<div class="card" style="padding:16px">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-              <div class="av">${emp.name[0]}</div>
-              <div><div style="font-weight:700;font-size:14px">${emp.name}</div><div style="font-size:11px;color:var(--txt3)">${bal.label}</div></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+              <div style="display:flex;align-items:center;gap:9px">
+                <div class="av">${emp.name[0]}</div>
+                <div><div style="font-weight:700;font-size:14px">${emp.name}</div><div style="font-size:11px;color:var(--txt3)">${bal.label}</div></div>
+              </div>
+              <button class="btn btn-s btn-xs" onclick="openUpdateLeaveModal('${emp.id}')">✏️ Update</button>
             </div>
             <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px">
               <span style="color:var(--txt2)">Leave Balance</span>
               <span style="font-weight:700;color:${color}">${bal.remaining} / ${bal.total} days left</span>
             </div>
-            <div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden">
+            <div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:8px">
               <div style="width:${pct}%;height:100%;background:${color};border-radius:3px"></div>
             </div>
-            <div style="margin-top:8px;font-size:11px;color:var(--txt3)">Used: ${bal.used} days${bal.lop > 0 ? ` | <span style="color:var(--red)">${bal.lop} LOP</span>` : ''}</div>
+            <div style="font-size:11px;color:var(--txt3)">Used: ${bal.used}d &nbsp;|&nbsp; Allowed: ${bal.total}d${bal.lop > 0 ? ` &nbsp;|&nbsp; <span style="color:var(--red)">${bal.lop}d LOP</span>` : ''}</div>
+            ${adjHtml}
           </div>`;
         }).join('');
       }
@@ -2419,9 +3075,11 @@
                 ? `<span style="color:var(--accent);font-size:12px">${paid}d paid + <span style="color:var(--red)">${overLimit}d LOP</span></span>`
                 : `<span style="color:var(--green);font-size:12px">${a.days}d paid (${bal.remaining - a.days >= 0 ? bal.remaining - a.days : 0} left)</span>`}
               </td>
-              <td><div style="display:flex;gap:6px">
+              <td><div style="display:flex;gap:5px;flex-wrap:wrap">
                 <button class="btn btn-g btn-xs" onclick="approveLeave('${a.id}')">✓ Approve</button>
                 <button class="btn btn-r btn-xs" onclick="rejectLeave('${a.id}')">✗ Reject</button>
+                <button class="btn btn-s btn-xs" onclick="openEditLeaveModal('${a.id}')">✏️ Edit</button>
+                <button class="btn btn-r btn-xs" onclick="deleteLeaveApp('${a.id}')">Del</button>
               </div></td>
             </tr>`;
           }).join('')}</tbody></table></div>`;
@@ -2439,7 +3097,7 @@
           histEl.innerHTML = '<div class="empty" style="padding:20px"><div class="empty-icon">📋</div><h3>No leave history yet</h3></div>';
         } else {
           histEl.innerHTML = `<div class="tbl-wrap"><table><thead><tr>
-            <th>Employee</th><th>From</th><th>To</th><th>Days</th><th>Reason</th><th>Status</th><th>Reviewed</th>
+            <th>Employee</th><th>From</th><th>To</th><th>Days</th><th>Reason</th><th>Status</th><th>Reviewed</th><th></th>
           </tr></thead><tbody>${history.map(a => {
             const emp = emps.find(e => e.id === a.empId);
             return `<tr>
@@ -2449,6 +3107,10 @@
               <td style="max-width:160px;font-size:12px">${a.reason}</td>
               <td><span class="badge ${a.status === 'approved' ? 'bg-g' : 'bg-r'}">${a.status === 'approved' ? '✓ Approved' : '✗ Rejected'}</span></td>
               <td style="color:var(--txt3);font-size:11px">${a.reviewedAt ? fmtDate(a.reviewedAt.slice(0,10)) : '—'}</td>
+              <td><div style="display:flex;gap:5px">
+                <button class="btn btn-s btn-xs" onclick="openEditLeaveModal('${a.id}')">✏️ Edit</button>
+                <button class="btn btn-r btn-xs" onclick="deleteLeaveApp('${a.id}')">Del</button>
+              </div></td>
             </tr>`;
           }).join('')}</tbody></table></div>`;
         }
@@ -2561,10 +3223,67 @@
     // ─── MODAL ──────────────────────────────────────────────────────────
     function openModal(id) { document.getElementById(id).classList.add('open'); }
     function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-    document.querySelectorAll('.overlay').forEach(o => o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); }));
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.overlay.open').forEach(o => o.classList.remove('open')); });
     const addEmpButton = document.getElementById('btn-add-emp');
     if (addEmpButton) addEmpButton.addEventListener('click', openEmpModal);
+
+    // ─── SHIFT CARD HELPERS ─────────────────────────────────────────────
+    function _fmtTime(t) {
+      const [hh, mm] = t.split(':').map(Number);
+      const ampm = hh >= 12 ? 'PM' : 'AM';
+      const h = hh > 12 ? hh - 12 : (hh === 0 ? 12 : hh);
+      return `${h}:${String(mm).padStart(2,'0')} ${ampm}`;
+    }
+
+    function updateShiftDuration(shift) {
+      const from = document.getElementById(`e-${shift}-from`).value;
+      const to   = document.getElementById(`e-${shift}-to`).value;
+      const barWrap = document.getElementById(`e-${shift}-bar-wrap`);
+      const sub     = document.getElementById(`e-${shift}-hdr-sub`);
+      if (!from || !to) {
+        barWrap.style.display = 'none';
+        sub.textContent = from ? 'Set end time' : to ? 'Set start time' : 'Set times below';
+        return;
+      }
+      const [fh, fm] = from.split(':').map(Number);
+      const [th, tm] = to.split(':').map(Number);
+      let mins = (th * 60 + tm) - (fh * 60 + fm);
+      if (mins <= 0) mins += 24 * 60;
+      const hours = Math.floor(mins / 60), remM = mins % 60;
+      const durStr = `${hours}h${remM ? ' ' + remM + 'm' : ''}`;
+      const pct = Math.min(100, (mins / (24 * 60)) * 100);
+      document.getElementById(`e-${shift}-bar-fill`).style.width = pct + '%';
+      document.getElementById(`e-${shift}-dur-label`).textContent = `${_fmtTime(from)} → ${_fmtTime(to)}`;
+      document.getElementById(`e-${shift}-dur-hours`).textContent = durStr;
+      barWrap.style.display = 'block';
+      sub.textContent = `${_fmtTime(from)} – ${_fmtTime(to)} · ${durStr}`;
+    }
+
+    function toggleShiftCard(shift) {
+      const on = document.getElementById(`e-${shift}-toggle`).checked;
+      document.getElementById(`e-${shift}-body`).style.display = on ? 'block' : 'none';
+      document.getElementById(`e-${shift}-card`).classList.toggle('on', on);
+      const sub = document.getElementById(`e-${shift}-hdr-sub`);
+      if (!on) {
+        document.getElementById(`e-${shift}-from`).value = '';
+        document.getElementById(`e-${shift}-to`).value = '';
+        document.getElementById(`e-${shift}-bar-wrap`).style.display = 'none';
+        sub.textContent = 'Tap to enable';
+      } else {
+        sub.textContent = 'Set times below';
+      }
+    }
+
+    function _initShiftCard(shift, from, to) {
+      const hasShift = !!(from && to);
+      document.getElementById(`e-${shift}-toggle`).checked = hasShift;
+      document.getElementById(`e-${shift}-body`).style.display = hasShift ? 'block' : 'none';
+      document.getElementById(`e-${shift}-card`).classList.toggle('on', hasShift);
+      document.getElementById(`e-${shift}-from`).value = from || '';
+      document.getElementById(`e-${shift}-to`).value = to || '';
+      document.getElementById(`e-${shift}-bar-wrap`).style.display = 'none';
+      document.getElementById(`e-${shift}-hdr-sub`).textContent = hasShift ? 'Loading…' : 'Tap to enable';
+      if (hasShift) updateShiftDuration(shift);
+    }
 
     // ─── EMPLOYEES ──────────────────────────────────────────────────────
     function openEmpModal(id = null) {
@@ -2576,10 +3295,8 @@
       document.getElementById('e-phone').value = emp?.phone || '';
       document.getElementById('e-role').value = emp?.role || '';
       document.getElementById('e-join').value = emp?.joinDate || today();
-      document.getElementById('e-morning-from').value = emp?.morningFrom || '';
-      document.getElementById('e-morning-to').value = emp?.morningTo || '';
-      document.getElementById('e-evening-from').value = emp?.eveningFrom || '';
-      document.getElementById('e-evening-to').value = emp?.eveningTo || '';
+      _initShiftCard('morning', emp?.morningFrom || '', emp?.morningTo || '');
+      _initShiftCard('evening', emp?.eveningFrom || '', emp?.eveningTo || '');
       document.getElementById('e-sal').value = emp?.salary || '';
       document.getElementById('e-wdays').value = emp?.wdays || 26;
       document.getElementById('e-status').value = emp?.status || 'active';
@@ -2598,8 +3315,11 @@
       const eveningTo = document.getElementById('e-evening-to').value;
       const morningValid = morningFrom && morningTo;
       const eveningValid = eveningFrom && eveningTo;
+      const phone = document.getElementById('e-phone').value.trim();
       if (!name) { toast('Employee name is required', 'err'); return; }
+      if (phone && !/^[0-9]{10}$/.test(phone)) { toast('Mobile number must be exactly 10 digits', 'err'); return; }
       if (Number.isNaN(salary)) { toast('Salary must be a number', 'err'); return; }
+      if (salary > 999999) { toast('Salary cannot exceed ₹9,99,999', 'err'); return; }
       if (!morningValid && !eveningValid) { toast('Provide at least one shift schedule', 'err'); return; }
       if ((morningFrom && !morningTo) || (!morningFrom && morningTo)) { toast('Complete morning shift times or leave both blank', 'err'); return; }
       if ((eveningFrom && !eveningTo) || (!eveningFrom && eveningTo)) { toast('Complete evening shift times or leave both blank', 'err'); return; }
@@ -2642,7 +3362,9 @@
       save(K.adv,      getAdv().filter(a => a.empId !== id));
       save(K.pay,      getPay().filter(p => p.empId !== id));
       save(K.pt,       getPt().filter(p => p.trainerId !== id));
+      save(K.ptRate,   getPtRates().filter(r => r.trainerId !== id));
       save(K.leaveApp, getLeaveApps().filter(a => a.empId !== id));
+      save(K.leaveAdj, getLeaveAdjs().filter(a => a.empId !== id));
       save(K.leave,    getLeaveTemplates().map(t => ({
         ...t, applicableEmpIds: (t.applicableEmpIds || []).filter(eid => eid !== id)
       })));
@@ -2658,26 +3380,93 @@
       if (curPage === 'pt')        renderPt();
     }
 
-    function renderEmp() {
+    let _empTab = 'active';
+
+    function switchEmpTab(tab) {
+      _empTab = tab;
+      document.getElementById('emp-tab-active').style.display = tab === 'active' ? '' : 'none';
+      document.getElementById('emp-tab-former').style.display = tab === 'former' ? '' : 'none';
+      document.getElementById('emp-tab-btn-active').classList.toggle('active', tab === 'active');
+      document.getElementById('emp-tab-btn-former').classList.toggle('active', tab === 'former');
+      document.getElementById('btn-add-emp').style.display = tab === 'active' ? '' : 'none';
+      renderEmp();
+    }
+
+    function terminateEmp(id) {
+      const emp = getEmp().find(e => e.id === id);
+      if (!emp) return;
+      if (!confirm(`Move ${emp.name} to Former Staff?\n\nTheir attendance and salary history will be kept for records.`)) return;
       const emps = getEmp();
+      const idx = emps.findIndex(e => e.id === id);
+      emps[idx] = { ...emps[idx], status: 'inactive', terminatedAt: today() };
+      save(K.emp, emps);
+      toast(`${emp.name} moved to Former Staff`, 'inf');
+      renderEmp();
+      if (curPage === 'dashboard') renderDash();
+    }
+
+    function restoreEmp(id) {
+      const emp = getEmp().find(e => e.id === id);
+      if (!emp) return;
+      if (!confirm(`Restore ${emp.name} as active staff?`)) return;
+      const emps = getEmp();
+      const idx = emps.findIndex(e => e.id === id);
+      emps[idx] = { ...emps[idx], status: 'active', terminatedAt: null };
+      save(K.emp, emps);
+      toast(`${emp.name} restored to active staff`, 'suc');
+      renderEmp();
+      if (curPage === 'dashboard') renderDash();
+    }
+
+    function renderEmp() {
+      const allEmps = getEmp();
+      const active = allEmps.filter(e => e.status !== 'inactive');
+      const former = allEmps.filter(e => e.status === 'inactive');
+
+      document.getElementById('emp-count-active').textContent = active.length;
+      document.getElementById('emp-count-former').textContent = former.length;
+
+      // Active tab
       const tb = document.getElementById('emp-tbody');
-      if (!emps.length) { tb.innerHTML = `<tr><td colspan="10"><div class="empty"><div class="empty-icon">👥</div><h3>No employees yet</h3><p>Add your first employee to get started</p></div></td></tr>`; return; }
-      tb.innerHTML = emps.map(e => `
-    <tr>
-      <td><div style="display:flex;align-items:center;gap:10px"><div class="av">${e.name[0].toUpperCase()}</div><div><div style="font-weight:600">${e.name}</div><div style="font-size:11px;color:var(--txt3)">${e.phone || '—'}</div></div></div></td>
-      <td>${e.role || '—'}</td>
-      <td>${formatShiftDisplay(e)}</td>
-      <td>${e.phone || '—'}</td>
-      <td>${fmtDate(e.joinDate)}</td>
-      <td style="font-weight:700">₹${(e.salary || 0).toLocaleString('en-IN')}</td>
-      <td>${e.wdays || 26} days</td>
-      <td>${(() => { const b = getLeaveBalance(e.id, curMonth()); return `<span style="font-weight:700;color:${b.remaining > 0 ? 'var(--green)' : 'var(--red)'}">${b.remaining}/${b.total}</span><div style="font-size:10px;color:var(--txt3)">${b.label}</div>`; })()}</td>
-      <td><span class="badge ${e.status === 'active' ? 'bg-g' : 'bg-r'}">${e.status || 'active'}</span></td>
-      <td><div style="display:flex;gap:6px">
-        <button class="btn btn-s btn-xs" onclick="openEmpModal('${e.id}')">Edit</button>
-        <button class="btn btn-r btn-xs" onclick="deleteEmp('${e.id}')">Del</button>
-      </div></td>
-    </tr>`).join('');
+      if (!active.length) {
+        tb.innerHTML = `<tr><td colspan="9"><div class="empty"><div class="empty-icon">👥</div><h3>No active employees</h3><p>Add your first employee to get started</p></div></td></tr>`;
+      } else {
+        tb.innerHTML = active.map(e => `
+        <tr>
+          <td><div style="display:flex;align-items:center;gap:10px"><div class="av">${e.name[0].toUpperCase()}</div><div><div style="font-weight:600">${e.name}</div><div style="font-size:11px;color:var(--txt3)">${e.phone || '—'}</div></div></div></td>
+          <td>${e.role || '—'}</td>
+          <td>${formatShiftDisplay(e)}</td>
+          <td>${e.phone || '—'}</td>
+          <td>${fmtDate(e.joinDate)}</td>
+          <td style="font-weight:700">₹${(e.salary || 0).toLocaleString('en-IN')}</td>
+          <td>${e.wdays || 26} days</td>
+          <td>${(() => { const b = getLeaveBalance(e.id, curMonth()); return `<span style="font-weight:700;color:${b.remaining > 0 ? 'var(--green)' : 'var(--red)'}">${b.remaining}/${b.total}</span><div style="font-size:10px;color:var(--txt3)">${b.label}</div>`; })()}</td>
+          <td><div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn btn-s btn-xs" onclick="openEmpModal('${e.id}')">Edit</button>
+            <button class="btn btn-r btn-xs" onclick="terminateEmp('${e.id}')">Remove</button>
+          </div></td>
+        </tr>`).join('');
+      }
+
+      // Former tab
+      const ftb = document.getElementById('emp-former-tbody');
+      if (!former.length) {
+        ftb.innerHTML = `<tr><td colspan="7"><div class="empty"><div class="empty-icon">📁</div><h3>No former employees</h3><p>Removed employees will appear here</p></div></td></tr>`;
+      } else {
+        ftb.innerHTML = former.map(e => `
+        <tr>
+          <td><div style="display:flex;align-items:center;gap:10px"><div class="av" style="background:rgba(107,114,128,.15);color:var(--txt3)">${e.name[0].toUpperCase()}</div><div><div style="font-weight:600;color:var(--txt2)">${e.name}</div><div style="font-size:11px;color:var(--txt3)">${e.role || '—'}</div></div></div></td>
+          <td style="color:var(--txt2)">${e.role || '—'}</td>
+          <td style="color:var(--txt2)">${e.phone || '—'}</td>
+          <td style="color:var(--txt2)">${fmtDate(e.joinDate)}</td>
+          <td><span style="color:var(--red);font-weight:600">${e.terminatedAt ? fmtDate(e.terminatedAt) : '—'}</span></td>
+          <td style="color:var(--txt2)">₹${(e.salary || 0).toLocaleString('en-IN')}</td>
+          <td><div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn btn-g btn-xs" onclick="restoreEmp('${e.id}')">↩ Restore</button>
+            <button class="btn btn-r btn-xs" onclick="deleteEmp('${e.id}')">Delete</button>
+          </div></td>
+        </tr>`).join('');
+      }
     }
 
     // ─── PUNCH ──────────────────────────────────────────────────────────
@@ -2686,7 +3475,7 @@
     }
 
     function isPresentStatus(status) {
-      return status === 'present' || status === 'late';
+      return status === 'present' || status === 'late' || status === 'half-day';
     }
 
     const PERIOD_LEAVE_DAYS = 7;
@@ -2700,27 +3489,45 @@
 
     function getLeaveBalance(empId, month) {
       const period = getLeavePeriod(month);
-      const apps = getLeaveApps().filter(a =>
-        a.empId === empId && a.status === 'approved' &&
-        a.fromDate.slice(0, 7) >= period.start &&
-        a.fromDate.slice(0, 7) <= period.end
-      );
-      const used = apps.reduce((sum, a) => sum + a.days, 0);
-      return { used, total: PERIOD_LEAVE_DAYS, remaining: Math.max(0, PERIOD_LEAVE_DAYS - used), lop: Math.max(0, used - PERIOD_LEAVE_DAYS), label: period.label };
+      normalizeLeaveStatuses(empId, month);
+      // Used = all attendance shifts marked 'leave' (paid, within pool) or 'lop' (over pool) —
+      // covers both approved leave applications AND plain absences that consumed the allowance
+      const usedShifts = getAtt().filter(a => a.empId === empId &&
+        a.date.slice(0, 7) >= period.start &&
+        a.date.slice(0, 7) <= period.end &&
+        (a.status === 'leave' || a.status === 'lop')).length;
+      const used = usedShifts / 2;
+      // Factor in manual adjustments for this employee & period
+      const adjs = getLeaveAdjs().filter(a => a.empId === empId && a.period === period.start);
+      const adjDays = adjs.reduce((sum, a) => sum + a.days, 0); // can be +/-
+      const total = Math.max(0, PERIOD_LEAVE_DAYS + adjDays);
+      return {
+        used, total,
+        remaining: Math.max(0, total - used),
+        lop: Math.max(0, used - total),
+        label: period.label,
+        adjs
+      };
     }
 
     function normalizeLeaveStatuses(empId, month) {
       const att = getAtt();
       const period = getLeavePeriod(month);
+      // Allowed pool size (in shifts), adjusted by any manual leave balance adjustments
+      const adjs = getLeaveAdjs().filter(a => a.empId === empId && a.period === period.start);
+      const adjDays = adjs.reduce((sum, a) => sum + a.days, 0);
+      const poolShifts = Math.max(0, PERIOD_LEAVE_SHIFTS + adjDays * 2);
+      // Both approved-leave shifts AND plain absences consume the allowance.
+      // First `poolShifts` (chronologically) count as paid leave; the rest become LOP.
       const records = att
         .filter(a => a.empId === empId &&
           a.date.slice(0, 7) >= period.start &&
           a.date.slice(0, 7) <= period.end &&
-          (a.status === 'leave' || a.status === 'lop'))
+          (a.status === 'leave' || a.status === 'lop' || a.status === 'absent'))
         .sort((a, b) => a.date.localeCompare(b.date) || a.shift.localeCompare(b.shift));
       let count = 0, changed = false;
       records.forEach(rec => {
-        const expected = count < PERIOD_LEAVE_SHIFTS ? 'leave' : 'lop';
+        const expected = count < poolShifts ? 'leave' : 'lop';
         if (rec.status !== expected) { rec.status = expected; changed = true; }
         count++;
       });
@@ -2728,7 +3535,7 @@
     }
 
     function normalizeLeaveStatusesForEmployee(empId) {
-      const months = [...new Set(getAtt().filter(a => a.empId === empId && (a.status === 'leave' || a.status === 'lop')).map(a => a.date.slice(0, 7)))];
+      const months = [...new Set(getAtt().filter(a => a.empId === empId && (a.status === 'leave' || a.status === 'lop' || a.status === 'absent')).map(a => a.date.slice(0, 7)))];
       months.forEach(month => normalizeLeaveStatuses(empId, month));
     }
 
@@ -2739,7 +3546,7 @@
       const rec = { id: idx >= 0 ? att[idx].id : uid(), empId, date, shift, punchIn: null, punchOut: null, status };
       if (idx >= 0) att[idx] = rec; else att.push(rec);
       save(K.att, att);
-      if (status === 'leave' || status === 'lop') normalizeLeaveStatuses(empId, date.slice(0, 7));
+      if (status === 'leave' || status === 'lop' || status === 'absent') normalizeLeaveStatuses(empId, date.slice(0, 7));
       const label = status === 'present' ? 'Present' : status === 'late' ? 'Late' : status === 'leave' ? 'Leave' : status === 'lop' ? 'LOP' : 'Absent';
       toast(`Marked ${label} — ${shift} shift`, 'suc');
       renderPunch();
@@ -2871,16 +3678,31 @@
     }
 
     // ─── MANUAL ATTENDANCE ──────────────────────────────────────────────
-    function openManualModal() {
+    function openManualModal(empId = null, date = null) {
       const emps = getEmp().filter(e => e.status !== 'inactive');
       const empSelect = document.getElementById('m-emp');
       empSelect.innerHTML = '<option value="">Select Employee</option>' + emps.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
-      document.getElementById('m-date').value = today();
-      updateManualStatusOptions();
-      document.getElementById('m-status').value = 'present';
-      toggleManualReason();
+      empSelect.value = empId || '';
+      document.getElementById('m-date').value = date || today();
+      document.querySelector('#manual-modal .mh h3').textContent = empId ? 'Edit Attendance' : 'Quick Attendance Entry';
       updateManualShiftOptions();
+      prefillManualFromAtt();
       openModal('manual-modal');
+    }
+
+    // Pre-fill status/reason from the existing attendance record for the
+    // currently selected employee/date/shift, so editing a cell shows its current value
+    function prefillManualFromAtt() {
+      updateManualStatusOptions();
+      const empId = document.getElementById('m-emp').value;
+      const date = document.getElementById('m-date').value;
+      const shift = document.getElementById('m-shift').value;
+      const rec = (empId && date) ? getAtt().find(a => a.empId === empId && a.date === date && a.shift === shift) : null;
+      const statusSelect = document.getElementById('m-status');
+      const status = rec?.status || 'present';
+      statusSelect.value = Array.from(statusSelect.options).some(o => o.value === status) ? status : 'present';
+      document.getElementById('m-reason').value = rec?.reason || '';
+      toggleManualReason();
     }
 
     function updateManualShiftOptions() {
@@ -2918,7 +3740,7 @@
       const rec = { id: idx >= 0 ? att[idx].id : uid(), empId, date, shift, punchIn: null, punchOut: null, status, reason };
       if (idx >= 0) att[idx] = rec; else att.push(rec);
       save(K.att, att);
-      if (status === 'leave' || status === 'lop') normalizeLeaveStatuses(empId, date.slice(0, 7));
+      if (status === 'leave' || status === 'lop' || status === 'absent') normalizeLeaveStatuses(empId, date.slice(0, 7));
       toast('Attendance saved', 'suc');
       closeModal('manual-modal');
       if (curPage === 'punch') renderPunch();
@@ -2932,13 +3754,13 @@
       const picker = document.getElementById(pickerId);
       const [y, m] = picker.value.split('-').map(Number);
       const d = new Date(y, m - 1 + dir, 1);
-      picker.value = d.toISOString().slice(0, 7);
+      picker.value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
       if (type === 'att') renderMonthly(); else renderSalary();
     }
 
     function renderMonthly() {
       const month = document.getElementById('att-month').value;
-      const emps = getEmp();
+      const emps = getEmp().filter(e => e.status !== 'inactive');
       const att = getAtt();
       const [y, m] = month.split('-').map(Number);
       const daysInMonth = new Date(y, m, 0).getDate();
@@ -2960,6 +3782,24 @@
     <th>Days</th><th>Shifts</th>
   </tr></thead>`;
 
+      // Pre-compute leave application date sets per employee for this month
+      const leaveApps = getLeaveApps();
+      const _approvedDates = {}, _pendingDates = {}, _approvedHalf = {};
+      leaveApps.forEach(a => {
+        if (a.status !== 'approved' && a.status !== 'pending') return;
+        const map = a.status === 'approved' ? _approvedDates : _pendingDates;
+        if (!map[a.empId]) map[a.empId] = new Set();
+        if (a.status === 'approved' && a.leaveType === 'half' && !_approvedHalf[a.empId]) _approvedHalf[a.empId] = new Set();
+        let dd = new Date(a.fromDate + 'T00:00:00');
+        const endD = new Date(a.toDate + 'T00:00:00');
+        while (dd <= endD) {
+          const ds = dd.toISOString().slice(0, 10);
+          map[a.empId].add(ds);
+          if (a.status === 'approved' && a.leaveType === 'half') _approvedHalf[a.empId].add(ds);
+          dd.setDate(dd.getDate() + 1);
+        }
+      });
+
       const tbody = emps.map(emp => {
         let days_p = 0, shifts_p = 0;
         const cells = days.map(({ ds, sun }) => {
@@ -2972,18 +3812,35 @@
           const ev = er?.status === 'leave';
           const ml = mr?.status === 'lop';
           const el = er?.status === 'lop';
+          const isApproved = _approvedDates[emp.id]?.has(ds);
+          const isPending  = _pendingDates[emp.id]?.has(ds);
           if (ds > todayStr) return `<td><div class="att-cell ac-fut">·</div></td>`;
           const tip = JSON.stringify({
             date: ds, hasMorning: hasMorning(emp), hasEvening: hasEvening(emp),
             morning: mr ? { status: mr.status, reason: mr.reason || '' } : null,
-            evening: er ? { status: er.status, reason: er.reason || '' } : null
+            evening: er ? { status: er.status, reason: er.reason || '' } : null,
+            leaveApp: isApproved ? 'approved' : isPending ? 'pending' : null
           }).replace(/"/g, '&quot;');
-          if (hm && he) { days_p++; shifts_p += 2; return `<td><div class="att-cell ac-full" data-tip="${tip}">F</div></td>`; }
-          if (hm) { days_p += 0.5; shifts_p++; return `<td><div class="att-cell ac-m" data-tip="${tip}">M</div></td>`; }
-          if (he) { days_p += 0.5; shifts_p++; return `<td><div class="att-cell ac-e" data-tip="${tip}">E</div></td>`; }
-          if (ml || el) { return `<td><div class="att-cell ac-lop" data-tip="${tip}">L</div></td>`; }
-          if (mv || ev) { days_p += 0.5; shifts_p++; return `<td><div class="att-cell ac-leave" data-tip="${tip}">V</div></td>`; }
-          return `<td><div class="att-cell ac-abs" data-tip="${tip}">A</div></td>`;
+          const edit = ` ac-edit" onclick="openManualModal('${emp.id}','${ds}')`;
+          if (hm && he) { days_p++; shifts_p += 2; return `<td><div class="att-cell ac-full${edit}" data-tip="${tip}">F</div></td>`; }
+          // Full day leave: both shifts marked paid leave
+          if (mv && ev) { days_p++; shifts_p += 2; return `<td><div class="att-cell ac-leave${edit}" data-tip="${tip}">L</div></td>`; }
+          // Half day leave: one shift on leave, other shift worked
+          if ((mv && he) || (ev && hm)) { days_p++; shifts_p += 2; return `<td><div class="att-cell ac-leave${edit}" data-tip="${tip}">HL</div></td>`; }
+          if (hm) { days_p += 0.5; shifts_p++; return `<td><div class="att-cell ac-m${edit}" data-tip="${tip}">M</div></td>`; }
+          if (he) { days_p += 0.5; shifts_p++; return `<td><div class="att-cell ac-e${edit}" data-tip="${tip}">E</div></td>`; }
+          if (ml || el) { return `<td><div class="att-cell ac-lop${edit}" data-tip="${tip}">X</div></td>`; }
+          // Single-shift leave (no present counterpart) → half day leave
+          if (mv || ev) { days_p += 0.5; shifts_p++; return `<td><div class="att-cell ac-leave${edit}" data-tip="${tip}">HL</div></td>`; }
+          // Approved leave app but attendance not yet marked → show as paid leave
+          if (isApproved) {
+            const isHalf = _approvedHalf[emp.id]?.has(ds);
+            days_p += isHalf ? 0.5 : 1; shifts_p += isHalf ? 1 : 2;
+            return `<td><div class="att-cell ac-leave${edit}" data-tip="${tip}">${isHalf ? 'HL' : 'L'}</div></td>`;
+          }
+          // Pending leave app → show as pending (amber)
+          if (isPending) { return `<td><div class="att-cell ac-pending${edit}" data-tip="${tip}">P</div></td>`; }
+          return `<td><div class="att-cell ac-abs${edit}" data-tip="${tip}">A</div></td>`;
         }).join('');
         return `<tr>
       <td class="sticky-col" style="padding:6px 10px">
@@ -3009,16 +3866,28 @@
       const [y, m] = month.split('-').map(Number);
       const dim = new Date(y, m, 0).getDate();
       const wd = emp.wdays || 26;
-      const perShift = emp.salary / (wd * 2);
+      const shiftsPerDay = (hasMorning(emp) ? 1 : 0) + (hasEvening(emp) ? 1 : 0) || 1;
+      const perShift = emp.salary / (wd * shiftsPerDay);
+      // Build approved leave dates for this employee in this month
+      const _approvedLeaveSet = new Set();
+      getLeaveApps().filter(a => a.empId === emp.id && a.status === 'approved').forEach(a => {
+        let dd = new Date(a.fromDate + 'T00:00:00');
+        const endD = new Date(a.toDate + 'T00:00:00');
+        while (dd <= endD) { _approvedLeaveSet.add(dd.toISOString().slice(0, 10)); dd.setDate(dd.getDate() + 1); }
+      });
       let mp = 0, ep = 0, paidLeaveShifts = 0, lopShifts = 0, absentShifts = 0;
       for (let d = 1; d <= dim; d++) {
         const ds = `${month}-${String(d).padStart(2, '0')}`;
         const mr = att.find(a => a.empId === emp.id && a.date === ds && a.shift === 'morning');
         const er = att.find(a => a.empId === emp.id && a.date === ds && a.shift === 'evening');
+        const onApprovedLeave = _approvedLeaveSet.has(ds);
         if (isPresentStatus(mr?.status)) mp++;
         if (isPresentStatus(er?.status)) ep++;
+        // Attendance leave record
         if (mr?.status === 'leave') paidLeaveShifts++;
+        else if (!mr && onApprovedLeave && hasMorning(emp)) paidLeaveShifts++; // approved but att not marked
         if (er?.status === 'leave') paidLeaveShifts++;
+        else if (!er && onApprovedLeave && hasEvening(emp)) paidLeaveShifts++; // approved but att not marked
         if (mr?.status === 'lop') lopShifts++;
         if (er?.status === 'lop') lopShifts++;
         if (mr?.status === 'absent') absentShifts++;
@@ -3029,15 +3898,15 @@
       const absentDeduction = absentShifts * perShift;
       const lopDeduction = lopShifts * perShift;
       const totalAdv = adv.filter(a => a.empId === emp.id && a.month === month).reduce((s, a) => s + a.amount, 0);
-      const ptRecords = getPt().filter(p => p.trainerId === emp.id && p.month === month);
-      const ptRevenue = ptRecords.reduce((s, p) => s + (p.amount || 0), 0);
-      const ptCommission = ptRecords.reduce((s, p) => s + (p.commission || 0), 0);
+      const ptRevenue = getPtTotal(emp.id, month);
+      const ptRate = getPtRate(emp.id, month);
+      const ptCommission = getPtCommissionAmount(emp.id, month);
       const leaveBalance = getLeaveBalance(emp.id, month);
       return {
         mp, ep, leaveShifts, paidLeaveShifts, lopShifts, absentShifts,
         shifts: mp + ep, days: (mp + ep) / 2,
-        wd, perShift, earned, absentDeduction, lopDeduction,
-        totalAdv, ptRevenue, ptCommission,
+        wd, shiftsPerDay, perShift, earned, absentDeduction, lopDeduction,
+        totalAdv, ptRevenue, ptRate, ptCommission,
         net: earned - totalAdv + ptCommission,
         base: emp.salary, leaveBalance
       };
@@ -3047,9 +3916,9 @@
       const monthInput = document.getElementById('sal-month');
       const month = monthInput.value || curMonth();
       monthInput.value = month;
-      const emps = getEmp();
+      const emps = getEmp().filter(e => e.status !== 'inactive');
       const c = document.getElementById('sal-grid');
-      if (!emps.length) { c.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="empty-icon">💰</div><h3>No employees</h3></div>`; return; }
+      if (!emps.length) { c.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="empty-icon">💰</div><h3>No active employees</h3></div>`; return; }
       const pays = getPay();
       c.innerHTML = emps.map(emp => {
         const s = calcSalary(emp, month);
@@ -3073,7 +3942,7 @@
           <div class="sal-row"><span class="sal-lbl">LOP Shifts</span><span class="sal-val">${s.lopShifts} shifts</span></div>
           <div class="sal-row"><span class="sal-lbl">Absent Shifts</span><span class="sal-val">${s.absentShifts} shifts</span></div>
           <div class="sal-row"><span class="sal-lbl">Advance Deduction</span><span class="sal-val" style="color:var(--red)">- ₹${s.totalAdv.toLocaleString('en-IN')}</span></div>
-          <div class="sal-row"><span class="sal-lbl">PT Commission</span><span class="sal-val" style="color:var(--blue)">₹${Math.round(s.ptCommission || 0).toLocaleString('en-IN')}</span></div>
+          <div class="sal-row"><span class="sal-lbl">PT Commission (${s.ptRate}%)</span><span class="sal-val" style="color:var(--blue)">₹${Math.round(s.ptCommission || 0).toLocaleString('en-IN')}</span></div>
         </div>
         <div class="sal-total">
           <span style="font-weight:700">Net Payable</span>
@@ -3128,10 +3997,11 @@
         const mp = records.filter(r => r.shift === 'morning' && isPresentStatus(r.status)).length;
         const ep = records.filter(r => r.shift === 'evening' && isPresentStatus(r.status)).length;
         const days = (mp + ep) / 2;
-        const earned = Math.round((mp + ep) * (emp.salary / ((emp.wdays || 26) * 2)));
+        const _spd = (hasMorning(emp) ? 1 : 0) + (hasEvening(emp) ? 1 : 0) || 1;
+        const earned = Math.round((mp + ep) * (emp.salary / ((emp.wdays || 26) * _spd)));
         const totalAdv = getAdv().filter(a => a.empId === emp.id && a.month === end.slice(0, 7)).reduce((sum, a) => sum + (a.amount || 0), 0);
-        const ptCommission = getPt().filter(p => p.trainerId === emp.id && p.month === end.slice(0, 7)).reduce((sum, p) => sum + (p.commission || 0), 0);
-        const ptRevenue = getPt().filter(p => p.trainerId === emp.id && p.month === end.slice(0, 7)).reduce((sum, p) => sum + (p.amount || 0), 0);
+        const ptCommission = getPtCommissionAmount(emp.id, end.slice(0, 7));
+        const ptRevenue = getPtTotal(emp.id, end.slice(0, 7));
         return {
           'Employee': emp.name,
           'Role': emp.role || 'Staff',
@@ -3231,20 +4101,17 @@
     <div class="card" style="padding:0;overflow:hidden">
       ${[
           ['Base Monthly Salary', `₹${emp.salary.toLocaleString('en-IN')}`],
-          ['Working Days (Base)', `${s.wd} days`],
-          ['Per Day Value', `₹${(emp.salary / s.wd).toFixed(2)}`],
+          ['Standard Working Days', `${s.wd} days × ${s.shiftsPerDay} shift${s.shiftsPerDay > 1 ? 's' : ''}/day = ${s.wd * s.shiftsPerDay} shifts`],
           ['Per Shift Value', `₹${s.perShift.toFixed(2)}`],
-          ['Morning Shifts', `${s.mp} × ₹${s.perShift.toFixed(0)} = ₹${Math.round(s.mp * s.perShift).toLocaleString()}`],
-          ['Evening Shifts', `${s.ep} × ₹${s.perShift.toFixed(0)} = ₹${Math.round(s.ep * s.perShift).toLocaleString()}`],
-          ['Paid Leave Shifts', `${s.paidLeaveShifts} × ₹${s.perShift.toFixed(0)} = ₹${Math.round(s.paidLeaveShifts * s.perShift).toLocaleString()}`],
-          ['LOP Shifts', `${s.lopShifts} shifts`],
-          ['Absent Shifts', `${s.absentShifts} shifts`],
-        ].map(([l, v]) => `<div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--txt2)">${l}</span><span>${v}</span></div>`).join('')}
-      <div style="display:flex;justify-content:space-between;padding:11px 16px;border-bottom:1px solid var(--border);font-weight:700;color:var(--green);font-size:14px"><span>Gross Earned</span><span>₹${Math.round(s.earned).toLocaleString('en-IN')}</span></div>
+          ['🌅 Morning Shifts Present', `${s.mp} shifts × ₹${s.perShift.toFixed(0)} = ₹${Math.round(s.mp * s.perShift).toLocaleString()}`],
+          ['🌆 Evening Shifts Present', `${s.ep} shifts × ₹${s.perShift.toFixed(0)} = ₹${Math.round(s.ep * s.perShift).toLocaleString()}`],
+          ['📋 Paid Leave Shifts', `${s.paidLeaveShifts} shifts × ₹${s.perShift.toFixed(0)} = ₹${Math.round(s.paidLeaveShifts * s.perShift).toLocaleString()}`],
+          ['⚠️ LOP Shifts (unpaid)', `${s.lopShifts} shifts — ₹${Math.round(s.lopDeduction).toLocaleString()} not earned`],
+          ['❌ Absent Shifts (unpaid)', `${s.absentShifts} shifts — ₹${Math.round(s.absentDeduction).toLocaleString()} not earned`],
+        ].map(([l, v]) => `<div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);font-size:13px;gap:8px"><span style="color:var(--txt2);flex-shrink:0">${l}</span><span style="text-align:right">${v}</span></div>`).join('')}
+      <div style="display:flex;justify-content:space-between;padding:11px 16px;border-bottom:1px solid var(--border);font-weight:700;color:var(--green);font-size:14px"><span>Gross Earned (${s.mp + s.ep + s.paidLeaveShifts} shifts)</span><span>₹${Math.round(s.earned).toLocaleString('en-IN')}</span></div>
       ${advs.map(a => `<div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);font-size:13px;color:var(--red)"><span>Advance — ${a.reason || 'Advance'} (${fmtDate(a.date)})</span><span>-₹${a.amount.toLocaleString()}</span></div>`).join('')}
-      <div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);font-size:13px;color:var(--red)"><span>LOP deduction</span><span>-₹${Math.round(s.lopDeduction).toLocaleString('en-IN')}</span></div>
-      <div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);font-size:13px;color:var(--red)"><span>Absent deduction</span><span>-₹${Math.round(s.absentDeduction).toLocaleString('en-IN')}</span></div>
-      ${s.ptCommission ? `<div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);font-size:13px;color:var(--blue)"><span>PT Commission</span><span>₹${Math.round(s.ptCommission).toLocaleString('en-IN')}</span></div>` : ''}
+      ${s.ptCommission ? `<div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);font-size:13px;color:var(--blue)"><span>PT Commission (${s.ptRate}% of ₹${Math.round(s.ptRevenue).toLocaleString('en-IN')})</span><span>+₹${Math.round(s.ptCommission).toLocaleString('en-IN')}</span></div>` : ''}
       <div style="display:flex;justify-content:space-between;padding:14px 16px;font-size:20px;font-weight:800;color:var(--accent)"><span>Net Payable</span><span>₹${Math.round(s.net).toLocaleString('en-IN')}</span></div>
     </div>
     <div style="margin-top:14px;padding:14px 16px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);border-radius:10px">
@@ -3278,17 +4145,27 @@
       </div>
       <div style="padding:16px 20px">
         ${[
-          ['🌅 Morning Shifts', `${s.mp} shifts`],
-          ['🌆 Evening Shifts', `${s.ep} shifts`],
-          ['Total Days Present', `${s.days} of ${s.wd}`],
+          ['🌅 Morning Shifts', `${s.mp} shifts × ₹${s.perShift.toFixed(0)}`],
+          ['🌆 Evening Shifts', `${s.ep} shifts × ₹${s.perShift.toFixed(0)}`],
+          ['📋 Paid Leave Shifts', `${s.paidLeaveShifts} shifts × ₹${s.perShift.toFixed(0)}`],
+          ['⚠️ LOP (unpaid)', `${s.lopShifts} shifts`],
+          ['❌ Absent (unpaid)', `${s.absentShifts} shifts`],
+          ['Days Present', `${s.days} of ${s.wd} days`],
           ['Per Shift Rate', `₹${s.perShift.toFixed(2)}`],
         ].map(([l, v]) => `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--txt2)">${l}</span><span>${v}</span></div>`).join('')}
-        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-weight:600;color:var(--green)"><span>Gross Earned</span><span>₹${Math.round(s.earned).toLocaleString('en-IN')}</span></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-weight:600;color:var(--green)"><span>Gross Earned (${s.mp + s.ep + s.paidLeaveShifts} paid shifts)</span><span>₹${Math.round(s.earned).toLocaleString('en-IN')}</span></div>
         ${advs.map(a => `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--red)"><span>Advance — ${a.reason || ''} (${fmtDate(a.date)})</span><span>-₹${a.amount.toLocaleString()}</span></div>`).join('')}
-        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--red)"><span>LOP deduction</span><span>-₹${Math.round(s.lopDeduction).toLocaleString('en-IN')}</span></div>
-        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--red)"><span>Absent deduction</span><span>-₹${Math.round(s.absentDeduction).toLocaleString('en-IN')}</span></div>
-        ${s.ptCommission ? `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--blue)"><span>PT Commission</span><span>₹${Math.round(s.ptCommission).toLocaleString('en-IN')}</span></div>` : ''}
+        ${s.ptCommission ? `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--blue)"><span>PT Commission</span><span>+₹${Math.round(s.ptCommission).toLocaleString('en-IN')}</span></div>` : ''}
         <div style="display:flex;justify-content:space-between;padding:14px 0;font-size:22px;font-weight:800;color:var(--accent)"><span>Net Payable</span><span>₹${Math.round(s.net).toLocaleString('en-IN')}</span></div>
+      </div>
+      <div style="padding:12px 18px;background:rgba(139,92,246,.07);border-top:1px solid rgba(139,92,246,.2)">
+        <div style="font-size:11px;font-weight:700;color:var(--purple);margin-bottom:6px">Leave Balance — ${s.leaveBalance?.label}</div>
+        <div style="display:flex;gap:18px;font-size:12px;flex-wrap:wrap">
+          <span>Allowed: <strong>${s.leaveBalance?.total} days</strong></span>
+          <span>Used: <strong style="color:${(s.leaveBalance?.used??0)>0?'var(--accent)':'inherit'}">${s.leaveBalance?.used} days</strong></span>
+          <span>Remaining: <strong style="color:${(s.leaveBalance?.remaining??0)>0?'var(--green)':'var(--red)'}">${s.leaveBalance?.remaining} days</strong></span>
+          ${(s.leaveBalance?.lop??0)>0?`<span style="color:var(--red)">LOP: <strong>${s.leaveBalance.lop} days</strong></span>`:''}
+        </div>
       </div>
       <div style="padding:12px 20px;background:var(--bg2);border-top:1px solid var(--border);font-size:11px;color:var(--txt3);text-align:center">Employee Signature _________________ &nbsp;&nbsp;&nbsp; Authorized Signature _________________</div>
     </div>`;
@@ -3297,7 +4174,7 @@
 
     // ─── ADVANCES ────────────────────────────────────────────────────────
     function openAdvModal(id = null) {
-      const emps = getEmp();
+      const emps = getEmp().filter(e => e.status !== 'inactive');
       const advs = getAdv();
       const adv = id ? advs.find(a => a.id === id) : null;
       const sel = document.getElementById('a-emp');
@@ -3344,13 +4221,14 @@
     }
 
     function renderAdvances() {
-      const emps = getEmp();
+      const emps = getEmp(); // all employees for name lookup in table
+      const activeEmps = emps.filter(e => e.status !== 'inactive');
       const fEmp = document.getElementById('adv-f-emp').value;
       const fMon = document.getElementById('adv-f-month').value;
-      // update filter dropdown
+      // update filter dropdown — active only
       const sel = document.getElementById('adv-f-emp');
       const cur = sel.value;
-      sel.innerHTML = '<option value="">All Employees</option>' + emps.map(e => `<option value="${e.id}" ${cur === e.id ? 'selected' : ''}>${e.name}</option>`).join('');
+      sel.innerHTML = '<option value="">All Employees</option>' + activeEmps.map(e => `<option value="${e.id}" ${cur === e.id ? 'selected' : ''}>${e.name}</option>`).join('');
       sel.value = cur;
 
       let advs = getAdv();
@@ -3382,39 +4260,17 @@
       return 0.2;
     }
 
-    function autoFillCommissionRate() {
-      const amount = parseFloat(document.getElementById('pt-amount').value) || 0;
-      const rate = Math.round(ptCommissionRate(amount) * 100);
-      document.getElementById('pt-commission-rate').value = rate;
-      updateCommissionPreview();
-    }
-
-    function updateCommissionPreview() {
-      const amount = parseFloat(document.getElementById('pt-amount').value) || 0;
-      const rate = parseFloat(document.getElementById('pt-commission-rate').value) || 0;
-      const commission = Math.round(amount * rate / 100);
-      document.getElementById('pt-commission-preview').textContent = '₹' + commission.toLocaleString('en-IN');
-    }
-
-    function openPtModal(id = null) {
+    function openPtModal(id = null, trainerId = null) {
       const emps = getEmp().filter(e => e.status !== 'inactive');
       const pt = id ? getPt().find(p => p.id === id) : null;
       const sel = document.getElementById('pt-trainer');
-      sel.innerHTML = '<option value="">Select Trainer</option>' + emps.map(e => `<option value="${e.id}" ${pt?.trainerId === e.id ? 'selected' : ''}>${e.name}</option>`).join('');
+      sel.innerHTML = '<option value="">Select Trainer</option>' + emps.map(e => `<option value="${e.id}" ${(pt?.trainerId || trainerId) === e.id ? 'selected' : ''}>${e.name}</option>`).join('');
       document.getElementById('pt-id').value = pt?.id || '';
       document.getElementById('pt-date').value = pt?.date || today();
       document.getElementById('pt-shift').value = pt?.shift || 'morning';
       document.getElementById('pt-amount').value = pt?.amount || '';
       document.getElementById('pt-notes').value = pt?.notes || '';
       document.getElementById('pt-modal-title').textContent = pt ? 'Edit PT Session' : 'Add PT Session';
-      if (pt) {
-        const savedRate = pt.amount ? Math.round((pt.commission / pt.amount) * 100) : 0;
-        document.getElementById('pt-commission-rate').value = savedRate;
-        document.getElementById('pt-commission-preview').textContent = '₹' + (pt.commission || 0).toLocaleString('en-IN');
-      } else {
-        document.getElementById('pt-commission-rate').value = '';
-        document.getElementById('pt-commission-preview').textContent = '₹0';
-      }
       openModal('pt-modal');
     }
 
@@ -3427,13 +4283,10 @@
       const shift = document.getElementById('pt-shift').value;
       const amount = parseFloat(document.getElementById('pt-amount').value);
       const notes = document.getElementById('pt-notes').value.trim();
-      const customRate = parseFloat(document.getElementById('pt-commission-rate').value);
       if (!trainerId) { toast('Select a trainer', 'err'); return; }
       if (!date) { toast('Select a date', 'err'); return; }
       if (Number.isNaN(amount) || amount <= 0) { toast('Enter a valid amount', 'err'); return; }
-      const commissionRate = !Number.isNaN(customRate) ? customRate / 100 : ptCommissionRate(amount);
-      const commission = Math.round(amount * commissionRate);
-      const data = { id: id || uid(), trainerId, date, shift, amount, notes, commission, month: date.slice(0, 7) };
+      const data = { id: id || uid(), trainerId, date, shift, amount, notes, month: date.slice(0, 7) };
       if (id) {
         const idx = pts.findIndex(p => p.id === id);
         if (idx >= 0) {
@@ -3450,63 +4303,166 @@
       save(K.pt, pts);
       closeModal('pt-modal');
       renderPt();
+      if (document.getElementById('pt-trainer-modal').classList.contains('open')) renderPtTrainerModal(trainerId);
       if (curPage === 'salary') renderSalary();
       if (curPage === 'dashboard') renderDash();
     }
 
     function deletePt(id) {
       if (!confirm('Delete this PT session?')) return;
+      const trainerId = getPt().find(p => p.id === id)?.trainerId;
       save(K.pt, getPt().filter(p => p.id !== id));
       toast('PT session deleted', 'suc');
       renderPt();
+      if (trainerId && document.getElementById('pt-trainer-modal').classList.contains('open')) renderPtTrainerModal(trainerId);
       if (curPage === 'salary') renderSalary();
       if (curPage === 'dashboard') renderDash();
     }
 
     function clearPtFilters() {
-      document.getElementById('pt-f-trainer').value = '';
       document.getElementById('pt-f-month').value = '';
       renderPt();
     }
 
     function renderPt() {
-      const emps = getEmp();
-      const fTrainer = document.getElementById('pt-f-trainer').value;
-      const fMonth = document.getElementById('pt-f-month').value;
-      const sel = document.getElementById('pt-f-trainer');
-      const cur = sel.value;
-      sel.innerHTML = '<option value="">All Trainers</option>' + emps.map(e => `<option value="${e.id}" ${cur === e.id ? 'selected' : ''}>${e.name}</option>`).join('');
-      sel.value = cur;
-      let pts = getPt().slice();
-      if (fTrainer) pts = pts.filter(p => p.trainerId === fTrainer);
-      if (fMonth) pts = pts.filter(p => p.month === fMonth);
-      pts.sort((a, b) => b.date.localeCompare(a.date) || a.shift.localeCompare(b.shift));
+      const emps = getEmp().filter(e => e.status !== 'inactive');
+      const monthInput = document.getElementById('pt-f-month');
+      const fMonth = monthInput.value || curMonth();
+      monthInput.value = fMonth;
+      const pts = getPt().filter(p => p.month === fMonth);
+
       const totalSessions = pts.length;
       const totalRevenue = pts.reduce((sum, p) => sum + (p.amount || 0), 0);
-      const totalCommission = pts.reduce((sum, p) => sum + (p.commission || 0), 0);
+      const totalCommission = emps.reduce((sum, e) => sum + getPtCommissionAmount(e.id, fMonth), 0);
       document.getElementById('pt-total-sessions').textContent = totalSessions;
       document.getElementById('pt-total-revenue').textContent = `₹${totalRevenue.toLocaleString('en-IN')}`;
       document.getElementById('pt-total-commission').textContent = `₹${totalCommission.toLocaleString('en-IN')}`;
-      const tb = document.getElementById('pt-tbody');
-      if (!pts.length) {
-        tb.innerHTML = `<tr><td colspan="7"><div class="empty"><div class="empty-icon">🏋️</div><h3>No PT sessions yet</h3><p>Add a session to track commissions.</p></div></td></tr>`;
+
+      const grid = document.getElementById('pt-trainer-grid');
+      const trainers = emps.filter(e => pts.some(p => p.trainerId === e.id));
+      if (!trainers.length) {
+        grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🏋️</div><h3>No PT sessions yet</h3><p>Add a session to track commissions.</p></div>`;
         return;
       }
-      tb.innerHTML = pts.map(p => {
-        const emp = emps.find(e => e.id === p.trainerId);
-        return `<tr>
-      <td><div style="display:flex;align-items:center;gap:9px"><div class="av">${emp ? emp.name[0] : '?'}</div><span style="font-weight:600">${emp?.name || 'Unknown'}</span></div></td>
-      <td>${fmtDate(p.date)}</td>
-      <td>${p.shift === 'morning' ? '🌅 Morning' : '🌆 Evening'}</td>
-      <td style="font-weight:700;color:var(--green)">₹${p.amount.toLocaleString('en-IN')}</td>
-      <td style="font-weight:700;color:var(--blue)">₹${p.commission.toLocaleString('en-IN')}</td>
-      <td>${p.notes || '—'}</td>
-      <td><div style="display:flex;gap:6px">
-        <button class="btn btn-s btn-xs" onclick="openPtModal('${p.id}')">Edit</button>
-        <button class="btn btn-r btn-xs" onclick="deletePt('${p.id}')">Del</button>
-      </div></td>
-    </tr>`;
+      grid.innerHTML = trainers.map(e => {
+        const tpts = pts.filter(p => p.trainerId === e.id);
+        const total = tpts.reduce((s, p) => s + (p.amount || 0), 0);
+        const rate = getPtRate(e.id, fMonth);
+        const commission = Math.round(total * rate / 100);
+        return `
+      <div class="pt-trainer-card" onclick="openPtTrainerModal('${e.id}')">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <div class="av">${e.name[0]}</div>
+          <div><div style="font-weight:700">${e.name}</div><div style="font-size:11px;color:var(--txt3)">${e.role || 'Trainer'}</div></div>
+        </div>
+        <div class="pt-row"><span>Sessions</span><strong>${tpts.length}</strong></div>
+        <div class="pt-row"><span>Total PT Amount</span><strong style="color:var(--green)">₹${total.toLocaleString('en-IN')}</strong></div>
+        <div class="pt-row"><span>Commission (${rate}%)</span><strong style="color:var(--blue)">₹${commission.toLocaleString('en-IN')}</strong></div>
+      </div>`;
       }).join('');
+    }
+
+    function openPtTrainerModal(trainerId) {
+      renderPtTrainerModal(trainerId);
+      openModal('pt-trainer-modal');
+    }
+
+    function renderPtTrainerModal(trainerId) {
+      const emp = getEmp().find(e => e.id === trainerId);
+      if (!emp) return;
+      const fMonth = document.getElementById('pt-f-month').value || curMonth();
+      const pts = getPt().filter(p => p.trainerId === trainerId && p.month === fMonth)
+        .sort((a, b) => b.date.localeCompare(a.date) || a.shift.localeCompare(b.shift));
+      const total = pts.reduce((s, p) => s + (p.amount || 0), 0);
+      const override = getPtRateOverride(trainerId, fMonth);
+      const rate = getPtRate(trainerId, fMonth);
+      const commission = Math.round(total * rate / 100);
+
+      document.getElementById('pt-trainer-modal-title').textContent = `${emp.name} — ${fmtMon(fMonth)}`;
+      const body = document.getElementById('pt-trainer-modal-body');
+      body.innerHTML = `
+        <div class="grid3" style="gap:10px;margin-bottom:14px">
+          <div class="card" style="padding:14px;text-align:center">
+            <div style="font-size:11px;color:var(--txt3)">Sessions</div>
+            <div style="font-size:20px;font-weight:800;color:var(--accent)">${pts.length}</div>
+          </div>
+          <div class="card" style="padding:14px;text-align:center">
+            <div style="font-size:11px;color:var(--txt3)">Total PT Amount</div>
+            <div style="font-size:20px;font-weight:800;color:var(--green)">₹${total.toLocaleString('en-IN')}</div>
+          </div>
+          <div class="card" style="padding:14px;text-align:center">
+            <div style="font-size:11px;color:var(--txt3)">Commission</div>
+            <div id="ptr-commission-amt" style="font-size:20px;font-weight:800;color:var(--blue)">₹${commission.toLocaleString('en-IN')}</div>
+          </div>
+        </div>
+        <div class="card" style="padding:14px;margin-bottom:14px">
+          <div class="fr2" style="align-items:flex-end">
+            <div class="fg" style="margin-bottom:0">
+              <label class="fl">Commission % on Total PT Amount</label>
+              <input type="number" class="fc" id="ptr-rate" min="0" max="100" step="1" value="${rate}" oninput="updatePtRatePreview('${trainerId}')">
+            </div>
+            <div class="fg" style="margin-bottom:0;display:flex;gap:8px">
+              <button type="button" class="btn btn-p" onclick="savePtRateForTrainer('${trainerId}')">Save %</button>
+              <button type="button" class="btn btn-s" onclick="resetPtRateForTrainer('${trainerId}')">Auto</button>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--txt3);margin-top:6px">
+            ${override ? `Custom rate set for ${fmtMon(fMonth)}.` : `Auto-tiered rate based on total PT amount (₹${total.toLocaleString('en-IN')}).`}
+          </div>
+        </div>
+        <div class="fa" style="margin-bottom:10px">
+          <button type="button" class="btn btn-p" onclick="openPtModal(null,'${trainerId}')">+ Add PT Session</button>
+        </div>
+        <div class="card">
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Date</th><th>Shift</th><th>Amount</th><th>Notes</th><th>Actions</th></tr></thead>
+              <tbody>
+                ${pts.length ? pts.map(p => `<tr>
+                  <td>${fmtDate(p.date)}</td>
+                  <td>${p.shift === 'morning' ? '🌅 Morning' : '🌆 Evening'}</td>
+                  <td style="font-weight:700;color:var(--green)">₹${p.amount.toLocaleString('en-IN')}</td>
+                  <td>${p.notes || '—'}</td>
+                  <td><div style="display:flex;gap:6px">
+                    <button class="btn btn-s btn-xs" onclick="openPtModal('${p.id}')">Edit</button>
+                    <button class="btn btn-r btn-xs" onclick="deletePt('${p.id}')">Del</button>
+                  </div></td>
+                </tr>`).join('') : `<tr><td colspan="5"><div class="empty"><div class="empty-icon">🏋️</div><h3>No sessions this month</h3></div></td></tr>`}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function updatePtRatePreview(trainerId) {
+      const fMonth = document.getElementById('pt-f-month').value || curMonth();
+      const total = getPtTotal(trainerId, fMonth);
+      const rate = parseFloat(document.getElementById('ptr-rate').value) || 0;
+      const commission = Math.round(total * rate / 100);
+      document.getElementById('ptr-commission-amt').textContent = '₹' + commission.toLocaleString('en-IN');
+    }
+
+    function savePtRateForTrainer(trainerId) {
+      const fMonth = document.getElementById('pt-f-month').value || curMonth();
+      const rate = parseFloat(document.getElementById('ptr-rate').value);
+      if (Number.isNaN(rate) || rate < 0 || rate > 100) { toast('Enter a valid commission % (0-100)', 'err'); return; }
+      savePtRate(trainerId, fMonth, rate);
+      toast('Commission rate saved', 'suc');
+      renderPtTrainerModal(trainerId);
+      renderPt();
+      if (curPage === 'salary') renderSalary();
+      if (curPage === 'dashboard') renderDash();
+    }
+
+    function resetPtRateForTrainer(trainerId) {
+      const fMonth = document.getElementById('pt-f-month').value || curMonth();
+      resetPtRate(trainerId, fMonth);
+      toast('Commission rate reset to auto', 'suc');
+      renderPtTrainerModal(trainerId);
+      renderPt();
+      if (curPage === 'salary') renderSalary();
+      if (curPage === 'dashboard') renderDash();
     }
 
     // ─── DASHBOARD ───────────────────────────────────────────────────────
@@ -3522,7 +4478,7 @@
       const morn = todayAtt.filter(a => a.shift === 'morning').length;
       const eve = todayAtt.filter(a => a.shift === 'evening').length;
       const monAdv = adv.filter(a => a.month === mon && empIds.has(a.empId)).reduce((s, a) => s + a.amount, 0);
-      const monPtCommission = getPt().filter(p => p.month === mon && empIds.has(p.trainerId)).reduce((s, p) => s + (p.commission || 0), 0);
+      const monPtCommission = [...empIds].reduce((s, id) => s + getPtCommissionAmount(id, mon), 0);
 
       document.getElementById('s-staff').textContent = emps.filter(e => e.status !== 'inactive').length;
       document.getElementById('s-present').textContent = presentIds.size;
@@ -3608,8 +4564,12 @@
       try {
         const d = JSON.parse(el.getAttribute('data-tip').replace(/&quot;/g, '"'));
         const dow = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date(d.date + 'T00:00:00').getDay()];
+        let leaveTag = '';
+        if (d.leaveApp === 'approved') leaveTag = `<div style="font-size:11px;color:var(--blue);padding:3px 0 2px">📋 Approved Leave — Paid</div>`;
+        if (d.leaveApp === 'pending')  leaveTag = `<div style="font-size:11px;color:var(--accent);padding:3px 0 2px">⏳ Leave Pending Approval</div>`;
         _attTip.innerHTML = `
           <div class="att-tip-date">📅 ${fmtDate(d.date)} <span style="color:var(--txt3);font-weight:400">${dow}</span></div>
+          ${leaveTag}
           ${_shiftRow('🌅 Morning', d.morning, d.hasMorning)}
           ${_shiftRow('🌆 Evening', d.evening, d.hasEvening)}
         `;
@@ -3647,6 +4607,8 @@
       if (lo) lo.style.display = 'none';
       const adminToggle = document.getElementById('admin-mode');
       if (adminToggle) adminToggle.addEventListener('change', updateManualStatusOptions);
+      const elStatus = document.getElementById('el-status');
+      if (elStatus) elStatus.addEventListener('change', _updateElStatusNote);
       const loginForm = document.getElementById('login-form');
       if (loginForm) loginForm.addEventListener('submit', handleLogin);
       const loginReset = document.getElementById('login-reset');
