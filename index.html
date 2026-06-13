@@ -577,6 +577,10 @@
       display: flex
     }
 
+    #pt-modal {
+      z-index: 210;
+    }
+
     .modal {
       background: var(--card);
       border: 1px solid var(--border);
@@ -1753,6 +1757,13 @@
         </div>
         <div class="filters">
           <input type="month" id="pt-f-month" class="fc" style="width:150px" onchange="renderPt()">
+          <select id="pt-f-type" class="fc" style="width:160px" onchange="renderPt()">
+            <option value="">All Plans</option>
+            <option value="12session">12 Session PT</option>
+            <option value="1month">1 Month PT</option>
+            <option value="couple">Couple PT</option>
+            <option value="group">Group PT</option>
+          </select>
           <button class="btn btn-s btn-sm" onclick="clearPtFilters()">Clear</button>
         </div>
         <div class="grid3" style="gap:12px;margin-bottom:16px">
@@ -2138,6 +2149,14 @@
               <option value="evening">🌆 Evening</option>
             </select>
           </div>
+        </div>
+        <div class="fg"><label class="fl">PT Plan *</label>
+          <select class="fc" id="pt-type" required>
+            <option value="12session">12 Session PT</option>
+            <option value="1month">1 Month PT</option>
+            <option value="couple">Couple PT</option>
+            <option value="group">Group PT</option>
+          </select>
         </div>
         <div class="fg"><label class="fl">Amount (₹) *</label><input type="number" class="fc" id="pt-amount" required
             min="1" max="999999" placeholder="12000" oninput="if(this.value.length>6)this.value=this.value.slice(0,6)"></div>
@@ -3951,7 +3970,7 @@
         <div class="sal-foot">
           <button class="btn btn-s btn-sm" onclick="showSalDetail('${emp.id}','${month}')">Details</button>
           <button class="btn btn-s btn-sm" onclick="printSlip('${emp.id}','${month}')">🖨 Slip</button>
-          ${!pay ? `<button class="btn btn-p btn-sm" onclick="markPaid('${emp.id}','${month}')">Mark Paid</button>` : `<span style="font-size:11px;color:var(--txt3)">Paid ${fmtDate(pay.paidDate)}</span>`}
+          ${!pay ? `<button class="btn btn-p btn-sm" onclick="markPaid('${emp.id}','${month}')">Mark Paid</button>` : `<span style="font-size:11px;color:var(--txt3)">Paid ${fmtDate(pay.paidDate)}</span><button class="btn btn-s btn-sm" onclick="unmarkPaid('${emp.id}','${month}')">Undo</button>`}
         </div>
       </div>`;
       }).join('');
@@ -4077,6 +4096,16 @@
       pays.push({ id: uid(), empId, month, amount: Math.round(s.net), paidDate: today() });
       save(K.pay, pays);
       toast('Salary marked as paid ✓', 'suc');
+      renderSalary();
+    }
+
+    function unmarkPaid(empId, month) {
+      const pays = getPay();
+      const idx = pays.findIndex(p => p.empId === empId && p.month === month);
+      if (idx < 0) return;
+      pays.splice(idx, 1);
+      save(K.pay, pays);
+      toast('Payment reverted', 'suc');
       renderSalary();
     }
 
@@ -4260,6 +4289,14 @@
       return 0.2;
     }
 
+    const PT_TYPES = {
+      '12session': '12 Session PT',
+      '1month': '1 Month PT',
+      'couple': 'Couple PT',
+      'group': 'Group PT'
+    };
+    const ptTypeLabel = t => PT_TYPES[t] || '—';
+
     function openPtModal(id = null, trainerId = null) {
       const emps = getEmp().filter(e => e.status !== 'inactive');
       const pt = id ? getPt().find(p => p.id === id) : null;
@@ -4268,6 +4305,7 @@
       document.getElementById('pt-id').value = pt?.id || '';
       document.getElementById('pt-date').value = pt?.date || today();
       document.getElementById('pt-shift').value = pt?.shift || 'morning';
+      document.getElementById('pt-type').value = pt?.type || '12session';
       document.getElementById('pt-amount').value = pt?.amount || '';
       document.getElementById('pt-notes').value = pt?.notes || '';
       document.getElementById('pt-modal-title').textContent = pt ? 'Edit PT Session' : 'Add PT Session';
@@ -4281,12 +4319,13 @@
       const trainerId = document.getElementById('pt-trainer').value;
       const date = document.getElementById('pt-date').value;
       const shift = document.getElementById('pt-shift').value;
+      const type = document.getElementById('pt-type').value;
       const amount = parseFloat(document.getElementById('pt-amount').value);
       const notes = document.getElementById('pt-notes').value.trim();
       if (!trainerId) { toast('Select a trainer', 'err'); return; }
       if (!date) { toast('Select a date', 'err'); return; }
       if (Number.isNaN(amount) || amount <= 0) { toast('Enter a valid amount', 'err'); return; }
-      const data = { id: id || uid(), trainerId, date, shift, amount, notes, month: date.slice(0, 7) };
+      const data = { id: id || uid(), trainerId, date, shift, type, amount, notes, month: date.slice(0, 7) };
       if (id) {
         const idx = pts.findIndex(p => p.id === id);
         if (idx >= 0) {
@@ -4321,6 +4360,7 @@
 
     function clearPtFilters() {
       document.getElementById('pt-f-month').value = '';
+      document.getElementById('pt-f-type').value = '';
       renderPt();
     }
 
@@ -4329,7 +4369,8 @@
       const monthInput = document.getElementById('pt-f-month');
       const fMonth = monthInput.value || curMonth();
       monthInput.value = fMonth;
-      const pts = getPt().filter(p => p.month === fMonth);
+      const fType = document.getElementById('pt-f-type').value;
+      const pts = getPt().filter(p => p.month === fMonth && (!fType || p.type === fType));
 
       const totalSessions = pts.length;
       const totalRevenue = pts.reduce((sum, p) => sum + (p.amount || 0), 0);
@@ -4349,12 +4390,17 @@
         const total = tpts.reduce((s, p) => s + (p.amount || 0), 0);
         const rate = getPtRate(e.id, fMonth);
         const commission = Math.round(total * rate / 100);
+        const planTypes = [...new Set(tpts.map(p => p.type).filter(Boolean))];
+        const plansHtml = planTypes.length
+          ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin:6px 0 8px">${planTypes.map(t => `<span class="badge" style="font-size:10px">${ptTypeLabel(t)}</span>`).join('')}</div>`
+          : '';
         return `
       <div class="pt-trainer-card" onclick="openPtTrainerModal('${e.id}')">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
           <div class="av">${e.name[0]}</div>
           <div><div style="font-weight:700">${e.name}</div><div style="font-size:11px;color:var(--txt3)">${e.role || 'Trainer'}</div></div>
         </div>
+        ${plansHtml}
         <div class="pt-row"><span>Sessions</span><strong>${tpts.length}</strong></div>
         <div class="pt-row"><span>Total PT Amount</span><strong style="color:var(--green)">₹${total.toLocaleString('en-IN')}</strong></div>
         <div class="pt-row"><span>Commission (${rate}%)</span><strong style="color:var(--blue)">₹${commission.toLocaleString('en-IN')}</strong></div>
@@ -4371,7 +4417,8 @@
       const emp = getEmp().find(e => e.id === trainerId);
       if (!emp) return;
       const fMonth = document.getElementById('pt-f-month').value || curMonth();
-      const pts = getPt().filter(p => p.trainerId === trainerId && p.month === fMonth)
+      const fType = document.getElementById('pt-f-type').value;
+      const pts = getPt().filter(p => p.trainerId === trainerId && p.month === fMonth && (!fType || p.type === fType))
         .sort((a, b) => b.date.localeCompare(a.date) || a.shift.localeCompare(b.shift));
       const total = pts.reduce((s, p) => s + (p.amount || 0), 0);
       const override = getPtRateOverride(trainerId, fMonth);
@@ -4416,18 +4463,19 @@
         <div class="card">
           <div class="tbl-wrap">
             <table>
-              <thead><tr><th>Date</th><th>Shift</th><th>Amount</th><th>Notes</th><th>Actions</th></tr></thead>
+              <thead><tr><th>Date</th><th>Shift</th><th>Plan</th><th>Amount</th><th>Notes</th><th>Actions</th></tr></thead>
               <tbody>
                 ${pts.length ? pts.map(p => `<tr>
                   <td>${fmtDate(p.date)}</td>
                   <td>${p.shift === 'morning' ? '🌅 Morning' : '🌆 Evening'}</td>
+                  <td>${ptTypeLabel(p.type)}</td>
                   <td style="font-weight:700;color:var(--green)">₹${p.amount.toLocaleString('en-IN')}</td>
                   <td>${p.notes || '—'}</td>
                   <td><div style="display:flex;gap:6px">
                     <button class="btn btn-s btn-xs" onclick="openPtModal('${p.id}')">Edit</button>
                     <button class="btn btn-r btn-xs" onclick="deletePt('${p.id}')">Del</button>
                   </div></td>
-                </tr>`).join('') : `<tr><td colspan="5"><div class="empty"><div class="empty-icon">🏋️</div><h3>No sessions this month</h3></div></td></tr>`}
+                </tr>`).join('') : `<tr><td colspan="6"><div class="empty"><div class="empty-icon">🏋️</div><h3>No sessions this month</h3></div></td></tr>`}
               </tbody>
             </table>
           </div>
