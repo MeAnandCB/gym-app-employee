@@ -5735,6 +5735,18 @@
       }
     }
 
+    function deleteEndStats(pkgId) {
+      if (getCurrentRole() !== 'admin') { toast('Not authorized', 'err'); return; }
+      const pkgs = getPtPkgs();
+      const pkg = pkgs.find(p => p.id === pkgId);
+      if (!pkg) return;
+      if (!confirm('Delete the Final Measurements for this client? This cannot be undone.')) return;
+      delete pkg.endStats;
+      save(K.ptPkg, pkgs);
+      toast('Final measurements deleted', 'suc');
+      openPtPkgDetail(pkgId);
+    }
+
     function openPtPkgReport(pkgId) {
       closeModal('ptpkg-detail-modal');
       closeModal('ptpkg-endstats-modal');
@@ -5950,6 +5962,7 @@
         ${pkg.endStats ? pkgStatsHtml(pkg.endStats, 'Final') : ''}
         <div class="fa" style="margin-bottom:14px">
           ${role === 'admin' ? `<button type="button" class="btn btn-s btn-sm" onclick="openEndStatsModal('${pkg.id}')">📏 ${pkg.endStats ? 'Edit' : 'Record'} Final Measurements</button>` : ''}
+          ${role === 'admin' && pkg.endStats ? `<button type="button" class="btn btn-r btn-sm" onclick="deleteEndStats('${pkg.id}')">🗑 Delete Final Measurements</button>` : ''}
           <button type="button" class="btn btn-p btn-sm" onclick="openPtPkgReport('${pkg.id}')">📊 View Progress Report</button>
         </div>
         <div class="card" style="padding:0">
