@@ -1581,9 +1581,9 @@
       <p>Enter your username and password to access the management system.</p>
       <form id="login-form">
         <div class="fg"><label class="fl">Username</label><input class="fc" id="login-user" placeholder="admin"
-            required></div>
+            autocomplete="off" required></div>
         <div class="fg"><label class="fl">Password</label><input type="password" class="fc" id="login-pass"
-            placeholder="Password" required></div>
+            placeholder="Password" autocomplete="off" required></div>
         <div class="login-actions">
           <button type="submit" class="btn btn-p">Login</button>
           <a href="#" id="login-reset">Reset Password</a>
@@ -2440,7 +2440,7 @@
 
   <!-- MODAL: PT Package (create/edit) -->
   <div class="overlay" id="ptpkg-modal">
-    <div class="modal">
+    <div class="modal modal-lg">
       <div class="mh">
         <h3 id="ptpkg-modal-title">New PT Package</h3><button class="mx" onclick="closeModal('ptpkg-modal')">✕</button>
       </div>
@@ -2462,6 +2462,30 @@
           <div class="fg"><label class="fl">Due Date *</label><input type="date" class="fc" id="ptpkg-due" required></div>
         </div>
         <div class="fg"><label class="fl">Notes</label><input class="fc" id="ptpkg-notes" placeholder="Optional notes"></div>
+
+        <div class="fl" style="margin:18px 0 10px;font-size:12px;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px">Body Composition (optional)</div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Height (cm)</label><input type="number" step="0.1" class="fc" id="ptpkg-height" placeholder="e.g. 165"></div>
+          <div class="fg"><label class="fl">Weight (kg)</label><input type="number" step="0.1" class="fc" id="ptpkg-weight" placeholder="e.g. 76.7"></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">BMI</label><input type="number" step="0.1" class="fc" id="ptpkg-bmi" placeholder="e.g. 32.8"></div>
+          <div class="fg"><label class="fl">Body Fat (%)</label><input type="number" step="0.1" class="fc" id="ptpkg-bodyfat" placeholder="e.g. 47.2"></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Fat Mass (kg)</label><input type="number" step="0.1" class="fc" id="ptpkg-fatmass" placeholder="e.g. 36.2"></div>
+          <div class="fg"><label class="fl">Muscle Mass (kg)</label><input type="number" step="0.1" class="fc" id="ptpkg-musclemass" placeholder="e.g. 37.8"></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Bone Mass (kg)</label><input type="number" step="0.1" class="fc" id="ptpkg-bonemass" placeholder="e.g. 2.7"></div>
+          <div class="fg"><label class="fl">Subcutaneous Fat (%)</label><input type="number" step="0.1" class="fc" id="ptpkg-subfat" placeholder="e.g. 33.5"></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Visceral Fat</label><input type="number" step="0.1" class="fc" id="ptpkg-visceralfat" placeholder="e.g. 16.0"></div>
+          <div class="fg"><label class="fl">Body Age</label><input type="number" step="1" class="fc" id="ptpkg-bodyage" placeholder="e.g. 47"></div>
+        </div>
+        <div class="fg"><label class="fl">WHR (Waist-Hip Ratio)</label><input type="number" step="0.01" class="fc" id="ptpkg-whr" placeholder="e.g. 0.91"></div>
+
         <input type="hidden" id="ptpkg-id">
         <div class="fa">
           <button type="button" class="btn btn-s" onclick="closeModal('ptpkg-modal')">Cancel</button>
@@ -2909,7 +2933,7 @@
     function isLoggedIn() {
       const token = localStorage.getItem('gp_logged_in');
       const loginTs = parseInt(localStorage.getItem('gp_login_ts') || '0', 10);
-      return token === '1' && Date.now() - loginTs < 2 * 60 * 60 * 1000;
+      return token === '1' && Date.now() - loginTs < 20 * 60 * 1000;
     }
     function updateLoginTimestamp() {
       localStorage.setItem('gp_logged_in', '1');
@@ -2938,6 +2962,10 @@
       document.getElementById('login-screen').classList.add('active');
       document.querySelector('.sidebar').classList.add('hidden');
       document.querySelector('.main').classList.add('hidden');
+      const loginForm = document.getElementById('login-form');
+      if (loginForm) loginForm.reset();
+      document.getElementById('login-user').value = '';
+      document.getElementById('login-pass').value = '';
       document.getElementById('login-user').focus();
     }
     function applyRoleUI() {
@@ -5028,6 +5056,18 @@
       document.getElementById('ptpkg-start').value = pkg?.startDate || today();
       document.getElementById('ptpkg-due').value = pkg?.dueDate || '';
       document.getElementById('ptpkg-notes').value = pkg?.notes || '';
+      const stats = pkg?.stats || {};
+      document.getElementById('ptpkg-height').value = stats.height ?? '';
+      document.getElementById('ptpkg-weight').value = stats.weight ?? '';
+      document.getElementById('ptpkg-bmi').value = stats.bmi ?? '';
+      document.getElementById('ptpkg-bodyfat').value = stats.bodyFat ?? '';
+      document.getElementById('ptpkg-fatmass').value = stats.fatMass ?? '';
+      document.getElementById('ptpkg-musclemass').value = stats.muscleMass ?? '';
+      document.getElementById('ptpkg-bonemass').value = stats.boneMass ?? '';
+      document.getElementById('ptpkg-subfat').value = stats.subFat ?? '';
+      document.getElementById('ptpkg-visceralfat').value = stats.visceralFat ?? '';
+      document.getElementById('ptpkg-bodyage').value = stats.bodyAge ?? '';
+      document.getElementById('ptpkg-whr').value = stats.whr ?? '';
       openModal('ptpkg-modal');
     }
 
@@ -5050,10 +5090,24 @@
       if (dueDate < startDate) { toast('Due date cannot be before start date', 'err'); return; }
       const totalSessions = PT_PKG_TYPES[type].sessions;
       const sessions = existing ? existing.sessions : Array.from({ length: totalSessions }, () => ({ done: false, date: '', timeIn: '', timeOut: '', plan: '', workout: '', remarks: '' }));
+      const numOrNull = fid => { const v = document.getElementById(fid).value; return v === '' ? null : parseFloat(v); };
+      const stats = {
+        height: numOrNull('ptpkg-height'),
+        weight: numOrNull('ptpkg-weight'),
+        bmi: numOrNull('ptpkg-bmi'),
+        bodyFat: numOrNull('ptpkg-bodyfat'),
+        fatMass: numOrNull('ptpkg-fatmass'),
+        muscleMass: numOrNull('ptpkg-musclemass'),
+        boneMass: numOrNull('ptpkg-bonemass'),
+        subFat: numOrNull('ptpkg-subfat'),
+        visceralFat: numOrNull('ptpkg-visceralfat'),
+        bodyAge: numOrNull('ptpkg-bodyage'),
+        whr: numOrNull('ptpkg-whr')
+      };
       const pkg = {
         id: id || uid(),
         trainerId, clientName, type, totalSessions,
-        startDate, dueDate, notes, sessions,
+        startDate, dueDate, notes, sessions, stats,
         createdBy: existing ? existing.createdBy : role
       };
       savePtPkgRecord(pkg);
@@ -5156,6 +5210,28 @@
       openModal('ptpkg-detail-modal');
     }
 
+    function pkgStatsHtml(stats) {
+      if (!stats) return '';
+      const fields = [
+        ['Height', stats.height, 'cm'], ['Weight', stats.weight, 'kg'], ['BMI', stats.bmi, ''],
+        ['Body Fat', stats.bodyFat, '%'], ['Fat Mass', stats.fatMass, 'kg'], ['Muscle Mass', stats.muscleMass, 'kg'],
+        ['Bone Mass', stats.boneMass, 'kg'], ['Subcutaneous Fat', stats.subFat, '%'], ['Visceral Fat', stats.visceralFat, ''],
+        ['Body Age', stats.bodyAge, 'yrs'], ['WHR', stats.whr, '']
+      ].filter(([, v]) => v !== null && v !== undefined && v !== '');
+      if (!fields.length) return '';
+      return `
+        <div class="card" style="padding:14px;margin-bottom:14px">
+          <div style="font-size:11px;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Body Composition</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px">
+            ${fields.map(([label, v, unit]) => `
+              <div>
+                <div style="font-size:10.5px;color:var(--txt3)">${label}</div>
+                <div style="font-size:15px;font-weight:700">${v}${unit ? `<span style="font-size:11px;color:var(--txt3)">${unit}</span>` : ''}</div>
+              </div>`).join('')}
+          </div>
+        </div>`;
+    }
+
     function renderPtPkgDetail(id) {
       const role = getCurrentRole();
       const pkg = getPtPkgs().find(p => p.id === id);
@@ -5194,6 +5270,7 @@
           <span>Start: ${fmtDate(pkg.startDate)} • Due: <span style="${status === 'overdue' ? 'color:var(--red);font-weight:700' : ''}">${fmtDate(pkg.dueDate)}</span></span>
           <div style="display:flex;gap:8px">${adminActions}</div>
         </div>
+        ${pkgStatsHtml(pkg.stats)}
         <div class="card" style="padding:0">
           <div class="tbl-wrap" style="max-height:65vh;overflow-y:auto">
             <table>
