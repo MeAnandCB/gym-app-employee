@@ -718,6 +718,174 @@
       margin-bottom: 2px;
     }
 
+    .pkg-report-summary {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      background: linear-gradient(135deg, var(--card) 0%, var(--bg2) 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .pkg-report-ring {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pkg-report-ring-inner {
+      width: 86px;
+      height: 86px;
+      border-radius: 50%;
+      background: var(--card);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pkg-report-row {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+    }
+
+    .pkg-report-row-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      font-weight: 700;
+      font-size: 13.5px;
+    }
+
+    .pkg-report-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .pkg-report-bar-lbl {
+      width: 42px;
+      font-size: 10.5px;
+      color: var(--txt3);
+      flex-shrink: 0;
+    }
+
+    .pkg-report-bar-track {
+      flex: 1;
+      height: 10px;
+      background: var(--bg2);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .pkg-report-bar-fill {
+      height: 100%;
+      border-radius: 5px;
+      background: var(--txt3);
+      transition: width .4s;
+    }
+
+    .pkg-report-bar-fill.improved { background: linear-gradient(90deg, var(--green), #34d399); }
+    .pkg-report-bar-fill.worsened { background: linear-gradient(90deg, var(--red), #f87171); }
+
+    .pkg-report-bar-val {
+      width: 64px;
+      text-align: right;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .pkg-report-ring {
+      box-shadow: 0 0 28px rgba(16, 185, 129, .25);
+    }
+
+    .pkg-chart-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+
+    .pkg-chart-title {
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 14px;
+    }
+
+    .pkg-barchart {
+      display: flex;
+      gap: 20px;
+      align-items: flex-end;
+      overflow-x: auto;
+      padding: 10px 4px 4px;
+    }
+
+    .pkg-bar-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .pkg-bar-pair {
+      display: flex;
+      align-items: flex-end;
+      gap: 5px;
+    }
+
+    .pkg-bar {
+      width: 18px;
+      border-radius: 4px 4px 0 0;
+      transition: height .4s;
+    }
+
+    .pkg-bar-label {
+      font-size: 10px;
+      color: var(--txt3);
+      text-align: center;
+      max-width: 74px;
+      line-height: 1.3;
+    }
+
+    .pkg-chart-legend {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--txt3);
+    }
+
+    .pkg-chart-legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pkg-chart-legend i {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+
     .pkg-action-col {
       position: sticky;
       right: 0;
@@ -1553,14 +1721,27 @@
       .content { padding: 12px 10px; }
     }
 
+    .print-only { display: none; }
+
     /* PRINT */
     @media print {
+
+      @page {
+        margin: 10mm 12mm;
+      }
 
       .sidebar,
       .topbar,
       .btn,
-      .toast-wrap {
+      .toast-wrap,
+      .bottom-nav,
+      .more-sheet,
+      .more-sheet-backdrop {
         display: none !important
+      }
+
+      body, html {
+        background: #fff !important;
       }
 
       .main {
@@ -1569,6 +1750,142 @@
 
       .content {
         padding: 0
+      }
+
+      #ptpkg-report-modal .mh {
+        display: none !important;
+      }
+
+      body:has(.overlay.open) .main {
+        display: none !important;
+      }
+
+      .overlay.open {
+        position: static !important;
+        background: none !important;
+        padding: 0 !important;
+        display: block !important;
+        width: 100% !important;
+        flex: 1 1 100% !important;
+      }
+
+      .overlay.open .modal {
+        max-height: none !important;
+        overflow: visible !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        box-shadow: none !important;
+        border: none !important;
+      }
+
+      #ptpkg-report-modal .modal {
+        background: #fff !important;
+        padding: 0 !important;
+      }
+
+      .overlay.open .ptpkg-detail-scroll {
+        overflow: visible !important;
+      }
+
+      .screen-only { display: none !important; }
+      .print-only { display: block !important; }
+
+      .pkg-print-report {
+        background: #fff;
+        color: #161616;
+        font-family: Arial, Helvetica, sans-serif;
+        padding: 6px;
+      }
+
+      .pkg-print-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        border-bottom: 3px solid #f59e0b;
+        padding-bottom: 12px;
+        margin-bottom: 18px;
+      }
+
+      .pkg-print-logo {
+        font-size: 22px;
+        font-weight: 800;
+        color: #161616;
+      }
+
+      .pkg-print-title { text-align: right; }
+
+      .pkg-print-info-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px 24px;
+        margin-bottom: 18px;
+        font-size: 12.5px;
+      }
+
+      .pkg-print-info-grid .lbl {
+        display: block;
+        color: #777;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: .4px;
+        margin-bottom: 2px;
+      }
+
+      .pkg-print-verdict {
+        background: #fff7ed;
+        border: 1px solid #fcd9a0;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 20px;
+      }
+
+      .pkg-print-section-title {
+        font-size: 12.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        color: #444;
+        margin: 22px 0 8px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+      }
+
+      .pkg-print-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 11px;
+        margin-bottom: 4px;
+        page-break-inside: auto;
+      }
+
+      .pkg-print-table th {
+        background: #f3f4f6;
+        text-align: left;
+        padding: 7px 9px;
+        border: 1px solid #ddd;
+        font-weight: 700;
+        color: #333;
+      }
+
+      .pkg-print-table td {
+        padding: 6px 9px;
+        border: 1px solid #ddd;
+      }
+
+      .pkg-print-table tr { page-break-inside: avoid; }
+      .pkg-print-table tr:nth-child(even) td { background: #fafafa; }
+      .pkg-print-table td.improved { color: #15803d; font-weight: 700; }
+      .pkg-print-table td.worsened { color: #b91c1c; font-weight: 700; }
+
+      .pkg-print-footer {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 46px;
+        padding-top: 14px;
+        border-top: 1px solid #ddd;
+        font-size: 11px;
+        color: #444;
       }
     }
   </style>
@@ -2442,7 +2759,7 @@
   <div class="overlay" id="ptpkg-modal">
     <div class="modal modal-lg">
       <div class="mh">
-        <h3 id="ptpkg-modal-title">New PT Package</h3><button class="mx" onclick="closeModal('ptpkg-modal')">✕</button>
+        <h3 id="ptpkg-modal-title">New PT Package</h3><button class="mx" onclick="closePtPkgModal()">✕</button>
       </div>
       <form onsubmit="savePtPkg(event)">
         <div class="fg"><label class="fl">Trainer *</label>
@@ -2488,7 +2805,7 @@
 
         <input type="hidden" id="ptpkg-id">
         <div class="fa">
-          <button type="button" class="btn btn-s" onclick="closeModal('ptpkg-modal')">Cancel</button>
+          <button type="button" class="btn btn-s" onclick="closePtPkgModal()">Cancel</button>
           <button type="submit" class="btn btn-p">Save Package</button>
         </div>
       </form>
@@ -2502,6 +2819,57 @@
         <h3 id="ptpkg-detail-modal-title">Package</h3><button class="mx" onclick="closeModal('ptpkg-detail-modal')">✕</button>
       </div>
       <div id="ptpkg-detail-modal-body" class="ptpkg-detail-scroll"></div>
+    </div>
+  </div>
+
+  <!-- MODAL: PT Package Final Measurements -->
+  <div class="overlay" id="ptpkg-endstats-modal">
+    <div class="modal modal-lg">
+      <div class="mh">
+        <h3>Final Measurements</h3><button class="mx" onclick="closeEndStatsModal()">✕</button>
+      </div>
+      <form onsubmit="saveEndStats(event)">
+        <div class="fr2">
+          <div class="fg"><label class="fl">Height (cm)</label><input type="number" step="0.1" class="fc" id="es-height" placeholder="e.g. 165"></div>
+          <div class="fg"><label class="fl">Weight (kg)</label><input type="number" step="0.1" class="fc" id="es-weight" placeholder="e.g. 72.0"></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">BMI</label><input type="number" step="0.1" class="fc" id="es-bmi" placeholder="e.g. 29.5"></div>
+          <div class="fg"><label class="fl">Body Fat (%)</label><input type="number" step="0.1" class="fc" id="es-bodyfat" placeholder="e.g. 40.0"></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Fat Mass (kg)</label><input type="number" step="0.1" class="fc" id="es-fatmass" placeholder="e.g. 30.0"></div>
+          <div class="fg"><label class="fl">Muscle Mass (kg)</label><input type="number" step="0.1" class="fc" id="es-musclemass" placeholder="e.g. 39.5"></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Bone Mass (kg)</label><input type="number" step="0.1" class="fc" id="es-bonemass" placeholder="e.g. 2.8"></div>
+          <div class="fg"><label class="fl">Subcutaneous Fat (%)</label><input type="number" step="0.1" class="fc" id="es-subfat" placeholder="e.g. 28.0"></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Visceral Fat</label><input type="number" step="0.1" class="fc" id="es-visceralfat" placeholder="e.g. 12.0"></div>
+          <div class="fg"><label class="fl">Body Age</label><input type="number" step="1" class="fc" id="es-bodyage" placeholder="e.g. 42"></div>
+        </div>
+        <div class="fg"><label class="fl">WHR (Waist-Hip Ratio)</label><input type="number" step="0.01" class="fc" id="es-whr" placeholder="e.g. 0.86"></div>
+        <input type="hidden" id="es-pkg-id">
+        <div class="fa">
+          <button type="button" class="btn btn-s" onclick="closeEndStatsModal()">Cancel</button>
+          <button type="submit" class="btn btn-p">Save Final Measurements</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: PT Package Progress Report -->
+  <div class="overlay" id="ptpkg-report-modal">
+    <div class="modal modal-full">
+      <div class="mh">
+        <h3 id="ptpkg-report-modal-title">Progress Report</h3><button class="mx" onclick="closeModal('ptpkg-report-modal')">✕</button>
+      </div>
+      <div id="ptpkg-report-modal-body" class="ptpkg-detail-scroll"></div>
+      <div class="fa" style="margin-top:14px">
+        <button class="btn btn-s" onclick="closeModal('ptpkg-report-modal')">Close</button>
+        <button class="btn btn-p" onclick="window.print()">🖨 Print / Save as PDF</button>
+      </div>
     </div>
   </div>
 
@@ -5037,11 +5405,17 @@
       renderPtPkg();
     }
 
+    let _ptpkgReturnToDetailId = null;
+
     function openPtPkgModal(id = null) {
       const role = getCurrentRole();
       const myEmpId = getCurrentEmpId();
       const pkg = id ? getPtPkgs().find(p => p.id === id) : null;
       if (role === 'employee' && pkg && pkg.trainerId !== myEmpId) { toast('Not authorized', 'err'); return; }
+      if (document.getElementById('ptpkg-detail-modal').classList.contains('open')) {
+        _ptpkgReturnToDetailId = id;
+        closeModal('ptpkg-detail-modal');
+      }
       let emps = getEmp().filter(e => e.status !== 'inactive');
       if (role === 'employee') emps = emps.filter(e => e.id === myEmpId);
       const sel = document.getElementById('ptpkg-trainer');
@@ -5069,6 +5443,14 @@
       document.getElementById('ptpkg-bodyage').value = stats.bodyAge ?? '';
       document.getElementById('ptpkg-whr').value = stats.whr ?? '';
       openModal('ptpkg-modal');
+    }
+
+    function closePtPkgModal() {
+      closeModal('ptpkg-modal');
+      if (_ptpkgReturnToDetailId) {
+        openPtPkgDetail(_ptpkgReturnToDetailId);
+        _ptpkgReturnToDetailId = null;
+      }
     }
 
     function savePtPkg(e) {
@@ -5112,7 +5494,7 @@
       };
       savePtPkgRecord(pkg);
       toast(existing ? 'Package updated' : 'Package created', 'suc');
-      closeModal('ptpkg-modal');
+      closePtPkgModal();
       renderPtPkg();
       updatePtPkgBadge();
     }
@@ -5210,7 +5592,301 @@
       openModal('ptpkg-detail-modal');
     }
 
-    function pkgStatsHtml(stats) {
+    // dir: -1 = lower is better, 1 = higher is better, 0 = neutral (goal-dependent)
+    const PKG_METRICS = [
+      { key: 'height', label: 'Height', unit: 'cm', dir: 0 },
+      { key: 'weight', label: 'Weight', unit: 'kg', dir: 0 },
+      { key: 'bmi', label: 'BMI', unit: '', dir: 0 },
+      { key: 'bodyFat', label: 'Body Fat', unit: '%', dir: -1 },
+      { key: 'fatMass', label: 'Fat Mass', unit: 'kg', dir: -1 },
+      { key: 'muscleMass', label: 'Muscle Mass', unit: 'kg', dir: 1 },
+      { key: 'boneMass', label: 'Bone Mass', unit: 'kg', dir: 1 },
+      { key: 'subFat', label: 'Subcutaneous Fat', unit: '%', dir: -1 },
+      { key: 'visceralFat', label: 'Visceral Fat', unit: '', dir: -1 },
+      { key: 'bodyAge', label: 'Body Age', unit: 'yrs', dir: -1 },
+      { key: 'whr', label: 'WHR', unit: '', dir: -1 }
+    ];
+
+    const PKG_METRIC_ICONS = {
+      height: '📏', weight: '⚖️', bmi: '📐', bodyFat: '🔥', fatMass: '🧈',
+      muscleMass: '💪', boneMass: '🦴', subFat: '〜', visceralFat: '🫀', bodyAge: '🎂', whr: '📊'
+    };
+
+    function pkgBarChartHtml(rows) {
+      const maxH = 130;
+      return `
+        <div class="pkg-chart-card">
+          <div class="pkg-chart-title">📊 Before vs After — All Metrics</div>
+          <div class="pkg-barchart">
+            ${rows.map(r => {
+              const maxV = Math.max(Math.abs(r.sv), Math.abs(r.ev), 0.001);
+              const hS = Math.max(4, Math.round(Math.abs(r.sv) / maxV * maxH));
+              const hE = Math.max(4, Math.round(Math.abs(r.ev) / maxV * maxH));
+              const color = r.verdict === 'improved' ? 'var(--green)' : r.verdict === 'worsened' ? 'var(--red)' : 'var(--accent)';
+              return `
+                <div class="pkg-bar-group">
+                  <div class="pkg-bar-pair" style="height:${maxH}px">
+                    <div class="pkg-bar" style="height:${hS}px;background:var(--txt3)" title="Start: ${r.sv}${r.unit}"></div>
+                    <div class="pkg-bar" style="height:${hE}px;background:${color}" title="Final: ${r.ev}${r.unit}"></div>
+                  </div>
+                  <div class="pkg-bar-label">${PKG_METRIC_ICONS[r.key] || ''} ${r.label}</div>
+                </div>`;
+            }).join('')}
+          </div>
+          <div class="pkg-chart-legend">
+            <span><i style="background:var(--txt3)"></i>Start</span>
+            <span><i style="background:var(--green)"></i>Improved</span>
+            <span><i style="background:var(--red)"></i>Needs Work</span>
+            <span><i style="background:var(--accent)"></i>No verdict</span>
+          </div>
+        </div>`;
+    }
+
+    function pkgLineChartSvg(rows) {
+      const w = Math.max(560, rows.length * 90), h = 200, padX = 36, padY = 26;
+      const innerW = w - padX * 2, innerH = h - padY * 2;
+      const maxAbs = Math.max(...rows.map(r => Math.abs(r.pctChange)), 10);
+      const xStep = rows.length > 1 ? innerW / (rows.length - 1) : 0;
+      const yOf = v => padY + innerH / 2 - (Math.max(-maxAbs, Math.min(maxAbs, v)) / maxAbs) * (innerH / 2);
+      const pts = rows.map((r, i) => ({ x: padX + i * xStep, y: yOf(r.pctChange), r }));
+      const zeroY = yOf(0);
+      const lineD = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+      const areaD = `M${pts[0].x.toFixed(1)},${zeroY.toFixed(1)} ` + pts.map(p => `L${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ') + ` L${pts[pts.length - 1].x.toFixed(1)},${zeroY.toFixed(1)} Z`;
+      return `
+        <div class="pkg-chart-card">
+          <div class="pkg-chart-title">📈 % Change Trend by Metric</div>
+          <div style="overflow-x:auto">
+            <svg viewBox="0 0 ${w} ${h}" style="width:100%;min-width:${w}px;height:${h}px;display:block">
+              <line x1="${padX}" y1="${zeroY.toFixed(1)}" x2="${w - padX}" y2="${zeroY.toFixed(1)}" stroke="#2a2a2a" stroke-width="1.5" stroke-dasharray="4,4"/>
+              <path d="${areaD}" fill="rgba(245,158,11,.10)"/>
+              <path d="${lineD}" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+              ${pts.map(p => `
+                <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="5.5" fill="${p.r.verdict === 'improved' ? '#10b981' : p.r.verdict === 'worsened' ? '#ef4444' : '#6b7280'}" stroke="#1a1a1a" stroke-width="2"/>
+                <text x="${p.x.toFixed(1)}" y="${(p.y - 12).toFixed(1)}" font-size="10" fill="#e5e5e5" text-anchor="middle" font-weight="700">${p.r.pctChange >= 0 ? '+' : ''}${p.r.pctChange.toFixed(0)}%</text>
+                <text x="${p.x.toFixed(1)}" y="${h - 6}" font-size="9.5" fill="#6b7280" text-anchor="middle">${p.r.label}</text>
+              `).join('')}
+            </svg>
+          </div>
+        </div>`;
+    }
+
+    function openEndStatsModal(pkgId) {
+      if (getCurrentRole() !== 'admin') { toast('Not authorized', 'err'); return; }
+      const pkg = getPtPkgs().find(p => p.id === pkgId);
+      if (!pkg) return;
+      if (document.getElementById('ptpkg-detail-modal').classList.contains('open')) {
+        _ptpkgReturnToDetailId = pkgId;
+        closeModal('ptpkg-detail-modal');
+      }
+      const stats = pkg.endStats || {};
+      document.getElementById('es-pkg-id').value = pkgId;
+      document.getElementById('es-height').value = stats.height ?? '';
+      document.getElementById('es-weight').value = stats.weight ?? '';
+      document.getElementById('es-bmi').value = stats.bmi ?? '';
+      document.getElementById('es-bodyfat').value = stats.bodyFat ?? '';
+      document.getElementById('es-fatmass').value = stats.fatMass ?? '';
+      document.getElementById('es-musclemass').value = stats.muscleMass ?? '';
+      document.getElementById('es-bonemass').value = stats.boneMass ?? '';
+      document.getElementById('es-subfat').value = stats.subFat ?? '';
+      document.getElementById('es-visceralfat').value = stats.visceralFat ?? '';
+      document.getElementById('es-bodyage').value = stats.bodyAge ?? '';
+      document.getElementById('es-whr').value = stats.whr ?? '';
+      openModal('ptpkg-endstats-modal');
+    }
+
+    function closeEndStatsModal() {
+      closeModal('ptpkg-endstats-modal');
+      if (_ptpkgReturnToDetailId) {
+        openPtPkgDetail(_ptpkgReturnToDetailId);
+        _ptpkgReturnToDetailId = null;
+      }
+    }
+
+    function saveEndStats(e) {
+      e.preventDefault();
+      if (getCurrentRole() !== 'admin') { toast('Not authorized', 'err'); return; }
+      const pkgId = document.getElementById('es-pkg-id').value;
+      const pkgs = getPtPkgs();
+      const pkg = pkgs.find(p => p.id === pkgId);
+      if (!pkg) return;
+      const numOrNull = fid => { const v = document.getElementById(fid).value; return v === '' ? null : parseFloat(v); };
+      pkg.endStats = {
+        height: numOrNull('es-height'),
+        weight: numOrNull('es-weight'),
+        bmi: numOrNull('es-bmi'),
+        bodyFat: numOrNull('es-bodyfat'),
+        fatMass: numOrNull('es-fatmass'),
+        muscleMass: numOrNull('es-musclemass'),
+        boneMass: numOrNull('es-bonemass'),
+        subFat: numOrNull('es-subfat'),
+        visceralFat: numOrNull('es-visceralfat'),
+        bodyAge: numOrNull('es-bodyage'),
+        whr: numOrNull('es-whr')
+      };
+      save(K.ptPkg, pkgs);
+      toast('Final measurements saved', 'suc');
+      closeModal('ptpkg-endstats-modal');
+      if (pkgStatus(pkg) === 'completed') {
+        _ptpkgReturnToDetailId = null;
+        openPtPkgReport(pkgId);
+      } else {
+        openPtPkgDetail(pkgId);
+        _ptpkgReturnToDetailId = null;
+      }
+    }
+
+    function openPtPkgReport(pkgId) {
+      closeModal('ptpkg-detail-modal');
+      closeModal('ptpkg-endstats-modal');
+      renderPtPkgReport(pkgId);
+      openModal('ptpkg-report-modal');
+    }
+
+    function renderPtPkgReport(pkgId) {
+      const pkg = getPtPkgs().find(p => p.id === pkgId);
+      if (!pkg) { closeModal('ptpkg-report-modal'); return; }
+      const emp = getEmp().find(e => e.id === pkg.trainerId);
+      document.getElementById('ptpkg-report-modal-title').textContent = `${pkg.clientName} — Progress Report`;
+      const body = document.getElementById('ptpkg-report-modal-body');
+      const start = pkg.stats || {};
+      const end = pkg.endStats || {};
+
+      const rows = PKG_METRICS.map(m => {
+        const sv = start[m.key], ev = end[m.key];
+        if (sv === null || sv === undefined || ev === null || ev === undefined) return null;
+        const change = ev - sv;
+        const pctChange = sv !== 0 ? (change / Math.abs(sv)) * 100 : 0;
+        let verdict = 'neutral';
+        if (m.dir !== 0 && Math.abs(change) > 0.001) verdict = (change * m.dir > 0) ? 'improved' : 'worsened';
+        return { ...m, sv, ev, change, pctChange, verdict };
+      }).filter(Boolean);
+
+      if (!rows.length) {
+        body.innerHTML = `<div class="empty"><div class="empty-icon">📊</div><h3>Not enough data yet</h3><p>Record both Start measurements (on the package form) and Final Measurements to generate a comparison report.</p></div>`;
+        return;
+      }
+
+      const improvedCount = rows.filter(r => r.verdict === 'improved').length;
+      const trackedCount = rows.filter(r => r.verdict !== 'neutral').length;
+      const scorePct = trackedCount ? Math.round((improvedCount / trackedCount) * 100) : 0;
+      const verdictText = !trackedCount ? 'No directional metrics tracked'
+        : scorePct >= 70 ? '🎉 Excellent Progress!'
+        : scorePct >= 40 ? '💪 Good Progress — Keep Going'
+        : '⚠️ Needs Attention';
+
+      body.innerHTML = `
+        <div class="screen-only">
+          <div class="pkg-report-summary">
+            <div class="pkg-report-ring" style="background:conic-gradient(var(--green) ${scorePct * 3.6}deg, var(--bg2) ${scorePct * 3.6}deg)">
+              <div class="pkg-report-ring-inner">
+                <div style="font-size:24px;font-weight:800;color:var(--accent)">${scorePct}%</div>
+                <div style="font-size:9.5px;color:var(--txt3)">Improved</div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:19px;font-weight:800">${verdictText}</div>
+              <div style="font-size:13px;color:var(--txt3);margin-top:4px">${pkg.clientName} • ${emp?.name || '—'} • ${PT_PKG_TYPES[pkg.type].label}</div>
+              <div style="font-size:12px;color:var(--txt3);margin-top:6px">${improvedCount} of ${trackedCount} tracked metrics improved &nbsp;•&nbsp; ${fmtDate(pkg.startDate)} → ${fmtDate(today())}</div>
+            </div>
+          </div>
+          ${pkgBarChartHtml(rows)}
+          ${pkgLineChartSvg(rows)}
+          <div class="pkg-chart-title" style="margin:18px 4px 10px">🔍 Detailed Breakdown</div>
+          ${rows.map(r => {
+            const maxV = Math.max(Math.abs(r.sv), Math.abs(r.ev), 0.001);
+            const startPct = Math.min(100, Math.abs(r.sv) / maxV * 100);
+            const endPct = Math.min(100, Math.abs(r.ev) / maxV * 100);
+            const badge = r.verdict === 'improved' ? `<span class="badge bg-g">▼ Improved</span>`
+              : r.verdict === 'worsened' ? `<span class="badge bg-r">▲ Needs Work</span>`
+              : `<span class="badge bg-a">No verdict</span>`;
+            const changeStr = `${r.change >= 0 ? '+' : ''}${r.change.toFixed(1)}${r.unit} (${r.pctChange >= 0 ? '+' : ''}${r.pctChange.toFixed(1)}%)`;
+            return `
+              <div class="pkg-report-row">
+                <div class="pkg-report-row-head">
+                  <span>${r.label} <span style="color:var(--txt3);font-weight:500;font-size:11.5px">${changeStr}</span></span>
+                  ${badge}
+                </div>
+                <div class="pkg-report-bar-row">
+                  <span class="pkg-report-bar-lbl">Start</span>
+                  <div class="pkg-report-bar-track"><div class="pkg-report-bar-fill" style="width:${startPct}%"></div></div>
+                  <span class="pkg-report-bar-val">${r.sv}${r.unit}</span>
+                </div>
+                <div class="pkg-report-bar-row">
+                  <span class="pkg-report-bar-lbl">Final</span>
+                  <div class="pkg-report-bar-track"><div class="pkg-report-bar-fill ${r.verdict}" style="width:${endPct}%"></div></div>
+                  <span class="pkg-report-bar-val">${r.ev}${r.unit}</span>
+                </div>
+              </div>`;
+          }).join('')}
+        </div>
+        ${pkgPrintReportHtml(pkg, emp, rows, improvedCount, trackedCount, scorePct, verdictText)}
+      `;
+    }
+
+    function pkgPrintReportHtml(pkg, emp, rows, improvedCount, trackedCount, scorePct, verdictText) {
+      const { done, total } = pkgProgress(pkg);
+      const cleanVerdict = verdictText.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '').trim();
+      return `
+      <div class="print-only pkg-print-report">
+        <div class="pkg-print-header">
+          <div class="pkg-print-logo">💪 GymPro</div>
+          <div class="pkg-print-title">
+            <div style="font-size:20px;font-weight:800">Client Progress Report</div>
+            <div style="font-size:11px;color:#666">Generated on ${fmtDate(today())}</div>
+          </div>
+        </div>
+        <div class="pkg-print-info-grid">
+          <div><span class="lbl">Client</span><strong>${escHtml(pkg.clientName)}</strong></div>
+          <div><span class="lbl">Trainer</span><strong>${escHtml(emp?.name || '—')}</strong></div>
+          <div><span class="lbl">Package</span><strong>${PT_PKG_TYPES[pkg.type].label}</strong></div>
+          <div><span class="lbl">Start Date</span><strong>${fmtDate(pkg.startDate)}</strong></div>
+          <div><span class="lbl">Due Date</span><strong>${fmtDate(pkg.dueDate)}</strong></div>
+          <div><span class="lbl">Sessions Completed</span><strong>${done} / ${total}</strong></div>
+        </div>
+        <div class="pkg-print-verdict">
+          <div style="font-size:16px;font-weight:800">${cleanVerdict}</div>
+          <div style="font-size:11.5px;color:#555;margin-top:3px">${improvedCount} of ${trackedCount} tracked metrics improved — ${scorePct}% improvement score</div>
+        </div>
+
+        <div class="pkg-print-section-title">Body Composition — Before &amp; After</div>
+        <table class="pkg-print-table">
+          <thead><tr><th>Metric</th><th>Start</th><th>Final</th><th>Change</th><th>% Change</th><th>Result</th></tr></thead>
+          <tbody>
+            ${rows.map(r => `<tr>
+              <td>${r.label}</td>
+              <td>${r.sv}${r.unit}</td>
+              <td>${r.ev}${r.unit}</td>
+              <td>${r.change >= 0 ? '+' : ''}${r.change.toFixed(1)}${r.unit}</td>
+              <td>${r.pctChange >= 0 ? '+' : ''}${r.pctChange.toFixed(1)}%</td>
+              <td class="${r.verdict}">${r.verdict === 'improved' ? 'Improved' : r.verdict === 'worsened' ? 'Needs Work' : '—'}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+
+        <div class="pkg-print-section-title">PT Session Log</div>
+        <table class="pkg-print-table">
+          <thead><tr><th>#</th><th>Date</th><th>Time In</th><th>Time Out</th><th>Workout Done</th><th>Remarks</th></tr></thead>
+          <tbody>
+            ${pkg.sessions.map((s, i) => `<tr>
+              <td>${i + 1}</td>
+              <td>${s.done ? fmtDate(s.date) : '—'}</td>
+              <td>${s.timeIn || '—'}</td>
+              <td>${s.timeOut || '—'}</td>
+              <td>${escHtml(s.workout) || '—'}</td>
+              <td>${escHtml(s.remarks) || '—'}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+        ${pkg.notes ? `<div class="pkg-print-section-title">Notes</div><div style="font-size:11.5px;color:#333">${escHtml(pkg.notes)}</div>` : ''}
+
+        <div class="pkg-print-footer">
+          <div>Trainer Signature: ____________________</div>
+          <div>Client Signature: ____________________</div>
+        </div>
+      </div>`;
+    }
+
+    function pkgStatsHtml(stats, label = '') {
       if (!stats) return '';
       const fields = [
         ['Height', stats.height, 'cm'], ['Weight', stats.weight, 'kg'], ['BMI', stats.bmi, ''],
@@ -5221,7 +5897,7 @@
       if (!fields.length) return '';
       return `
         <div class="card" style="padding:14px;margin-bottom:14px">
-          <div style="font-size:11px;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Body Composition</div>
+          <div style="font-size:11px;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Body Composition${label ? ` — ${label}` : ''}</div>
           <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px">
             ${fields.map(([label, v, unit]) => `
               <div>
@@ -5270,7 +5946,12 @@
           <span>Start: ${fmtDate(pkg.startDate)} • Due: <span style="${status === 'overdue' ? 'color:var(--red);font-weight:700' : ''}">${fmtDate(pkg.dueDate)}</span></span>
           <div style="display:flex;gap:8px">${adminActions}</div>
         </div>
-        ${pkgStatsHtml(pkg.stats)}
+        ${pkgStatsHtml(pkg.stats, pkg.endStats ? 'Start' : '')}
+        ${pkg.endStats ? pkgStatsHtml(pkg.endStats, 'Final') : ''}
+        <div class="fa" style="margin-bottom:14px">
+          ${role === 'admin' ? `<button type="button" class="btn btn-s btn-sm" onclick="openEndStatsModal('${pkg.id}')">📏 ${pkg.endStats ? 'Edit' : 'Record'} Final Measurements</button>` : ''}
+          <button type="button" class="btn btn-p btn-sm" onclick="openPtPkgReport('${pkg.id}')">📊 View Progress Report</button>
+        </div>
         <div class="card" style="padding:0">
           <div class="tbl-wrap" style="max-height:65vh;overflow-y:auto">
             <table>
@@ -5306,11 +5987,21 @@
       const pkg = pkgs.find(p => p.id === pkgId);
       if (!pkg) return false;
       if (role === 'employee' && pkg.trainerId !== getCurrentEmpId()) { toast('Not authorized', 'err'); return false; }
+      const wasComplete = pkgStatus(pkg) === 'completed';
       pkg.sessions[idx].done = checked;
       pkg.sessions[idx].date = checked ? (pkg.sessions[idx].date || today()) : '';
       save(K.ptPkg, pkgs);
+      const justCompleted = !wasComplete && pkgStatus(pkg) === 'completed' && !pkg.endStats;
       renderPtPkgDetail(pkgId);
       renderPtPkg();
+      if (justCompleted) {
+        if (role === 'admin') {
+          toast('🎉 All sessions completed! Add final measurements to generate the progress report.', 'suc');
+          setTimeout(() => openEndStatsModal(pkgId), 600);
+        } else {
+          toast('🎉 All sessions completed! Ask admin to record final measurements.', 'suc');
+        }
+      }
       return true;
     }
 
