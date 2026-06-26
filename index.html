@@ -581,6 +581,160 @@
       z-index: 210;
     }
 
+    body.role-employee [data-role="admin"] {
+      display: none !important;
+    }
+
+    body.role-employee .sb-logout-emp {
+      display: block !important;
+    }
+
+    body:not(.role-employee) [data-role="employee"] {
+      display: none !important;
+    }
+
+    .ptpkg-badge {
+      background: var(--red);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      min-width: 16px;
+      height: 16px;
+      border-radius: 8px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+      margin-left: auto;
+    }
+
+    .pkg-card {
+      position: relative;
+      background: linear-gradient(160deg, var(--card) 0%, var(--bg2) 130%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      padding-top: 21px;
+      cursor: pointer;
+      overflow: hidden;
+      transition: border-color .15s, transform .15s, box-shadow .15s;
+    }
+
+    .pkg-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: var(--blue);
+    }
+
+    .pkg-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 24px rgba(0,0,0,.28);
+    }
+
+    .pkg-card.status-completed::before { background: var(--green); }
+    .pkg-card.status-overdue::before { background: var(--red); }
+
+    .pkg-card.overdue {
+      border-color: var(--red);
+    }
+
+    .pkg-card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .pkg-card-id {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pkg-type-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--accent);
+      background: rgba(245, 158, 11, .12);
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-top: 3px;
+    }
+
+    .pkg-progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .pkg-progress-pct {
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--accent);
+      min-width: 44px;
+      text-align: right;
+    }
+
+    .pkg-progress-bar {
+      flex: 1;
+      height: 8px;
+      background: var(--bg2);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .pkg-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 4px;
+      transition: width .25s;
+    }
+
+    .pkg-card.status-completed .pkg-progress-fill { background: linear-gradient(90deg, var(--green), #34d399); }
+    .pkg-card.status-overdue .pkg-progress-fill { background: linear-gradient(90deg, var(--red), #f87171); }
+
+    .pkg-card-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 12px;
+      border-top: 1px dashed var(--border);
+      font-size: 12px;
+    }
+
+    .pkg-card-foot .lbl {
+      color: var(--txt3);
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      margin-bottom: 2px;
+    }
+
+    .pkg-action-col {
+      position: sticky;
+      right: 0;
+      z-index: 2;
+      box-shadow: -6px 0 8px -4px rgba(0,0,0,.5);
+      text-align: center;
+    }
+
+    th.pkg-action-col {
+      background: var(--bg2);
+    }
+
+    td.pkg-action-col {
+      background: var(--card);
+    }
+
+
     .modal {
       background: var(--card);
       border: 1px solid var(--border);
@@ -594,6 +748,20 @@
 
     .modal-lg {
       max-width: 700px
+    }
+
+    .modal-full {
+      width: 96vw;
+      max-width: 1200px;
+      height: 92vh;
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-full .ptpkg-detail-scroll {
+      flex: 1;
+      overflow-y: auto;
     }
 
     .mh {
@@ -1431,22 +1599,26 @@
       <span>Management System</span>
     </div>
     <div>
-      <div class="nav-section">Main</div>
-      <div class="nav-item active" onclick="nav('dashboard')"><span class="nav-icon">📊</span>Dashboard</div>
-      <div class="nav-item" onclick="nav('profile')"><span class="nav-icon">👤</span>Profile</div>
-      <div class="nav-item" onclick="nav('employees')"><span class="nav-icon">👥</span>Employees</div>
-      <div class="nav-section">Attendance</div>
-      <div class="nav-item" onclick="nav('punch')"><span class="nav-icon">👊</span>Attendance</div>
-      <div class="nav-item" onclick="nav('monthly')"><span class="nav-icon">📅</span>Monthly View</div>
-      <div class="nav-item" onclick="nav('leave')"><span class="nav-icon">📝</span>Leave</div>
+      <div class="nav-section" data-role="admin">Main</div>
+      <div class="nav-item active" data-role="admin" onclick="nav('dashboard')"><span class="nav-icon">📊</span>Dashboard</div>
+      <div class="nav-item" data-role="admin" onclick="nav('profile')"><span class="nav-icon">👤</span>Profile</div>
+      <div class="nav-item" data-role="admin" onclick="nav('employees')"><span class="nav-icon">👥</span>Employees</div>
+      <div class="nav-item" data-role="admin" onclick="nav('accounts')"><span class="nav-icon">🔑</span>User Accounts</div>
+      <div class="nav-section" data-role="admin">Attendance</div>
+      <div class="nav-item" data-role="admin" onclick="nav('punch')"><span class="nav-icon">👊</span>Attendance</div>
+      <div class="nav-item" data-role="admin" onclick="nav('monthly')"><span class="nav-icon">📅</span>Monthly View</div>
+      <div class="nav-item" data-role="admin" onclick="nav('leave')"><span class="nav-icon">📝</span>Leave</div>
       <div class="nav-section">Finance</div>
-      <div class="nav-item" onclick="nav('salary')"><span class="nav-icon">💰</span>Salary</div>
+      <div class="nav-item" data-role="admin" onclick="nav('salary')"><span class="nav-icon">💰</span>Salary</div>
       <div class="nav-item" onclick="nav('pt')"><span class="nav-icon">🏋️</span>PT Sessions</div>
-      <div class="nav-item" onclick="nav('advances')"><span class="nav-icon">💳</span>Advances</div>
+      <div class="nav-item" data-role="admin" onclick="nav('ptpkg')"><span class="nav-icon">✅</span>PT Packages<span class="ptpkg-badge"></span></div>
+      <div class="nav-item" data-role="employee" onclick="nav('ptpkg')"><span class="nav-icon">✅</span>PT Details<span class="ptpkg-badge"></span></div>
+      <div class="nav-item" data-role="admin" onclick="nav('advances')"><span class="nav-icon">💳</span>Advances</div>
     </div>
     <div class="sidebar-bottom">
       <div id="sb-time"></div>
       <div id="sb-date"></div>
+      <button class="btn btn-r btn-sm sb-logout-emp" style="display:none;width:100%;margin-top:8px" onclick="logout()">🚪 Logout</button>
     </div>
   </nav>
 
@@ -1580,6 +1752,32 @@
                 <tbody id="emp-former-tbody"></tbody>
               </table>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- USER ACCOUNTS -->
+      <div id="page-accounts" class="page">
+        <div class="ph">
+          <div>
+            <h2>User Accounts</h2>
+            <div class="ph-sub">Give employees a login to view and add their own PT sessions</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Employee</th>
+                  <th>Role</th>
+                  <th>Username</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="accounts-tbody"></tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -1783,6 +1981,30 @@
         <div id="pt-trainer-grid" class="grid3" style="gap:12px"></div>
       </div>
 
+      <!-- PT PACKAGES / PT DETAILS -->
+      <div id="page-ptpkg" class="page">
+        <div class="ph">
+          <div>
+            <h2 id="ptpkg-page-h2">PT Packages</h2>
+            <div class="ph-sub" id="ptpkg-page-sub">Track 24 / 12 session packages and tick off sessions as they're completed</div>
+          </div>
+          <button class="btn btn-p" onclick="openPtPkgModal()">+ New Package</button>
+        </div>
+        <div class="filters">
+          <select id="ptpkg-f-trainer" class="fc" style="width:180px" onchange="renderPtPkg()" data-role="admin">
+            <option value="">All Trainers</option>
+          </select>
+          <select id="ptpkg-f-status" class="fc" style="width:160px" onchange="renderPtPkg()">
+            <option value="">All Statuses</option>
+            <option value="active">Active</option>
+            <option value="completed">Completed</option>
+            <option value="overdue">Overdue</option>
+          </select>
+          <button class="btn btn-s btn-sm" onclick="clearPtPkgFilters()">Clear</button>
+        </div>
+        <div id="ptpkg-grid" class="grid3" style="gap:12px"></div>
+      </div>
+
       <!-- ADVANCES -->
       <div id="page-advances" class="page">
         <div class="ph">
@@ -1825,21 +2047,25 @@
 
   <!-- BOTTOM NAV (mobile) -->
   <nav class="bottom-nav" id="bottom-nav">
-    <div class="bn-item active" data-page="dashboard" onclick="nav('dashboard')">
+    <div class="bn-item active" data-role="admin" data-page="dashboard" onclick="nav('dashboard')">
       <span class="bn-icon">🏠</span>
       <span class="bn-label">Home</span>
     </div>
-    <div class="bn-item" data-page="employees" onclick="nav('employees')">
+    <div class="bn-item" data-role="admin" data-page="employees" onclick="nav('employees')">
       <span class="bn-icon">👥</span>
       <span class="bn-label">Staff</span>
     </div>
-    <div class="bn-item bn-center" data-page="punch" onclick="nav('punch')">
+    <div class="bn-item bn-center" data-role="admin" data-page="punch" onclick="nav('punch')">
       <div class="bn-icon-wrap">👊</div>
       <span class="bn-label" style="margin-top:4px">Attend</span>
     </div>
-    <div class="bn-item" data-page="salary" onclick="nav('salary')">
+    <div class="bn-item" data-role="admin" data-page="salary" onclick="nav('salary')">
       <span class="bn-icon">💰</span>
       <span class="bn-label">Salary</span>
+    </div>
+    <div class="bn-item" data-page="pt" onclick="nav('pt')">
+      <span class="bn-icon">🏋️</span>
+      <span class="bn-label">PT</span>
     </div>
     <div class="bn-item" id="bn-more" onclick="openMoreSheet()">
       <span class="bn-icon">⋯</span>
@@ -1852,11 +2078,11 @@
   <div id="more-sheet" class="more-sheet">
     <div class="more-sheet-handle"></div>
     <div class="ms-grid">
-      <div class="ms-item" data-page="monthly" onclick="nav('monthly');closeMoreSheet()">
+      <div class="ms-item" data-role="admin" data-page="monthly" onclick="nav('monthly');closeMoreSheet()">
         <span class="ms-icon">📅</span>
         <span class="ms-label">Monthly View</span>
       </div>
-      <div class="ms-item" data-page="leave" onclick="nav('leave');closeMoreSheet()">
+      <div class="ms-item" data-role="admin" data-page="leave" onclick="nav('leave');closeMoreSheet()">
         <span class="ms-icon">📝</span>
         <span class="ms-label">Leave</span>
       </div>
@@ -1864,11 +2090,23 @@
         <span class="ms-icon">🏋️</span>
         <span class="ms-label">PT Sessions</span>
       </div>
-      <div class="ms-item" data-page="advances" onclick="nav('advances');closeMoreSheet()">
+      <div class="ms-item" data-role="admin" data-page="ptpkg" onclick="nav('ptpkg');closeMoreSheet()">
+        <span class="ms-icon">✅</span>
+        <span class="ms-label">PT Packages</span>
+      </div>
+      <div class="ms-item" data-role="employee" data-page="ptpkg" onclick="nav('ptpkg');closeMoreSheet()">
+        <span class="ms-icon">✅</span>
+        <span class="ms-label">PT Details</span>
+      </div>
+      <div class="ms-item" data-role="admin" data-page="advances" onclick="nav('advances');closeMoreSheet()">
         <span class="ms-icon">💳</span>
         <span class="ms-label">Advances</span>
       </div>
-      <div class="ms-item" data-page="profile" onclick="nav('profile');closeMoreSheet()">
+      <div class="ms-item" data-role="admin" data-page="accounts" onclick="nav('accounts');closeMoreSheet()">
+        <span class="ms-icon">🔑</span>
+        <span class="ms-label">User Accounts</span>
+      </div>
+      <div class="ms-item" data-role="admin" data-page="profile" onclick="nav('profile');closeMoreSheet()">
         <span class="ms-icon">👤</span>
         <span class="ms-label">Profile</span>
       </div>
@@ -2129,6 +2367,25 @@
     </div>
   </div>
 
+  <!-- MODAL: Employee Login Account -->
+  <div class="overlay" id="account-modal">
+    <div class="modal">
+      <div class="mh">
+        <h3 id="account-modal-title">Create Login</h3><button class="mx" onclick="closeModal('account-modal')">✕</button>
+      </div>
+      <form onsubmit="saveAccount(event)">
+        <div class="fg"><label class="fl">Employee</label><input class="fc" id="acct-emp-name" readonly></div>
+        <div class="fg"><label class="fl">Username *</label><input class="fc" id="acct-username" required placeholder="e.g. ramesh"></div>
+        <div class="fg"><label class="fl">Password *</label><input type="password" class="fc" id="acct-password" required placeholder="Set a password"></div>
+        <input type="hidden" id="acct-emp-id">
+        <div class="fa">
+          <button type="button" class="btn btn-s" onclick="closeModal('account-modal')">Cancel</button>
+          <button type="submit" class="btn btn-p">Save Login</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- MODAL: PT Session -->
   <div class="overlay" id="pt-modal">
     <div class="modal">
@@ -2178,6 +2435,49 @@
         <h3 id="pt-trainer-modal-title">Trainer</h3><button class="mx" onclick="closeModal('pt-trainer-modal')">✕</button>
       </div>
       <div id="pt-trainer-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- MODAL: PT Package (create/edit) -->
+  <div class="overlay" id="ptpkg-modal">
+    <div class="modal">
+      <div class="mh">
+        <h3 id="ptpkg-modal-title">New PT Package</h3><button class="mx" onclick="closeModal('ptpkg-modal')">✕</button>
+      </div>
+      <form onsubmit="savePtPkg(event)">
+        <div class="fg"><label class="fl">Trainer *</label>
+          <select class="fc" id="ptpkg-trainer" required>
+            <option value="">Select Trainer</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">Client Name *</label><input class="fc" id="ptpkg-client" required placeholder="Client name"></div>
+        <div class="fg"><label class="fl">Package Type *</label>
+          <select class="fc" id="ptpkg-type" required>
+            <option value="24session">24 Session Package</option>
+            <option value="12session">12 Session Package</option>
+          </select>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Start Date *</label><input type="date" class="fc" id="ptpkg-start" required></div>
+          <div class="fg"><label class="fl">Due Date *</label><input type="date" class="fc" id="ptpkg-due" required></div>
+        </div>
+        <div class="fg"><label class="fl">Notes</label><input class="fc" id="ptpkg-notes" placeholder="Optional notes"></div>
+        <input type="hidden" id="ptpkg-id">
+        <div class="fa">
+          <button type="button" class="btn btn-s" onclick="closeModal('ptpkg-modal')">Cancel</button>
+          <button type="submit" class="btn btn-p">Save Package</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: PT Package Detail / Checklist -->
+  <div class="overlay" id="ptpkg-detail-modal">
+    <div class="modal modal-full">
+      <div class="mh">
+        <h3 id="ptpkg-detail-modal-title">Package</h3><button class="mx" onclick="closeModal('ptpkg-detail-modal')">✕</button>
+      </div>
+      <div id="ptpkg-detail-modal-body" class="ptpkg-detail-scroll"></div>
     </div>
   </div>
 
@@ -2389,7 +2689,7 @@
     const _db = firebase.database();
 
     // ─── STORAGE ────────────────────────────────────────────────────────
-    const K = { emp: 'gp_emp', att: 'gp_att', adv: 'gp_adv', pay: 'gp_pay', pt: 'gp_pt', ptRate: 'gp_pt_rate', leave: 'gp_leave', leaveApp: 'gp_leave_app', leaveAdj: 'gp_leave_adj', auth: 'gp_auth', init: 'gp_init' };
+    const K = { emp: 'gp_emp', att: 'gp_att', adv: 'gp_adv', pay: 'gp_pay', pt: 'gp_pt', ptRate: 'gp_pt_rate', ptPkg: 'gp_pt_pkg', leave: 'gp_leave', leaveApp: 'gp_leave_app', leaveAdj: 'gp_leave_adj', auth: 'gp_auth', userAcct: 'gp_user_acct', init: 'gp_init' };
     const _cache = {};
 
     const load = k => { const v = _cache[k]; return Array.isArray(v) ? v : []; };
@@ -2441,9 +2741,10 @@
           } catch(e) {}
         });
         if (changed && typeof curPage !== 'undefined') {
-          const renders = { dashboard: renderDash, profile: renderProfile, employees: renderEmp, punch: renderPunch, monthly: renderMonthly, leave: renderLeavePage, salary: renderSalary, pt: renderPt, advances: renderAdvances };
+          const renders = { dashboard: renderDash, profile: renderProfile, employees: renderEmp, punch: renderPunch, monthly: renderMonthly, leave: renderLeavePage, salary: renderSalary, pt: renderPt, advances: renderAdvances, accounts: renderAccounts, ptpkg: renderPtPkg };
           try { if (renders[curPage]) renders[curPage](); } catch(e) {}
         }
+        try { updatePtPkgBadge(); } catch(e) {}
       });
     }
 
@@ -2498,6 +2799,63 @@
       }
       return stored;
     };
+    const getUserAccts = () => load(K.userAcct);
+    const getUserAcctByEmp = empId => getUserAccts().find(a => a.empId === empId) || null;
+    function saveUserAcct(empId, username, password) {
+      const accts = getUserAccts();
+      const idx = accts.findIndex(a => a.empId === empId);
+      if (idx >= 0) accts[idx] = { ...accts[idx], username, password, active: true };
+      else accts.push({ id: uid(), empId, username, password, active: true });
+      save(K.userAcct, accts);
+    }
+    function setAcctActive(empId, active) {
+      const accts = getUserAccts();
+      const idx = accts.findIndex(a => a.empId === empId);
+      if (idx < 0) return;
+      accts[idx] = { ...accts[idx], active };
+      save(K.userAcct, accts);
+    }
+    function removeUserAcct(empId) {
+      save(K.userAcct, getUserAccts().filter(a => a.empId !== empId));
+    }
+
+    // ─── PT PACKAGE TRACKER ─────────────────────────────────────────────
+    const PT_PKG_TYPES = {
+      '24session': { label: '24 Session Package', sessions: 24 },
+      '12session': { label: '12 Session Package', sessions: 12 }
+    };
+    const getPtPkgs = () => load(K.ptPkg);
+    function savePtPkgRecord(pkg) {
+      const pkgs = getPtPkgs();
+      const idx = pkgs.findIndex(p => p.id === pkg.id);
+      if (idx >= 0) pkgs[idx] = pkg; else pkgs.push(pkg);
+      save(K.ptPkg, pkgs);
+    }
+    function deletePtPkgRecord(id) {
+      save(K.ptPkg, getPtPkgs().filter(p => p.id !== id));
+    }
+    function pkgProgress(pkg) {
+      const done = pkg.sessions.filter(s => s.done).length;
+      return { done, total: pkg.totalSessions };
+    }
+    function pkgStatus(pkg) {
+      const { done, total } = pkgProgress(pkg);
+      if (done >= total) return 'completed';
+      if (pkg.dueDate && today() > pkg.dueDate) return 'overdue';
+      return 'active';
+    }
+    function getOverduePkgCount() {
+      const role = getCurrentRole();
+      const myEmpId = getCurrentEmpId();
+      return getPtPkgs().filter(p => (role !== 'employee' || p.trainerId === myEmpId) && pkgStatus(p) === 'overdue').length;
+    }
+    function updatePtPkgBadge() {
+      const count = getOverduePkgCount();
+      document.querySelectorAll('.ptpkg-badge').forEach(el => {
+        el.textContent = count;
+        el.style.display = count > 0 ? 'flex' : 'none';
+      });
+    }
     const getLeaveTemplates = () => load(K.leave);
     const getLeaveApps = () => load(K.leaveApp);
     const getLeaveAdjs = () => load(K.leaveAdj);
@@ -2557,10 +2915,21 @@
       localStorage.setItem('gp_logged_in', '1');
       localStorage.setItem('gp_login_ts', Date.now().toString());
     }
+    const getCurrentRole = () => localStorage.getItem('gp_role') || 'admin';
+    const getCurrentEmpId = () => localStorage.getItem('gp_emp_id') || '';
+    function setSession(role, empId, username) {
+      localStorage.setItem('gp_logged_in', '1');
+      localStorage.setItem('gp_login_ts', Date.now().toString());
+      localStorage.setItem('gp_role', role);
+      localStorage.setItem('gp_emp_id', empId || '');
+      localStorage.setItem('gp_user', username || '');
+    }
     function logout() {
       localStorage.removeItem('gp_logged_in');
       localStorage.removeItem('gp_login_ts');
       localStorage.removeItem('gp_user');
+      localStorage.removeItem('gp_role');
+      localStorage.removeItem('gp_emp_id');
       showLogin();
       toast('Logged out due to inactivity or user action', 'inf');
     }
@@ -2571,12 +2940,18 @@
       document.querySelector('.main').classList.add('hidden');
       document.getElementById('login-user').focus();
     }
+    function applyRoleUI() {
+      const isEmployee = getCurrentRole() === 'employee';
+      document.body.classList.toggle('role-employee', isEmployee);
+    }
     function showApp() {
       document.body.classList.remove('login-active');
       document.getElementById('login-screen').classList.remove('active');
       document.querySelector('.sidebar').classList.remove('hidden');
       document.querySelector('.main').classList.remove('hidden');
-      nav(curPage);
+      applyRoleUI();
+      nav(getCurrentRole() === 'employee' ? 'pt' : curPage);
+      updatePtPkgBadge();
     }
     function handleLogin(e) {
       e.preventDefault();
@@ -2584,11 +2959,18 @@
       const username = document.getElementById('login-user').value.trim();
       const password = document.getElementById('login-pass').value;
       if (username === auth.username && password === auth.password) {
-        updateLoginTimestamp();
-        localStorage.setItem('gp_user', username);
+        setSession('admin', '', username);
         toast('Login successful', 'suc');
         showApp();
-        renderDash();
+        return;
+      }
+      const acct = getUserAccts().find(a => a.username === username && a.password === password && a.active !== false);
+      if (acct) {
+        const emp = getEmp().find(e => e.id === acct.empId);
+        if (!emp || emp.status === 'inactive') { toast('This login is disabled', 'err'); return; }
+        setSession('employee', acct.empId, username);
+        toast('Login successful', 'suc');
+        showApp();
         return;
       }
       toast('Invalid username or password', 'err');
@@ -2630,6 +3012,8 @@
     const today = () => new Date().toISOString().slice(0, 10);
     const curMonth = () => new Date().toISOString().slice(0, 7);
     const fmtDate = s => s ? new Date(s + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+    const escAttr = s => String(s || '').replace(/"/g, '&quot;');
+    const escHtml = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const fmtMon = m => new Date(m + '-01').toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
     const defaultMorning = { from: '05:30', to: '09:00' };
     const defaultEvening = { from: '16:00', to: '22:30' };
@@ -3180,7 +3564,7 @@
       document.getElementById('more-sheet-backdrop').classList.remove('open');
     }
 
-    const _morePages = new Set(['monthly','leave','pt','advances','profile']);
+    const _morePages = new Set(['monthly','leave','advances','profile','accounts','ptpkg']);
     function _updateBottomNav(page) {
       document.querySelectorAll('#bottom-nav .bn-item[data-page]').forEach(el => {
         el.classList.toggle('active', el.dataset.page === page);
@@ -3193,11 +3577,13 @@
     }
 
     // ─── NAVIGATION ─────────────────────────────────────────────────────
-    const PAGE_TITLES = { dashboard: 'Dashboard', profile: 'Profile', employees: 'Employees', punch: 'Attendance', monthly: 'Monthly Attendance', leave: 'Leave Management', salary: 'Salary Management', pt: 'PT Sessions', advances: 'Salary Advances' };
+    const PAGE_TITLES = { dashboard: 'Dashboard', profile: 'Profile', employees: 'Employees', punch: 'Attendance', monthly: 'Monthly Attendance', leave: 'Leave Management', salary: 'Salary Management', pt: 'PT Sessions', advances: 'Salary Advances', accounts: 'User Accounts', ptpkg: 'PT Packages' };
     let curPage = 'dashboard';
 
     function nav(page) {
       if (!isLoggedIn()) { showLogin(); return; }
+      const _empAllowed = new Set(['pt', 'ptpkg']);
+      if (getCurrentRole() === 'employee' && !_empAllowed.has(page)) page = 'pt';
       closeSidebar();
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -3205,10 +3591,10 @@
       document.querySelectorAll('.nav-item').forEach(n => {
         if (n.getAttribute('onclick') === `nav('${page}')`) n.classList.add('active');
       });
-      document.getElementById('page-title').textContent = PAGE_TITLES[page];
+      document.getElementById('page-title').textContent = page === 'ptpkg' && getCurrentRole() === 'employee' ? 'PT Details' : PAGE_TITLES[page];
       curPage = page;
       _updateBottomNav(page);
-      const renders = { dashboard: renderDash, profile: renderProfile, employees: renderEmp, punch: renderPunch, monthly: renderMonthly, leave: renderLeavePage, salary: renderSalary, pt: renderPt, advances: renderAdvances };
+      const renders = { dashboard: renderDash, profile: renderProfile, employees: renderEmp, punch: renderPunch, monthly: renderMonthly, leave: renderLeavePage, salary: renderSalary, pt: renderPt, advances: renderAdvances, accounts: renderAccounts, ptpkg: renderPtPkg };
       if (renders[page]) renders[page]();
     }
 
@@ -3382,6 +3768,8 @@
       save(K.pay,      getPay().filter(p => p.empId !== id));
       save(K.pt,       getPt().filter(p => p.trainerId !== id));
       save(K.ptRate,   getPtRates().filter(r => r.trainerId !== id));
+      save(K.ptPkg,    getPtPkgs().filter(p => p.trainerId !== id));
+      save(K.userAcct, getUserAccts().filter(a => a.empId !== id));
       save(K.leaveApp, getLeaveApps().filter(a => a.empId !== id));
       save(K.leaveAdj, getLeaveAdjs().filter(a => a.empId !== id));
       save(K.leave,    getLeaveTemplates().map(t => ({
@@ -3397,6 +3785,8 @@
       if (curPage === 'monthly')   renderMonthly();
       if (curPage === 'leave')     renderLeavePage();
       if (curPage === 'pt')        renderPt();
+      if (curPage === 'ptpkg')     renderPtPkg();
+      updatePtPkgBadge();
     }
 
     let _empTab = 'active';
@@ -3419,6 +3809,7 @@
       const idx = emps.findIndex(e => e.id === id);
       emps[idx] = { ...emps[idx], status: 'inactive', terminatedAt: today() };
       save(K.emp, emps);
+      setAcctActive(id, false);
       toast(`${emp.name} moved to Former Staff`, 'inf');
       renderEmp();
       if (curPage === 'dashboard') renderDash();
@@ -3435,6 +3826,76 @@
       toast(`${emp.name} restored to active staff`, 'suc');
       renderEmp();
       if (curPage === 'dashboard') renderDash();
+    }
+
+    function renderAccounts() {
+      const emps = getEmp().filter(e => e.status !== 'inactive');
+      const tb = document.getElementById('accounts-tbody');
+      if (!emps.length) {
+        tb.innerHTML = `<tr><td colspan="5"><div class="empty"><div class="empty-icon">🔑</div><h3>No active employees</h3></div></td></tr>`;
+        return;
+      }
+      tb.innerHTML = emps.map(e => {
+        const acct = getUserAcctByEmp(e.id);
+        const statusBadge = !acct ? `<span class="badge bg-a">No Login</span>`
+          : acct.active !== false ? `<span class="badge bg-g">Active</span>` : `<span class="badge bg-r">Disabled</span>`;
+        const actions = !acct
+          ? `<button class="btn btn-p btn-xs" onclick="openAccountModal('${e.id}')">Create Login</button>`
+          : `
+            <button class="btn btn-s btn-xs" onclick="openAccountModal('${e.id}')">Edit</button>
+            ${acct.active !== false
+              ? `<button class="btn btn-s btn-xs" onclick="toggleAccountActive('${e.id}',false)">Disable</button>`
+              : `<button class="btn btn-s btn-xs" onclick="toggleAccountActive('${e.id}',true)">Enable</button>`}
+            <button class="btn btn-r btn-xs" onclick="removeAccount('${e.id}')">Remove</button>`;
+        return `<tr>
+          <td>${e.name}</td>
+          <td>${e.role || 'Staff'}</td>
+          <td>${acct ? acct.username : '—'}</td>
+          <td>${statusBadge}</td>
+          <td><div style="display:flex;gap:6px;flex-wrap:wrap">${actions}</div></td>
+        </tr>`;
+      }).join('');
+    }
+
+    function openAccountModal(empId) {
+      const emp = getEmp().find(e => e.id === empId);
+      if (!emp) return;
+      const acct = getUserAcctByEmp(empId);
+      document.getElementById('account-modal-title').textContent = acct ? 'Edit Login' : 'Create Login';
+      document.getElementById('acct-emp-id').value = empId;
+      document.getElementById('acct-emp-name').value = emp.name;
+      document.getElementById('acct-username').value = acct?.username || '';
+      document.getElementById('acct-password').value = '';
+      openModal('account-modal');
+    }
+
+    function saveAccount(e) {
+      e.preventDefault();
+      const empId = document.getElementById('acct-emp-id').value;
+      const username = document.getElementById('acct-username').value.trim();
+      const password = document.getElementById('acct-password').value;
+      if (!username || !password) { toast('Enter username and password', 'err'); return; }
+      const auth = getAuth();
+      if (username === auth.username) { toast('Username already used by admin login', 'err'); return; }
+      const clash = getUserAccts().find(a => a.username === username && a.empId !== empId);
+      if (clash) { toast('Username already taken', 'err'); return; }
+      saveUserAcct(empId, username, password);
+      toast('Login saved', 'suc');
+      closeModal('account-modal');
+      renderAccounts();
+    }
+
+    function toggleAccountActive(empId, active) {
+      setAcctActive(empId, active);
+      toast(active ? 'Login enabled' : 'Login disabled', 'suc');
+      renderAccounts();
+    }
+
+    function removeAccount(empId) {
+      if (!confirm('Remove this login? The employee will no longer be able to sign in.')) return;
+      removeUserAcct(empId);
+      toast('Login removed', 'suc');
+      renderAccounts();
     }
 
     function renderEmp() {
@@ -4298,10 +4759,16 @@
     const ptTypeLabel = t => PT_TYPES[t] || '—';
 
     function openPtModal(id = null, trainerId = null) {
-      const emps = getEmp().filter(e => e.status !== 'inactive');
+      const role = getCurrentRole();
+      const myEmpId = getCurrentEmpId();
       const pt = id ? getPt().find(p => p.id === id) : null;
+      if (role === 'employee' && pt && pt.trainerId !== myEmpId) { toast('Not authorized', 'err'); return; }
+      let emps = getEmp().filter(e => e.status !== 'inactive');
+      if (role === 'employee') emps = emps.filter(e => e.id === myEmpId);
       const sel = document.getElementById('pt-trainer');
-      sel.innerHTML = '<option value="">Select Trainer</option>' + emps.map(e => `<option value="${e.id}" ${(pt?.trainerId || trainerId) === e.id ? 'selected' : ''}>${e.name}</option>`).join('');
+      const lockedTrainerId = role === 'employee' ? myEmpId : (pt?.trainerId || trainerId);
+      sel.innerHTML = '<option value="">Select Trainer</option>' + emps.map(e => `<option value="${e.id}" ${lockedTrainerId === e.id ? 'selected' : ''}>${e.name}</option>`).join('');
+      sel.disabled = role === 'employee';
       document.getElementById('pt-id').value = pt?.id || '';
       document.getElementById('pt-date').value = pt?.date || today();
       document.getElementById('pt-shift').value = pt?.shift || 'morning';
@@ -4314,9 +4781,15 @@
 
     function savePt(e) {
       e.preventDefault();
+      const role = getCurrentRole();
+      const myEmpId = getCurrentEmpId();
       const pts = getPt();
       const id = document.getElementById('pt-id').value;
-      const trainerId = document.getElementById('pt-trainer').value;
+      if (id && role === 'employee') {
+        const existing = pts.find(p => p.id === id);
+        if (existing && existing.trainerId !== myEmpId) { toast('Not authorized', 'err'); return; }
+      }
+      const trainerId = role === 'employee' ? myEmpId : document.getElementById('pt-trainer').value;
       const date = document.getElementById('pt-date').value;
       const shift = document.getElementById('pt-shift').value;
       const type = document.getElementById('pt-type').value;
@@ -4348,8 +4821,11 @@
     }
 
     function deletePt(id) {
+      const role = getCurrentRole();
+      const target = getPt().find(p => p.id === id);
+      if (role === 'employee' && target && target.trainerId !== getCurrentEmpId()) { toast('Not authorized', 'err'); return; }
       if (!confirm('Delete this PT session?')) return;
-      const trainerId = getPt().find(p => p.id === id)?.trainerId;
+      const trainerId = target?.trainerId;
       save(K.pt, getPt().filter(p => p.id !== id));
       toast('PT session deleted', 'suc');
       renderPt();
@@ -4365,12 +4841,16 @@
     }
 
     function renderPt() {
-      const emps = getEmp().filter(e => e.status !== 'inactive');
+      const role = getCurrentRole();
+      const myEmpId = getCurrentEmpId();
+      let emps = getEmp().filter(e => e.status !== 'inactive');
+      if (role === 'employee') emps = emps.filter(e => e.id === myEmpId);
       const monthInput = document.getElementById('pt-f-month');
       const fMonth = monthInput.value || curMonth();
       monthInput.value = fMonth;
       const fType = document.getElementById('pt-f-type').value;
-      const pts = getPt().filter(p => p.month === fMonth && (!fType || p.type === fType));
+      let pts = getPt().filter(p => p.month === fMonth && (!fType || p.type === fType));
+      if (role === 'employee') pts = pts.filter(p => p.trainerId === myEmpId);
 
       const totalSessions = pts.length;
       const totalRevenue = pts.reduce((sum, p) => sum + (p.amount || 0), 0);
@@ -4380,7 +4860,7 @@
       document.getElementById('pt-total-commission').textContent = `₹${totalCommission.toLocaleString('en-IN')}`;
 
       const grid = document.getElementById('pt-trainer-grid');
-      const trainers = emps.filter(e => pts.some(p => p.trainerId === e.id));
+      const trainers = role === 'employee' ? emps : emps.filter(e => pts.some(p => p.trainerId === e.id));
       if (!trainers.length) {
         grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🏋️</div><h3>No PT sessions yet</h3><p>Add a session to track commissions.</p></div>`;
         return;
@@ -4414,6 +4894,8 @@
     }
 
     function renderPtTrainerModal(trainerId) {
+      const role = getCurrentRole();
+      if (role === 'employee' && trainerId !== getCurrentEmpId()) { closeModal('pt-trainer-modal'); return; }
       const emp = getEmp().find(e => e.id === trainerId);
       if (!emp) return;
       const fMonth = document.getElementById('pt-f-month').value || curMonth();
@@ -4427,6 +4909,28 @@
 
       document.getElementById('pt-trainer-modal-title').textContent = `${emp.name} — ${fmtMon(fMonth)}`;
       const body = document.getElementById('pt-trainer-modal-body');
+      const rateBlock = role === 'admin' ? `
+        <div class="card" style="padding:14px;margin-bottom:14px">
+          <div class="fr2" style="align-items:flex-end">
+            <div class="fg" style="margin-bottom:0">
+              <label class="fl">Commission % on Total PT Amount</label>
+              <input type="number" class="fc" id="ptr-rate" min="0" max="100" step="1" value="${rate}" oninput="updatePtRatePreview('${trainerId}')">
+            </div>
+            <div class="fg" style="margin-bottom:0;display:flex;gap:8px">
+              <button type="button" class="btn btn-p" onclick="savePtRateForTrainer('${trainerId}')">Save %</button>
+              <button type="button" class="btn btn-s" onclick="resetPtRateForTrainer('${trainerId}')">Auto</button>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--txt3);margin-top:6px">
+            ${override ? `Custom rate set for ${fmtMon(fMonth)}.` : `Auto-tiered rate based on total PT amount (₹${total.toLocaleString('en-IN')}).`}
+          </div>
+        </div>` : `
+        <div class="card" style="padding:14px;margin-bottom:14px">
+          <div class="pt-row"><span>Commission Rate</span><strong>${rate}%</strong></div>
+        </div>`;
+      const actionsCell = p => role === 'admin'
+        ? `<button class="btn btn-s btn-xs" onclick="openPtModal('${p.id}')">Edit</button><button class="btn btn-r btn-xs" onclick="deletePt('${p.id}')">Del</button>`
+        : `<button class="btn btn-s btn-xs" onclick="openPtModal('${p.id}')">Edit</button>`;
       body.innerHTML = `
         <div class="grid3" style="gap:10px;margin-bottom:14px">
           <div class="card" style="padding:14px;text-align:center">
@@ -4442,21 +4946,7 @@
             <div id="ptr-commission-amt" style="font-size:20px;font-weight:800;color:var(--blue)">₹${commission.toLocaleString('en-IN')}</div>
           </div>
         </div>
-        <div class="card" style="padding:14px;margin-bottom:14px">
-          <div class="fr2" style="align-items:flex-end">
-            <div class="fg" style="margin-bottom:0">
-              <label class="fl">Commission % on Total PT Amount</label>
-              <input type="number" class="fc" id="ptr-rate" min="0" max="100" step="1" value="${rate}" oninput="updatePtRatePreview('${trainerId}')">
-            </div>
-            <div class="fg" style="margin-bottom:0;display:flex;gap:8px">
-              <button type="button" class="btn btn-p" onclick="savePtRateForTrainer('${trainerId}')">Save %</button>
-              <button type="button" class="btn btn-s" onclick="resetPtRateForTrainer('${trainerId}')">Auto</button>
-            </div>
-          </div>
-          <div style="font-size:11px;color:var(--txt3);margin-top:6px">
-            ${override ? `Custom rate set for ${fmtMon(fMonth)}.` : `Auto-tiered rate based on total PT amount (₹${total.toLocaleString('en-IN')}).`}
-          </div>
-        </div>
+        ${rateBlock}
         <div class="fa" style="margin-bottom:10px">
           <button type="button" class="btn btn-p" onclick="openPtModal(null,'${trainerId}')">+ Add PT Session</button>
         </div>
@@ -4471,10 +4961,7 @@
                   <td>${ptTypeLabel(p.type)}</td>
                   <td style="font-weight:700;color:var(--green)">₹${p.amount.toLocaleString('en-IN')}</td>
                   <td>${p.notes || '—'}</td>
-                  <td><div style="display:flex;gap:6px">
-                    <button class="btn btn-s btn-xs" onclick="openPtModal('${p.id}')">Edit</button>
-                    <button class="btn btn-r btn-xs" onclick="deletePt('${p.id}')">Del</button>
-                  </div></td>
+                  <td><div style="display:flex;gap:6px">${actionsCell(p)}</div></td>
                 </tr>`).join('') : `<tr><td colspan="6"><div class="empty"><div class="empty-icon">🏋️</div><h3>No sessions this month</h3></div></td></tr>`}
               </tbody>
             </table>
@@ -4492,6 +4979,7 @@
     }
 
     function savePtRateForTrainer(trainerId) {
+      if (getCurrentRole() !== 'admin') { toast('Not authorized', 'err'); return; }
       const fMonth = document.getElementById('pt-f-month').value || curMonth();
       const rate = parseFloat(document.getElementById('ptr-rate').value);
       if (Number.isNaN(rate) || rate < 0 || rate > 100) { toast('Enter a valid commission % (0-100)', 'err'); return; }
@@ -4504,6 +4992,7 @@
     }
 
     function resetPtRateForTrainer(trainerId) {
+      if (getCurrentRole() !== 'admin') { toast('Not authorized', 'err'); return; }
       const fMonth = document.getElementById('pt-f-month').value || curMonth();
       resetPtRate(trainerId, fMonth);
       toast('Commission rate reset to auto', 'suc');
@@ -4511,6 +5000,259 @@
       renderPt();
       if (curPage === 'salary') renderSalary();
       if (curPage === 'dashboard') renderDash();
+    }
+
+    // ─── PT PACKAGE TRACKER UI ──────────────────────────────────────────
+    function clearPtPkgFilters() {
+      document.getElementById('ptpkg-f-trainer').value = '';
+      document.getElementById('ptpkg-f-status').value = '';
+      renderPtPkg();
+    }
+
+    function openPtPkgModal(id = null) {
+      const role = getCurrentRole();
+      const myEmpId = getCurrentEmpId();
+      const pkg = id ? getPtPkgs().find(p => p.id === id) : null;
+      if (role === 'employee' && pkg && pkg.trainerId !== myEmpId) { toast('Not authorized', 'err'); return; }
+      let emps = getEmp().filter(e => e.status !== 'inactive');
+      if (role === 'employee') emps = emps.filter(e => e.id === myEmpId);
+      const sel = document.getElementById('ptpkg-trainer');
+      const lockedTrainerId = role === 'employee' ? myEmpId : pkg?.trainerId;
+      sel.innerHTML = '<option value="">Select Trainer</option>' + emps.map(e => `<option value="${e.id}" ${lockedTrainerId === e.id ? 'selected' : ''}>${e.name}</option>`).join('');
+      sel.disabled = role === 'employee';
+      document.getElementById('ptpkg-modal-title').textContent = pkg ? 'Edit Package' : 'New PT Package';
+      document.getElementById('ptpkg-id').value = pkg?.id || '';
+      document.getElementById('ptpkg-client').value = pkg?.clientName || '';
+      document.getElementById('ptpkg-type').value = pkg?.type || '24session';
+      document.getElementById('ptpkg-type').disabled = !!pkg;
+      document.getElementById('ptpkg-start').value = pkg?.startDate || today();
+      document.getElementById('ptpkg-due').value = pkg?.dueDate || '';
+      document.getElementById('ptpkg-notes').value = pkg?.notes || '';
+      openModal('ptpkg-modal');
+    }
+
+    function savePtPkg(e) {
+      e.preventDefault();
+      const role = getCurrentRole();
+      const myEmpId = getCurrentEmpId();
+      const id = document.getElementById('ptpkg-id').value;
+      const existing = id ? getPtPkgs().find(p => p.id === id) : null;
+      if (role === 'employee' && existing && existing.trainerId !== myEmpId) { toast('Not authorized', 'err'); return; }
+      const trainerId = role === 'employee' ? myEmpId : document.getElementById('ptpkg-trainer').value;
+      const clientName = document.getElementById('ptpkg-client').value.trim();
+      const type = document.getElementById('ptpkg-type').value;
+      const startDate = document.getElementById('ptpkg-start').value;
+      const dueDate = document.getElementById('ptpkg-due').value;
+      const notes = document.getElementById('ptpkg-notes').value.trim();
+      if (!trainerId) { toast('Select a trainer', 'err'); return; }
+      if (!clientName) { toast('Enter client name', 'err'); return; }
+      if (!startDate || !dueDate) { toast('Select start and due dates', 'err'); return; }
+      if (dueDate < startDate) { toast('Due date cannot be before start date', 'err'); return; }
+      const totalSessions = PT_PKG_TYPES[type].sessions;
+      const sessions = existing ? existing.sessions : Array.from({ length: totalSessions }, () => ({ done: false, date: '', timeIn: '', timeOut: '', plan: '', workout: '', remarks: '' }));
+      const pkg = {
+        id: id || uid(),
+        trainerId, clientName, type, totalSessions,
+        startDate, dueDate, notes, sessions,
+        createdBy: existing ? existing.createdBy : role
+      };
+      savePtPkgRecord(pkg);
+      toast(existing ? 'Package updated' : 'Package created', 'suc');
+      closeModal('ptpkg-modal');
+      renderPtPkg();
+      updatePtPkgBadge();
+    }
+
+    function deletePtPkg(id) {
+      const role = getCurrentRole();
+      const pkg = getPtPkgs().find(p => p.id === id);
+      if (!pkg) return;
+      if (role === 'employee' && pkg.trainerId !== getCurrentEmpId()) { toast('Not authorized', 'err'); return; }
+      if (!confirm(`Delete the PT package for ${pkg.clientName}?`)) return;
+      deletePtPkgRecord(id);
+      toast('Package deleted', 'suc');
+      closeModal('ptpkg-detail-modal');
+      renderPtPkg();
+      updatePtPkgBadge();
+    }
+
+    function renderPtPkg() {
+      const role = getCurrentRole();
+      const myEmpId = getCurrentEmpId();
+      const emps = getEmp().filter(e => e.status !== 'inactive');
+      const trainerSel = document.getElementById('ptpkg-f-trainer');
+      if (role === 'admin') {
+        const prevVal = trainerSel.value;
+        trainerSel.innerHTML = '<option value="">All Trainers</option>' + emps.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
+        trainerSel.value = prevVal;
+      }
+      const fTrainer = role === 'admin' ? trainerSel.value : myEmpId;
+      const fStatus = document.getElementById('ptpkg-f-status').value;
+
+      document.getElementById('ptpkg-page-h2').textContent = role === 'employee' ? 'PT Details' : 'PT Packages';
+      document.getElementById('ptpkg-page-sub').textContent = role === 'employee'
+        ? 'Tick off sessions as you complete them with your clients'
+        : "Track 24 / 12 session packages and tick off sessions as they're completed";
+
+      let pkgs = getPtPkgs();
+      if (role === 'employee') pkgs = pkgs.filter(p => p.trainerId === myEmpId);
+      else if (fTrainer) pkgs = pkgs.filter(p => p.trainerId === fTrainer);
+      if (fStatus) pkgs = pkgs.filter(p => pkgStatus(p) === fStatus);
+      pkgs = pkgs.slice().sort((a, b) => b.startDate.localeCompare(a.startDate));
+
+      const grid = document.getElementById('ptpkg-grid');
+      if (!pkgs.length) {
+        grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="empty-icon">✅</div><h3>No PT packages yet</h3><p>Create a package to start tracking sessions.</p></div>`;
+        updatePtPkgBadge();
+        return;
+      }
+      const empName = id => emps.find(e => e.id === id)?.name || '—';
+      grid.innerHTML = pkgs.map(pkg => {
+        const { done, total } = pkgProgress(pkg);
+        const status = pkgStatus(pkg);
+        const pct = Math.round((done / total) * 100);
+        const statusBadge = status === 'completed' ? `<span class="badge bg-g">✓ Completed</span>`
+          : status === 'overdue' ? `<span class="badge bg-r">⚠ Overdue</span>`
+          : `<span class="badge bg-b">● Active</span>`;
+        const daysDiff = Math.round((new Date(pkg.dueDate) - new Date(today())) / 86400000);
+        const dueNote = status === 'completed' ? ''
+          : daysDiff < 0 ? `${Math.abs(daysDiff)} day${Math.abs(daysDiff) === 1 ? '' : 's'} overdue`
+          : daysDiff === 0 ? 'Due today'
+          : `${daysDiff} day${daysDiff === 1 ? '' : 's'} left`;
+        return `
+      <div class="pkg-card status-${status}" onclick="openPtPkgDetail('${pkg.id}')">
+        <div class="pkg-card-head">
+          <div class="pkg-card-id">
+            <div class="av">${pkg.clientName[0].toUpperCase()}</div>
+            <div>
+              <div style="font-weight:700;font-size:15px">${pkg.clientName}</div>
+              ${role === 'admin' ? `<div style="font-size:11px;color:var(--txt3);margin-top:1px">👤 ${empName(pkg.trainerId)}</div>` : ''}
+              <span class="pkg-type-tag">🏋️ ${PT_PKG_TYPES[pkg.type].label}</span>
+            </div>
+          </div>
+          ${statusBadge}
+        </div>
+        <div class="pkg-progress-wrap">
+          <div class="pkg-progress-bar"><div class="pkg-progress-fill" style="width:${pct}%"></div></div>
+          <div class="pkg-progress-pct">${pct}%</div>
+        </div>
+        <div class="pkg-card-foot">
+          <div>
+            <div class="lbl">Sessions</div>
+            <strong>${done} / ${total}</strong>
+          </div>
+          <div style="text-align:right">
+            <div class="lbl">Due ${fmtDate(pkg.dueDate)}</div>
+            <strong style="${status === 'overdue' ? 'color:var(--red)' : status === 'completed' ? 'color:var(--green)' : ''}">${dueNote}</strong>
+          </div>
+        </div>
+      </div>`;
+      }).join('');
+      updatePtPkgBadge();
+    }
+
+    function openPtPkgDetail(id) {
+      renderPtPkgDetail(id);
+      openModal('ptpkg-detail-modal');
+    }
+
+    function renderPtPkgDetail(id) {
+      const role = getCurrentRole();
+      const pkg = getPtPkgs().find(p => p.id === id);
+      if (!pkg) { closeModal('ptpkg-detail-modal'); return; }
+      if (role === 'employee' && pkg.trainerId !== getCurrentEmpId()) { closeModal('ptpkg-detail-modal'); return; }
+      const emp = getEmp().find(e => e.id === pkg.trainerId);
+      const { done, total } = pkgProgress(pkg);
+      const status = pkgStatus(pkg);
+      const pct = Math.round((done / total) * 100);
+      const statusBadge = status === 'completed' ? `<span class="badge bg-g">Completed</span>`
+        : status === 'overdue' ? `<span class="badge bg-r">Overdue</span>`
+        : `<span class="badge bg-b">Active</span>`;
+
+      document.getElementById('ptpkg-detail-modal-title').textContent = `${pkg.clientName} — ${PT_PKG_TYPES[pkg.type].label}`;
+      const body = document.getElementById('ptpkg-detail-modal-body');
+      const adminActions = role === 'admin' ? `
+        <button type="button" class="btn btn-s btn-sm" onclick="openPtPkgModal('${pkg.id}')">Edit</button>
+        <button type="button" class="btn btn-r btn-sm" onclick="deletePtPkg('${pkg.id}')">Delete</button>` : '';
+      body.innerHTML = `
+        <div class="grid3" style="gap:10px;margin-bottom:14px">
+          <div class="card" style="padding:14px;text-align:center">
+            <div style="font-size:11px;color:var(--txt3)">Trainer</div>
+            <div style="font-size:15px;font-weight:700;margin-top:4px">${emp?.name || '—'}</div>
+          </div>
+          <div class="card" style="padding:14px;text-align:center">
+            <div style="font-size:11px;color:var(--txt3)">Progress</div>
+            <div style="font-size:20px;font-weight:800;color:var(--accent)">${done} / ${total}</div>
+          </div>
+          <div class="card" style="padding:14px;text-align:center">
+            <div style="font-size:11px;color:var(--txt3)">Status</div>
+            <div style="margin-top:4px">${statusBadge}</div>
+          </div>
+        </div>
+        <div class="pkg-progress-bar" style="margin-bottom:14px"><div class="pkg-progress-fill" style="width:${pct}%"></div></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:12px;color:var(--txt3)">
+          <span>Start: ${fmtDate(pkg.startDate)} • Due: <span style="${status === 'overdue' ? 'color:var(--red);font-weight:700' : ''}">${fmtDate(pkg.dueDate)}</span></span>
+          <div style="display:flex;gap:8px">${adminActions}</div>
+        </div>
+        <div class="card" style="padding:0">
+          <div class="tbl-wrap" style="max-height:65vh;overflow-y:auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th><th>Done</th><th>Date</th><th>Time In</th><th>Time Out</th><th>Workout Plan</th><th>Workout Done</th><th>Remarks</th><th class="pkg-action-col">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${(() => { const nextIdx = pkg.sessions.findIndex(s => !s.done); return pkg.sessions.map((s, i) => `
+                  <tr ${i === nextIdx ? 'style="background:rgba(245,158,11,.08)"' : ''}>
+                    <td>${i + 1}${i === nextIdx ? ' <span class="badge bg-b" style="font-size:9px">Next</span>' : ''}</td>
+                    <td><input type="checkbox" ${s.done ? 'checked' : ''} onchange="togglePkgSession('${pkg.id}',${i},this.checked)" style="width:18px;height:18px"></td>
+                    <td><input type="date" class="fc" style="min-width:130px" value="${s.date || ''}" ${s.done ? '' : 'disabled'} onchange="setPkgSessionField('${pkg.id}',${i},'date',this.value)"></td>
+                    <td><input type="time" class="fc" style="min-width:110px" value="${s.timeIn || ''}" onchange="setPkgSessionField('${pkg.id}',${i},'timeIn',this.value)"></td>
+                    <td><input type="time" class="fc" style="min-width:110px" value="${s.timeOut || ''}" onchange="setPkgSessionField('${pkg.id}',${i},'timeOut',this.value)"></td>
+                    <td><textarea class="fc" rows="2" style="min-width:160px;resize:vertical" placeholder="${role === 'admin' ? 'Plan next workout…' : 'Set by admin'}" ${role === 'admin' ? '' : 'disabled'} onchange="setPkgSessionField('${pkg.id}',${i},'plan',this.value)">${escHtml(s.plan)}</textarea></td>
+                    <td><textarea class="fc" rows="2" style="min-width:160px;resize:vertical" placeholder="e.g. Legs, HIIT" onchange="setPkgSessionField('${pkg.id}',${i},'workout',this.value)">${escHtml(s.workout)}</textarea></td>
+                    <td><input type="text" class="fc" style="min-width:140px" placeholder="Remarks" value="${escAttr(s.remarks)}" onchange="setPkgSessionField('${pkg.id}',${i},'remarks',this.value)"></td>
+                    <td class="pkg-action-col">${s.done ? '<span class="badge bg-g">Done</span>' : `<button type="button" class="btn btn-p btn-xs" onclick="completePkgSession('${pkg.id}',${i})">Add</button>`}</td>
+                  </tr>`).join(''); })()}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        ${pkg.notes ? `<div style="font-size:12px;color:var(--txt3);margin-top:10px">Notes: ${pkg.notes}</div>` : ''}
+      `;
+    }
+
+    function togglePkgSession(pkgId, idx, checked) {
+      const role = getCurrentRole();
+      const pkgs = getPtPkgs();
+      const pkg = pkgs.find(p => p.id === pkgId);
+      if (!pkg) return false;
+      if (role === 'employee' && pkg.trainerId !== getCurrentEmpId()) { toast('Not authorized', 'err'); return false; }
+      pkg.sessions[idx].done = checked;
+      pkg.sessions[idx].date = checked ? (pkg.sessions[idx].date || today()) : '';
+      save(K.ptPkg, pkgs);
+      renderPtPkgDetail(pkgId);
+      renderPtPkg();
+      return true;
+    }
+
+    function completePkgSession(pkgId, idx) {
+      if (togglePkgSession(pkgId, idx, true)) {
+        toast('Session marked complete', 'suc');
+        closeModal('ptpkg-detail-modal');
+      }
+    }
+
+    function setPkgSessionField(pkgId, idx, field, value) {
+      const role = getCurrentRole();
+      if (field === 'plan' && role !== 'admin') { toast('Not authorized', 'err'); return; }
+      const pkgs = getPtPkgs();
+      const pkg = pkgs.find(p => p.id === pkgId);
+      if (!pkg) return;
+      if (role === 'employee' && pkg.trainerId !== getCurrentEmpId()) { toast('Not authorized', 'err'); return; }
+      pkg.sessions[idx][field] = value;
+      save(K.ptPkg, pkgs);
     }
 
     // ─── DASHBOARD ───────────────────────────────────────────────────────
@@ -4666,7 +5408,6 @@
       if (isLoggedIn()) {
         updateLoginTimestamp();
         showApp();
-        renderDash();
       } else {
         showLogin();
       }
