@@ -812,6 +812,49 @@
       box-shadow: 0 0 28px rgba(16, 185, 129, .25);
     }
 
+    .pkg-verdict-toggle {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--border);
+    }
+
+    .pkg-verdict-toggle button {
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 5px 9px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      background: var(--bg2);
+      color: var(--txt2);
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .pkg-verdict-toggle button:hover {
+      border-color: var(--accent);
+    }
+
+    .pkg-verdict-toggle button.active {
+      background: rgba(245, 158, 11, .15);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .pkg-verdict-toggle button.active.improved {
+      background: rgba(16, 185, 129, .15);
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .pkg-verdict-toggle button.active.worsened {
+      background: rgba(239, 68, 68, .15);
+      border-color: var(--red);
+      color: var(--red);
+    }
+
     .pkg-chart-card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -2803,6 +2846,36 @@
         </div>
         <div class="fg"><label class="fl">WHR (Waist-Hip Ratio)</label><input type="number" step="0.01" class="fc" id="ptpkg-whr" placeholder="e.g. 0.91"></div>
 
+        <div class="fl" style="margin:18px 0 10px;font-size:12px;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px">Body Part Measurements, cm (optional)</div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Neck</label><input type="number" step="0.1" class="fc" id="ptpkg-neck" placeholder="e.g. 38"></div>
+          <div class="fg"><label class="fl">Shoulders</label><input type="number" step="0.1" class="fc" id="ptpkg-shoulders" placeholder="e.g. 110"></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Chest/Bust</label><input type="number" step="0.1" class="fc" id="ptpkg-chest" placeholder="e.g. 95"></div>
+          <div class="fg"><label class="fl">Waist (Narrowest)</label><input type="number" step="0.1" class="fc" id="ptpkg-waist" placeholder="e.g. 80"></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Belly/Abdomen (At Navel)</label><input type="number" step="0.1" class="fc" id="ptpkg-belly" placeholder="e.g. 90"></div>
+          <div class="fg"><label class="fl">Hips/Glutes</label><input type="number" step="0.1" class="fc" id="ptpkg-hips" placeholder="e.g. 100"></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Right Upper Arm</label><input type="number" step="0.1" class="fc" id="ptpkg-rUpperArm" placeholder="e.g. 30"></div>
+          <div class="fg"><label class="fl">Left Upper Arm</label><input type="number" step="0.1" class="fc" id="ptpkg-lUpperArm" placeholder="e.g. 30"></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Right Forearm</label><input type="number" step="0.1" class="fc" id="ptpkg-rForearm" placeholder="e.g. 26"></div>
+          <div class="fg"><label class="fl">Left Forearm</label><input type="number" step="0.1" class="fc" id="ptpkg-lForearm" placeholder="e.g. 26"></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Right Thigh</label><input type="number" step="0.1" class="fc" id="ptpkg-rThigh" placeholder="e.g. 55"></div>
+          <div class="fg"><label class="fl">Left Thigh</label><input type="number" step="0.1" class="fc" id="ptpkg-lThigh" placeholder="e.g. 55"></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Right Calf</label><input type="number" step="0.1" class="fc" id="ptpkg-rCalf" placeholder="e.g. 36"></div>
+          <div class="fg"><label class="fl">Left Calf</label><input type="number" step="0.1" class="fc" id="ptpkg-lCalf" placeholder="e.g. 36"></div>
+        </div>
+
         <input type="hidden" id="ptpkg-id">
         <div class="fa">
           <button type="button" class="btn btn-s" onclick="closePtPkgModal()">Cancel</button>
@@ -2850,6 +2923,37 @@
           <div class="fg"><label class="fl">Body Age</label><input type="number" step="1" class="fc" id="es-bodyage" placeholder="e.g. 42"></div>
         </div>
         <div class="fg"><label class="fl">WHR (Waist-Hip Ratio)</label><input type="number" step="0.01" class="fc" id="es-whr" placeholder="e.g. 0.86"></div>
+
+        <div class="fl" style="margin:18px 0 10px;font-size:12px;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px">Body Part Measurements, cm (optional)</div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Neck</label><input type="number" step="0.1" class="fc" id="es-neck" placeholder="e.g. 37"></div>
+          <div class="fg"><label class="fl">Shoulders</label><input type="number" step="0.1" class="fc" id="es-shoulders" placeholder="e.g. 112"></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Chest/Bust</label><input type="number" step="0.1" class="fc" id="es-chest" placeholder="e.g. 97"></div>
+          <div class="fg"><label class="fl">Waist (Narrowest)</label><input type="number" step="0.1" class="fc" id="es-waist" placeholder="e.g. 74"></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Belly/Abdomen (At Navel)</label><input type="number" step="0.1" class="fc" id="es-belly" placeholder="e.g. 82"></div>
+          <div class="fg"><label class="fl">Hips/Glutes</label><input type="number" step="0.1" class="fc" id="es-hips" placeholder="e.g. 98"></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Right Upper Arm</label><input type="number" step="0.1" class="fc" id="es-rUpperArm" placeholder="e.g. 31"></div>
+          <div class="fg"><label class="fl">Left Upper Arm</label><input type="number" step="0.1" class="fc" id="es-lUpperArm" placeholder="e.g. 31"></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Right Forearm</label><input type="number" step="0.1" class="fc" id="es-rForearm" placeholder="e.g. 27"></div>
+          <div class="fg"><label class="fl">Left Forearm</label><input type="number" step="0.1" class="fc" id="es-lForearm" placeholder="e.g. 27"></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Right Thigh</label><input type="number" step="0.1" class="fc" id="es-rThigh" placeholder="e.g. 53"></div>
+          <div class="fg"><label class="fl">Left Thigh</label><input type="number" step="0.1" class="fc" id="es-lThigh" placeholder="e.g. 53"></div>
+        </div>
+        <div class="fr2">
+          <div class="fg"><label class="fl">Right Calf</label><input type="number" step="0.1" class="fc" id="es-rCalf" placeholder="e.g. 35"></div>
+          <div class="fg"><label class="fl">Left Calf</label><input type="number" step="0.1" class="fc" id="es-lCalf" placeholder="e.g. 35"></div>
+        </div>
+
         <input type="hidden" id="es-pkg-id">
         <div class="fa">
           <button type="button" class="btn btn-s" onclick="closeEndStatsModal()">Cancel</button>
@@ -5470,6 +5574,21 @@
       document.getElementById('ptpkg-visceralfat').value = stats.visceralFat ?? '';
       document.getElementById('ptpkg-bodyage').value = stats.bodyAge ?? '';
       document.getElementById('ptpkg-whr').value = stats.whr ?? '';
+      const meas = pkg?.measurements || {};
+      document.getElementById('ptpkg-neck').value = meas.neck ?? '';
+      document.getElementById('ptpkg-shoulders').value = meas.shoulders ?? '';
+      document.getElementById('ptpkg-chest').value = meas.chest ?? '';
+      document.getElementById('ptpkg-waist').value = meas.waist ?? '';
+      document.getElementById('ptpkg-belly').value = meas.belly ?? '';
+      document.getElementById('ptpkg-hips').value = meas.hips ?? '';
+      document.getElementById('ptpkg-rUpperArm').value = meas.rUpperArm ?? '';
+      document.getElementById('ptpkg-lUpperArm').value = meas.lUpperArm ?? '';
+      document.getElementById('ptpkg-rForearm').value = meas.rForearm ?? '';
+      document.getElementById('ptpkg-lForearm').value = meas.lForearm ?? '';
+      document.getElementById('ptpkg-rThigh').value = meas.rThigh ?? '';
+      document.getElementById('ptpkg-lThigh').value = meas.lThigh ?? '';
+      document.getElementById('ptpkg-rCalf').value = meas.rCalf ?? '';
+      document.getElementById('ptpkg-lCalf').value = meas.lCalf ?? '';
       openModal('ptpkg-modal');
     }
 
@@ -5514,10 +5633,27 @@
         bodyAge: numOrNull('ptpkg-bodyage'),
         whr: numOrNull('ptpkg-whr')
       };
+      const measurements = {
+        neck: numOrNull('ptpkg-neck'),
+        shoulders: numOrNull('ptpkg-shoulders'),
+        chest: numOrNull('ptpkg-chest'),
+        waist: numOrNull('ptpkg-waist'),
+        belly: numOrNull('ptpkg-belly'),
+        hips: numOrNull('ptpkg-hips'),
+        rUpperArm: numOrNull('ptpkg-rUpperArm'),
+        lUpperArm: numOrNull('ptpkg-lUpperArm'),
+        rForearm: numOrNull('ptpkg-rForearm'),
+        lForearm: numOrNull('ptpkg-lForearm'),
+        rThigh: numOrNull('ptpkg-rThigh'),
+        lThigh: numOrNull('ptpkg-lThigh'),
+        rCalf: numOrNull('ptpkg-rCalf'),
+        lCalf: numOrNull('ptpkg-lCalf')
+      };
       const pkg = {
         id: id || uid(),
         trainerId, clientName, type, totalSessions,
-        startDate, dueDate, notes, sessions, stats,
+        startDate, dueDate, notes, sessions, stats, measurements,
+        manualVerdicts: existing?.manualVerdicts || {},
         createdBy: existing ? existing.createdBy : role
       };
       savePtPkgRecord(pkg);
@@ -5635,9 +5771,33 @@
       { key: 'whr', label: 'WHR', unit: '', dir: -1 }
     ];
 
+    // Body part measurements — size-change direction is goal-dependent (bulking vs cutting),
+    // so these default to neutral (no auto verdict) except waist/belly, which default to
+    // "smaller is better". Admin can manually set/override the verdict for any of these
+    // in the Progress Report (see setPkgMetricVerdict).
+    const PKG_BODY_PARTS = [
+      { key: 'neck', label: 'Neck', unit: 'cm', dir: 0 },
+      { key: 'shoulders', label: 'Shoulders', unit: 'cm', dir: 0 },
+      { key: 'chest', label: 'Chest/Bust', unit: 'cm', dir: 0 },
+      { key: 'waist', label: 'Waist (Narrowest)', unit: 'cm', dir: -1 },
+      { key: 'belly', label: 'Belly/Abdomen', unit: 'cm', dir: -1 },
+      { key: 'hips', label: 'Hips/Glutes', unit: 'cm', dir: 0 },
+      { key: 'rUpperArm', label: 'Right Upper Arm', unit: 'cm', dir: 0 },
+      { key: 'lUpperArm', label: 'Left Upper Arm', unit: 'cm', dir: 0 },
+      { key: 'rForearm', label: 'Right Forearm', unit: 'cm', dir: 0 },
+      { key: 'lForearm', label: 'Left Forearm', unit: 'cm', dir: 0 },
+      { key: 'rThigh', label: 'Right Thigh', unit: 'cm', dir: 0 },
+      { key: 'lThigh', label: 'Left Thigh', unit: 'cm', dir: 0 },
+      { key: 'rCalf', label: 'Right Calf', unit: 'cm', dir: 0 },
+      { key: 'lCalf', label: 'Left Calf', unit: 'cm', dir: 0 }
+    ];
+
     const PKG_METRIC_ICONS = {
       height: '📏', weight: '⚖️', bmi: '📐', bodyFat: '🔥', fatMass: '🧈',
-      muscleMass: '💪', boneMass: '🦴', subFat: '〜', visceralFat: '🫀', bodyAge: '🎂', whr: '📊'
+      muscleMass: '💪', boneMass: '🦴', subFat: '〜', visceralFat: '🫀', bodyAge: '🎂', whr: '📊',
+      neck: '🦒', shoulders: '🤷', chest: '🫁', waist: '➰', belly: '🍩', hips: '🍑',
+      rUpperArm: '💪', lUpperArm: '💪', rForearm: '🦾', lForearm: '🦾',
+      rThigh: '🦵', lThigh: '🦵', rCalf: '🦵', lCalf: '🦵'
     };
 
     function pkgBarChartHtml(rows) {
@@ -5719,6 +5879,21 @@
       document.getElementById('es-visceralfat').value = stats.visceralFat ?? '';
       document.getElementById('es-bodyage').value = stats.bodyAge ?? '';
       document.getElementById('es-whr').value = stats.whr ?? '';
+      const meas = pkg.endMeasurements || {};
+      document.getElementById('es-neck').value = meas.neck ?? '';
+      document.getElementById('es-shoulders').value = meas.shoulders ?? '';
+      document.getElementById('es-chest').value = meas.chest ?? '';
+      document.getElementById('es-waist').value = meas.waist ?? '';
+      document.getElementById('es-belly').value = meas.belly ?? '';
+      document.getElementById('es-hips').value = meas.hips ?? '';
+      document.getElementById('es-rUpperArm').value = meas.rUpperArm ?? '';
+      document.getElementById('es-lUpperArm').value = meas.lUpperArm ?? '';
+      document.getElementById('es-rForearm').value = meas.rForearm ?? '';
+      document.getElementById('es-lForearm').value = meas.lForearm ?? '';
+      document.getElementById('es-rThigh').value = meas.rThigh ?? '';
+      document.getElementById('es-lThigh').value = meas.lThigh ?? '';
+      document.getElementById('es-rCalf').value = meas.rCalf ?? '';
+      document.getElementById('es-lCalf').value = meas.lCalf ?? '';
       openModal('ptpkg-endstats-modal');
     }
 
@@ -5751,6 +5926,22 @@
         bodyAge: numOrNull('es-bodyage'),
         whr: numOrNull('es-whr')
       };
+      pkg.endMeasurements = {
+        neck: numOrNull('es-neck'),
+        shoulders: numOrNull('es-shoulders'),
+        chest: numOrNull('es-chest'),
+        waist: numOrNull('es-waist'),
+        belly: numOrNull('es-belly'),
+        hips: numOrNull('es-hips'),
+        rUpperArm: numOrNull('es-rUpperArm'),
+        lUpperArm: numOrNull('es-lUpperArm'),
+        rForearm: numOrNull('es-rForearm'),
+        lForearm: numOrNull('es-lForearm'),
+        rThigh: numOrNull('es-rThigh'),
+        lThigh: numOrNull('es-lThigh'),
+        rCalf: numOrNull('es-rCalf'),
+        lCalf: numOrNull('es-lCalf')
+      };
       save(K.ptPkg, pkgs);
       toast('Final measurements saved', 'suc');
       closeModal('ptpkg-endstats-modal');
@@ -5782,23 +5973,43 @@
       openModal('ptpkg-report-modal');
     }
 
+    function setPkgMetricVerdict(pkgId, key, verdict) {
+      if (getCurrentRole() !== 'admin') { toast('Not authorized', 'err'); return; }
+      const pkgs = getPtPkgs();
+      const pkg = pkgs.find(p => p.id === pkgId);
+      if (!pkg) return;
+      if (!pkg.manualVerdicts) pkg.manualVerdicts = {};
+      if (verdict === null) delete pkg.manualVerdicts[key];
+      else pkg.manualVerdicts[key] = verdict;
+      save(K.ptPkg, pkgs);
+      renderPtPkgReport(pkgId);
+    }
+
     function renderPtPkgReport(pkgId) {
+      const role = getCurrentRole();
       const pkg = getPtPkgs().find(p => p.id === pkgId);
       if (!pkg) { closeModal('ptpkg-report-modal'); return; }
       const emp = getEmp().find(e => e.id === pkg.trainerId);
       document.getElementById('ptpkg-report-modal-title').textContent = `${pkg.clientName} — Progress Report`;
       const body = document.getElementById('ptpkg-report-modal-body');
-      const start = pkg.stats || {};
-      const end = pkg.endStats || {};
+      const start = { ...(pkg.stats || {}), ...(pkg.measurements || {}) };
+      const end = { ...(pkg.endStats || {}), ...(pkg.endMeasurements || {}) };
+      const manualVerdicts = pkg.manualVerdicts || {};
 
-      const rows = PKG_METRICS.map(m => {
+      const taggedMetrics = [
+        ...PKG_METRICS.map(m => ({ ...m, category: 'composition' })),
+        ...PKG_BODY_PARTS.map(m => ({ ...m, category: 'measurement' }))
+      ];
+      const rows = taggedMetrics.map(m => {
         const sv = start[m.key], ev = end[m.key];
         if (sv === null || sv === undefined || ev === null || ev === undefined) return null;
         const change = ev - sv;
         const pctChange = sv !== 0 ? (change / Math.abs(sv)) * 100 : 0;
         let verdict = 'neutral';
         if (m.dir !== 0 && Math.abs(change) > 0.001) verdict = (change * m.dir > 0) ? 'improved' : 'worsened';
-        return { ...m, sv, ev, change, pctChange, verdict };
+        const manual = manualVerdicts[m.key] || null;
+        if (manual) verdict = manual;
+        return { ...m, sv, ev, change, pctChange, verdict, manual };
       }).filter(Boolean);
 
       if (!rows.length) {
@@ -5831,36 +6042,51 @@
           </div>
           ${pkgBarChartHtml(rows)}
           ${pkgLineChartSvg(rows)}
-          <div class="pkg-chart-title" style="margin:18px 4px 10px">🔍 Detailed Breakdown</div>
-          ${rows.map(r => {
-            const maxV = Math.max(Math.abs(r.sv), Math.abs(r.ev), 0.001);
-            const startPct = Math.min(100, Math.abs(r.sv) / maxV * 100);
-            const endPct = Math.min(100, Math.abs(r.ev) / maxV * 100);
-            const badge = r.verdict === 'improved' ? `<span class="badge bg-g">▼ Improved</span>`
-              : r.verdict === 'worsened' ? `<span class="badge bg-r">▲ Needs Work</span>`
-              : `<span class="badge bg-a">No verdict</span>`;
-            const changeStr = `${r.change >= 0 ? '+' : ''}${r.change.toFixed(1)}${r.unit} (${r.pctChange >= 0 ? '+' : ''}${r.pctChange.toFixed(1)}%)`;
-            return `
-              <div class="pkg-report-row">
-                <div class="pkg-report-row-head">
-                  <span>${r.label} <span style="color:var(--txt3);font-weight:500;font-size:11.5px">${changeStr}</span></span>
-                  ${badge}
-                </div>
-                <div class="pkg-report-bar-row">
-                  <span class="pkg-report-bar-lbl">Start</span>
-                  <div class="pkg-report-bar-track"><div class="pkg-report-bar-fill" style="width:${startPct}%"></div></div>
-                  <span class="pkg-report-bar-val">${r.sv}${r.unit}</span>
-                </div>
-                <div class="pkg-report-bar-row">
-                  <span class="pkg-report-bar-lbl">Final</span>
-                  <div class="pkg-report-bar-track"><div class="pkg-report-bar-fill ${r.verdict}" style="width:${endPct}%"></div></div>
-                  <span class="pkg-report-bar-val">${r.ev}${r.unit}</span>
-                </div>
-              </div>`;
-          }).join('')}
+          <div class="pkg-chart-title" style="margin:18px 4px 10px">🔍 Detailed Breakdown — Body Composition</div>
+          ${pkgDetailRowsHtml(rows.filter(r => r.category === 'composition'), pkg.id, role)}
+          ${rows.some(r => r.category === 'measurement') ? `
+          <div class="pkg-chart-title" style="margin:18px 4px 10px">📐 Detailed Breakdown — Body Part Measurements</div>
+          ${pkgDetailRowsHtml(rows.filter(r => r.category === 'measurement'), pkg.id, role)}` : ''}
         </div>
         ${pkgPrintReportHtml(pkg, emp, rows, improvedCount, trackedCount, scorePct, verdictText)}
       `;
+    }
+
+    function pkgDetailRowsHtml(rows, pkgId, role) {
+      return rows.map(r => {
+        const maxV = Math.max(Math.abs(r.sv), Math.abs(r.ev), 0.001);
+        const startPct = Math.min(100, Math.abs(r.sv) / maxV * 100);
+        const endPct = Math.min(100, Math.abs(r.ev) / maxV * 100);
+        const badge = r.verdict === 'improved' ? `<span class="badge bg-g">▼ Improved</span>`
+          : r.verdict === 'worsened' ? `<span class="badge bg-r">▲ Needs Work</span>`
+          : `<span class="badge bg-a">No verdict</span>`;
+        const changeStr = `${r.change >= 0 ? '+' : ''}${r.change.toFixed(1)}${r.unit} (${r.pctChange >= 0 ? '+' : ''}${r.pctChange.toFixed(1)}%)`;
+        const verdictToggle = role === 'admin' ? `
+            <div class="pkg-verdict-toggle">
+              <button type="button" class="${!r.manual ? 'active' : ''}" onclick="setPkgMetricVerdict('${pkgId}','${r.key}',null)">↺ Auto</button>
+              <button type="button" class="${r.manual === 'improved' ? 'active improved' : ''}" onclick="setPkgMetricVerdict('${pkgId}','${r.key}','improved')">✅ Improved</button>
+              <button type="button" class="${r.manual === 'neutral' ? 'active' : ''}" onclick="setPkgMetricVerdict('${pkgId}','${r.key}','neutral')">➖ Same</button>
+              <button type="button" class="${r.manual === 'worsened' ? 'active worsened' : ''}" onclick="setPkgMetricVerdict('${pkgId}','${r.key}','worsened')">❌ Needs Work</button>
+            </div>` : '';
+        return `
+          <div class="pkg-report-row">
+            <div class="pkg-report-row-head">
+              <span>${r.label} <span style="color:var(--txt3);font-weight:500;font-size:11.5px">${changeStr}</span></span>
+              ${badge}
+            </div>
+            <div class="pkg-report-bar-row">
+              <span class="pkg-report-bar-lbl">Start</span>
+              <div class="pkg-report-bar-track"><div class="pkg-report-bar-fill" style="width:${startPct}%"></div></div>
+              <span class="pkg-report-bar-val">${r.sv}${r.unit}</span>
+            </div>
+            <div class="pkg-report-bar-row">
+              <span class="pkg-report-bar-lbl">Final</span>
+              <div class="pkg-report-bar-track"><div class="pkg-report-bar-fill ${r.verdict}" style="width:${endPct}%"></div></div>
+              <span class="pkg-report-bar-val">${r.ev}${r.unit}</span>
+            </div>
+            ${verdictToggle}
+          </div>`;
+      }).join('');
     }
 
     function pkgPrintReportHtml(pkg, emp, rows, improvedCount, trackedCount, scorePct, verdictText) {
@@ -5892,7 +6118,7 @@
         <table class="pkg-print-table">
           <thead><tr><th>Metric</th><th>Start</th><th>Final</th><th>Change</th><th>% Change</th><th>Result</th></tr></thead>
           <tbody>
-            ${rows.map(r => `<tr>
+            ${rows.filter(r => r.category === 'composition').map(r => `<tr>
               <td>${r.label}</td>
               <td>${r.sv}${r.unit}</td>
               <td>${r.ev}${r.unit}</td>
@@ -5902,6 +6128,22 @@
             </tr>`).join('')}
           </tbody>
         </table>
+
+        ${rows.some(r => r.category === 'measurement') ? `
+        <div class="pkg-print-section-title">Body Part Measurements — Before &amp; After</div>
+        <table class="pkg-print-table">
+          <thead><tr><th>Body Part</th><th>Start</th><th>Final</th><th>Change</th><th>% Change</th><th>Result</th></tr></thead>
+          <tbody>
+            ${rows.filter(r => r.category === 'measurement').map(r => `<tr>
+              <td>${r.label}</td>
+              <td>${r.sv}${r.unit}</td>
+              <td>${r.ev}${r.unit}</td>
+              <td>${r.change >= 0 ? '+' : ''}${r.change.toFixed(1)}${r.unit}</td>
+              <td>${r.pctChange >= 0 ? '+' : ''}${r.pctChange.toFixed(1)}%</td>
+              <td class="${r.verdict}">${r.verdict === 'improved' ? 'Improved' : r.verdict === 'worsened' ? 'Needs Work' : '—'}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>` : ''}
 
         <div class="pkg-print-section-title">PT Session Log</div>
         <table class="pkg-print-table">
@@ -5926,18 +6168,15 @@
       </div>`;
     }
 
-    function pkgStatsHtml(stats, label = '') {
+    function pkgStatsHtml(stats, label = '', title = 'Body Composition', metricList = PKG_METRICS) {
       if (!stats) return '';
-      const fields = [
-        ['Height', stats.height, 'cm'], ['Weight', stats.weight, 'kg'], ['BMI', stats.bmi, ''],
-        ['Body Fat', stats.bodyFat, '%'], ['Fat Mass', stats.fatMass, 'kg'], ['Muscle Mass', stats.muscleMass, 'kg'],
-        ['Bone Mass', stats.boneMass, 'kg'], ['Subcutaneous Fat', stats.subFat, '%'], ['Visceral Fat', stats.visceralFat, ''],
-        ['Body Age', stats.bodyAge, 'yrs'], ['WHR', stats.whr, '']
-      ].filter(([, v]) => v !== null && v !== undefined && v !== '');
+      const fields = metricList
+        .map(m => [m.label, stats[m.key], m.unit])
+        .filter(([, v]) => v !== null && v !== undefined && v !== '');
       if (!fields.length) return '';
       return `
         <div class="card" style="padding:14px;margin-bottom:14px">
-          <div style="font-size:11px;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Body Composition${label ? ` — ${label}` : ''}</div>
+          <div style="font-size:11px;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">${title}${label ? ` — ${label}` : ''}</div>
           <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px">
             ${fields.map(([label, v, unit]) => `
               <div>
@@ -5988,6 +6227,8 @@
         </div>
         ${pkgStatsHtml(pkg.stats, pkg.endStats ? 'Start' : '')}
         ${pkg.endStats ? pkgStatsHtml(pkg.endStats, 'Final') : ''}
+        ${pkgStatsHtml(pkg.measurements, pkg.endMeasurements ? 'Start' : '', 'Body Part Measurements', PKG_BODY_PARTS)}
+        ${pkg.endMeasurements ? pkgStatsHtml(pkg.endMeasurements, 'Final', 'Body Part Measurements', PKG_BODY_PARTS) : ''}
         <div class="fa" style="margin-bottom:14px">
           ${role === 'admin' ? `<button type="button" class="btn btn-s btn-sm" onclick="openEndStatsModal('${pkg.id}')">📏 ${pkg.endStats ? 'Edit' : 'Record'} Final Measurements</button>` : ''}
           ${role === 'admin' && pkg.endStats ? `<button type="button" class="btn btn-r btn-sm" onclick="deleteEndStats('${pkg.id}')">🗑 Delete Final Measurements</button>` : ''}
