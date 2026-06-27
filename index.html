@@ -2217,7 +2217,7 @@
         <div class="ph">
           <div>
             <h2>Leave Management</h2>
-            <div class="ph-sub">7 days paid leave per 6 months · Extra leaves deducted as LOP</div>
+            <div class="ph-sub">1 paid leave per month · Extra leaves deducted as LOP</div>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button class="btn btn-s" onclick="openUpdateLeaveModal()">📋 Update Leave</button>
@@ -2922,12 +2922,13 @@
           </select>
         </div>
         <div class="fg">
-          <label class="fl">Period *</label>
-          <select class="fc" id="ul-period" onchange="refreshUlBalance()"></select>
+          <label class="fl">Month *</label>
+          <input type="month" class="fc" id="ul-month" onchange="refreshUlBalance()">
+          <div style="font-size:11px;color:var(--txt3);margin-top:4px">Leave accrues 1 day per month, every month. This adjustment applies to the selected month only.</div>
         </div>
         <!-- Current balance info -->
         <div id="ul-balance-card" style="display:none;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:14px">
-          <div style="font-size:11px;color:var(--txt3);margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px">Current Balance</div>
+          <div style="font-size:11px;color:var(--txt3);margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px">Current Month's Balance</div>
           <div style="display:flex;gap:18px;font-size:13px;flex-wrap:wrap">
             <span>Allowed: <strong id="ul-bal-total">—</strong></span>
             <span>Used: <strong id="ul-bal-used">—</strong></span>
@@ -3427,26 +3428,7 @@
       sel.innerHTML = '<option value="">Select Employee</option>' + emps.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
       if (prefillEmpId) sel.value = prefillEmpId;
 
-      // Build period options: last 4 half-years
-      const periodSel = document.getElementById('ul-period');
-      const now = new Date();
-      const periods = [];
-      for (let i = 0; i < 4; i++) {
-        let y = now.getFullYear(), m = now.getMonth() + 1;
-        const shift = Math.floor(i / 1);
-        const half = m <= 6 ? 0 : 1;
-        const periodHalf = (half - i % 2 + 4) % 2;
-        const baseY = y - Math.floor(i / 2);
-        const pStart = periodHalf === 0 ? `${baseY}-01` : `${baseY}-07`;
-        const pLabel = periodHalf === 0 ? `Jan–Jun ${baseY}` : `Jul–Dec ${baseY}`;
-        if (!periods.find(p => p.start === pStart)) periods.push({ start: pStart, label: pLabel });
-      }
-      // Ensure current period is first
-      const curPeriod = getLeavePeriod(curMonth());
-      if (!periods.find(p => p.start === curPeriod.start)) periods.unshift({ start: curPeriod.start, label: curPeriod.label });
-      periods.sort((a, b) => b.start.localeCompare(a.start));
-      periodSel.innerHTML = periods.map(p => `<option value="${p.start}">${p.label}</option>`).join('');
-
+      document.getElementById('ul-month').value = curMonth();
       document.getElementById('ul-days').value = '';
       document.getElementById('ul-type').value = 'add';
       document.getElementById('ul-reason').value = '';
@@ -3458,10 +3440,10 @@
 
     function refreshUlBalance() {
       const empId = document.getElementById('ul-emp').value;
-      const period = document.getElementById('ul-period').value;
+      const month = document.getElementById('ul-month').value;
       const card = document.getElementById('ul-balance-card');
-      if (!empId || !period) { card.style.display = 'none'; return; }
-      const bal = getLeaveBalance(empId, period + '-01');
+      if (!empId || !month) { card.style.display = 'none'; return; }
+      const bal = getMonthlyLeaveBalance(empId, month);
       document.getElementById('ul-bal-total').textContent = `${bal.total} days`;
       document.getElementById('ul-bal-used').textContent = `${bal.used} days`;
       const remEl = document.getElementById('ul-bal-rem');
@@ -3473,16 +3455,16 @@
 
     function refreshUlPreview() {
       const empId = document.getElementById('ul-emp').value;
-      const period = document.getElementById('ul-period').value;
+      const month = document.getElementById('ul-month').value;
       const type = document.getElementById('ul-type').value;
       const days = parseInt(document.getElementById('ul-days').value) || 0;
       const prev = document.getElementById('ul-preview');
-      if (!empId || !period || !days) { prev.style.display = 'none'; return; }
-      const bal = getLeaveBalance(empId, period + '-01');
+      if (!empId || !month || !days) { prev.style.display = 'none'; return; }
+      const bal = getMonthlyLeaveBalance(empId, month);
       let newTotal = bal.total, msg = '', color = 'var(--green)';
-      if (type === 'add')    { newTotal = bal.total + days; msg = `Allowed days: ${bal.total} → ${newTotal} (+${days})`; }
-      if (type === 'deduct') { newTotal = Math.max(0, bal.total - days); msg = `Allowed days: ${bal.total} → ${newTotal} (-${days})`; color = newTotal < bal.used ? 'var(--red)' : 'var(--accent)'; }
-      if (type === 'set')    { newTotal = days; msg = `Allowed days set to: ${newTotal} (was ${bal.total})`; color = days < bal.used ? 'var(--red)' : 'var(--blue)'; }
+      if (type === 'add')    { newTotal = bal.total + days; msg = `This month's allowed days: ${bal.total} → ${newTotal} (+${days})`; }
+      if (type === 'deduct') { newTotal = Math.max(0, bal.total - days); msg = `This month's allowed days: ${bal.total} → ${newTotal} (-${days})`; color = newTotal < bal.used ? 'var(--red)' : 'var(--accent)'; }
+      if (type === 'set')    { newTotal = days; msg = `This month's allowed days set to: ${newTotal} (was ${bal.total})`; color = days < bal.used ? 'var(--red)' : 'var(--blue)'; }
       const newRem = Math.max(0, newTotal - bal.used);
       prev.style.display = 'block';
       prev.style.background = `rgba(${type === 'add' ? '16,185,129' : type === 'deduct' ? '245,158,11' : '59,130,246'},.1)`;
@@ -3494,22 +3476,23 @@
     function saveLeaveAdjustment(e) {
       e.preventDefault();
       const empId = document.getElementById('ul-emp').value;
-      const period = document.getElementById('ul-period').value;
+      const month = document.getElementById('ul-month').value;
       const type = document.getElementById('ul-type').value;
       const inputDays = parseInt(document.getElementById('ul-days').value) || 0;
       const reason = document.getElementById('ul-reason').value.trim();
       if (!empId) { toast('Select an employee', 'err'); return; }
+      if (!month) { toast('Select a month', 'err'); return; }
       if (!inputDays) { toast('Enter number of days', 'err'); return; }
       if (!reason) { toast('Enter a reason', 'err'); return; }
 
-      const bal = getLeaveBalance(empId, period + '-01');
+      const { baseDays, adjs: existingAdjs } = getMonthlyLeaveCap(empId, month);
       let adjDays;
       if (type === 'add')    adjDays = inputDays;
       if (type === 'deduct') adjDays = -inputDays;
-      if (type === 'set')    adjDays = inputDays - PERIOD_LEAVE_DAYS - bal.adjs.reduce((s, a) => s + a.days, 0);
+      if (type === 'set')    adjDays = inputDays - baseDays - existingAdjs.reduce((s, a) => s + a.days, 0);
 
       const adjs = getLeaveAdjs();
-      adjs.push({ id: uid(), empId, period, days: adjDays, type, inputDays, reason, createdAt: new Date().toISOString() });
+      adjs.push({ id: uid(), empId, period: month, days: adjDays, type, inputDays, reason, createdAt: new Date().toISOString() });
       save(K.leaveAdj, adjs);
       closeModal('update-leave-modal');
       toast('Leave balance updated', 'suc');
@@ -4354,8 +4337,13 @@
       return status === 'present' || status === 'late' || status === 'half-day';
     }
 
-    const PERIOD_LEAVE_DAYS = 7;
-    const PERIOD_LEAVE_SHIFTS = PERIOD_LEAVE_DAYS * 2;
+    // Leave accrues 1 day per calendar month, no exceptions — every month (including the
+    // last month of a 6-month period) is capped at exactly 1 day. A half-day leave counts
+    // as 0.5 toward that cap (two half-days in the same month = the full 1-day allowance).
+    // The cap resets every month — it does NOT bank/carry over from a month that went unused,
+    // and taking more than the current month's cap always converts the excess to LOP,
+    // regardless of how much "remaining" balance shows elsewhere in the period.
+    const MONTHLY_LEAVE_DAYS = 1;
 
     function getLeavePeriod(month) {
       const [y, m] = month.split('-').map(Number);
@@ -4363,51 +4351,79 @@
       return { start: `${y}-07`, end: `${y}-12`, label: `Jul–Dec ${y}` };
     }
 
-    function getLeaveBalance(empId, month) {
-      const period = getLeavePeriod(month);
-      normalizeLeaveStatuses(empId, month);
-      // Used = all attendance shifts marked 'leave' (paid, within pool) or 'lop' (over pool) —
-      // covers both approved leave applications AND plain absences that consumed the allowance
-      const usedShifts = getAtt().filter(a => a.empId === empId &&
-        a.date.slice(0, 7) >= period.start &&
-        a.date.slice(0, 7) <= period.end &&
-        (a.status === 'leave' || a.status === 'lop')).length;
-      const used = usedShifts / 2;
-      // Factor in manual adjustments for this employee & period
-      const adjs = getLeaveAdjs().filter(a => a.empId === empId && a.period === period.start);
-      const adjDays = adjs.reduce((sum, a) => sum + a.days, 0); // can be +/-
-      const total = Math.max(0, PERIOD_LEAVE_DAYS + adjDays);
-      return {
-        used, total,
-        remaining: Math.max(0, total - used),
-        lop: Math.max(0, used - total),
-        label: period.label,
-        adjs
-      };
+    function getMonthsInPeriod(period) {
+      const months = [];
+      let [y, m] = period.start.split('-').map(Number);
+      for (let i = 0; i < 6; i++) {
+        months.push(`${y}-${String(m).padStart(2, '0')}`);
+        m++; if (m > 12) { m = 1; y++; }
+      }
+      return months;
+    }
+
+    // Base monthly cap (before adjustments) — flat 1 day every month, no last-month bonus
+    function getMonthlyLeaveBase(month) {
+      return MONTHLY_LEAVE_DAYS;
+    }
+
+    // Effective cap for a specific month, including any manual adjustments recorded against that month
+    function getMonthlyLeaveCap(empId, month) {
+      const baseDays = getMonthlyLeaveBase(month);
+      const adjs = getLeaveAdjs().filter(a => a.empId === empId && a.period === month);
+      const adjDays = adjs.reduce((sum, a) => sum + a.days, 0);
+      return { capDays: Math.max(0, baseDays + adjDays), baseDays, adjs };
     }
 
     function normalizeLeaveStatuses(empId, month) {
       const att = getAtt();
-      const period = getLeavePeriod(month);
-      // Allowed pool size (in shifts), adjusted by any manual leave balance adjustments
-      const adjs = getLeaveAdjs().filter(a => a.empId === empId && a.period === period.start);
-      const adjDays = adjs.reduce((sum, a) => sum + a.days, 0);
-      const poolShifts = Math.max(0, PERIOD_LEAVE_SHIFTS + adjDays * 2);
-      // Both approved-leave shifts AND plain absences consume the allowance.
-      // First `poolShifts` (chronologically) count as paid leave; the rest become LOP.
+      const { capDays } = getMonthlyLeaveCap(empId, month);
+      const capShifts = capDays * 2;
+      // Both approved-leave shifts AND plain absences consume this month's allowance.
+      // First `capShifts` (chronologically, within THIS month only) count as paid leave; the rest become LOP.
       const records = att
         .filter(a => a.empId === empId &&
-          a.date.slice(0, 7) >= period.start &&
-          a.date.slice(0, 7) <= period.end &&
+          a.date.slice(0, 7) === month &&
           (a.status === 'leave' || a.status === 'lop' || a.status === 'absent'))
         .sort((a, b) => a.date.localeCompare(b.date) || a.shift.localeCompare(b.shift));
       let count = 0, changed = false;
       records.forEach(rec => {
-        const expected = count < poolShifts ? 'leave' : 'lop';
+        const expected = count < capShifts ? 'leave' : 'lop';
         if (rec.status !== expected) { rec.status = expected; changed = true; }
         count++;
       });
       if (changed) save(K.att, att);
+    }
+
+    // Single month's balance — used by the "Update Leave" adjustment screen
+    function getMonthlyLeaveBalance(empId, month) {
+      normalizeLeaveStatuses(empId, month);
+      const { capDays, baseDays, adjs } = getMonthlyLeaveCap(empId, month);
+      const monthRecs = getAtt().filter(a => a.empId === empId && a.date.slice(0, 7) === month);
+      const used = monthRecs.filter(a => a.status === 'leave').length / 2;
+      const lop = monthRecs.filter(a => a.status === 'lop').length / 2;
+      return { total: capDays, baseDays, used, remaining: Math.max(0, capDays - used), lop, adjs };
+    }
+
+    // Period-level (6-month) summary — sums each month's cap/usage. Still shown on the Leave page.
+    function getLeaveBalance(empId, month) {
+      const period = getLeavePeriod(month);
+      const months = getMonthsInPeriod(period);
+      let total = 0, used = 0, lop = 0;
+      const adjs = [];
+      months.forEach(ym => {
+        const mb = getMonthlyLeaveBalance(empId, ym);
+        total += mb.total;
+        used += mb.used;
+        lop += mb.lop;
+        adjs.push(...mb.adjs);
+      });
+      return {
+        used, total,
+        remaining: Math.max(0, total - used),
+        lop,
+        label: period.label,
+        adjs
+      };
     }
 
     function normalizeLeaveStatusesForEmployee(empId) {
@@ -4637,6 +4653,7 @@
     function renderMonthly() {
       const month = document.getElementById('att-month').value;
       const emps = getEmp().filter(e => e.status !== 'inactive');
+      emps.forEach(emp => normalizeLeaveStatuses(emp.id, month));
       const att = getAtt();
       const [y, m] = month.split('-').map(Number);
       const daysInMonth = new Date(y, m, 0).getDate();
@@ -4703,9 +4720,11 @@
           if (mv && ev) { days_p++; shifts_p += 2; return `<td><div class="att-cell ac-leave${edit}" data-tip="${tip}">L</div></td>`; }
           // Half day leave: one shift on leave, other shift worked
           if ((mv && he) || (ev && hm)) { days_p++; shifts_p += 2; return `<td><div class="att-cell ac-leave${edit}" data-tip="${tip}">HL</div></td>`; }
+          // LOP on either shift must show even if the other shift was worked — check before M/E
+          // so a present+LOP day isn't silently rendered as a plain "M"/"E" present cell.
+          if (ml || el) { if (hm || he) { days_p += 0.5; shifts_p++; } return `<td><div class="att-cell ac-lop${edit}" data-tip="${tip}">X</div></td>`; }
           if (hm) { days_p += 0.5; shifts_p++; return `<td><div class="att-cell ac-m${edit}" data-tip="${tip}">M</div></td>`; }
           if (he) { days_p += 0.5; shifts_p++; return `<td><div class="att-cell ac-e${edit}" data-tip="${tip}">E</div></td>`; }
-          if (ml || el) { return `<td><div class="att-cell ac-lop${edit}" data-tip="${tip}">X</div></td>`; }
           // Single-shift leave (no present counterpart) → half day leave
           if (mv || ev) { days_p += 0.5; shifts_p++; return `<td><div class="att-cell ac-leave${edit}" data-tip="${tip}">HL</div></td>`; }
           // Approved leave app but attendance not yet marked → show as paid leave
@@ -4873,6 +4892,9 @@
         const mp = records.filter(r => r.shift === 'morning' && isPresentStatus(r.status)).length;
         const ep = records.filter(r => r.shift === 'evening' && isPresentStatus(r.status)).length;
         const days = (mp + ep) / 2;
+        const leaveShifts = records.filter(r => r.status === 'leave').length;
+        const lopShifts = records.filter(r => r.status === 'lop').length;
+        const absentShifts = records.filter(r => r.status === 'absent').length;
         const _spd = (hasMorning(emp) ? 1 : 0) + (hasEvening(emp) ? 1 : 0) || 1;
         const earned = Math.round((mp + ep) * (emp.salary / ((emp.wdays || 26) * _spd)));
         const totalAdv = getAdv().filter(a => a.empId === emp.id && a.month === end.slice(0, 7)).reduce((sum, a) => sum + (a.amount || 0), 0);
@@ -4885,6 +4907,9 @@
           'Morning Shifts': mp,
           'Evening Shifts': ep,
           'Present Days': days,
+          'Paid Leave Shifts': leaveShifts,
+          'LOP Shifts': lopShifts,
+          'Absent Shifts': absentShifts,
           'Estimated Earned': earned,
           'PT Revenue': ptRevenue,
           'PT Commission': ptCommission,
@@ -4907,6 +4932,9 @@
           'Present Days': s.days,
           'Morning Shifts': s.mp,
           'Evening Shifts': s.ep,
+          'Paid Leave Shifts': s.paidLeaveShifts,
+          'LOP Shifts': s.lopShifts,
+          'Absent Shifts': s.absentShifts,
           'Earned': Math.round(s.earned),
           'PT Revenue': s.ptRevenue || 0,
           'PT Commission': s.ptCommission || 0,
