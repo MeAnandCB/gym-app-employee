@@ -4824,9 +4824,15 @@
           if (mv && ev) { days_p++; shifts_p += 2; return `<td><div class="att-cell ac-leave${edit}" data-tip="${tip}">L</div></td>`; }
           // Half day leave: one shift on leave, other shift worked
           if ((mv && he) || (ev && hm)) { days_p++; shifts_p += 2; return `<td><div class="att-cell ac-leave${edit}" data-tip="${tip}">HL</div></td>`; }
-          // LOP on either shift must show even if the other shift was worked — check before M/E
-          // so a present+LOP day isn't silently rendered as a plain "M"/"E" present cell.
-          if (ml || el) { if (hm || he) { days_p += 0.5; shifts_p++; } return `<td><div class="att-cell ac-lop${edit}" data-tip="${tip}">X</div></td>`; }
+          // LOP on either shift must show in red even if the other shift was worked — check
+          // before M/E so a present+LOP day still surfaces which shift was actually worked.
+          if (ml || el) {
+            if (hm || he) {
+              days_p += 0.5; shifts_p++;
+              return `<td><div class="att-cell ac-lop${edit}" data-tip="${tip}">${hm ? 'M' : 'E'}</div></td>`;
+            }
+            return `<td><div class="att-cell ac-lop${edit}" data-tip="${tip}">X</div></td>`;
+          }
           if (hm) { days_p += 0.5; shifts_p++; return `<td><div class="att-cell ac-m${edit}" data-tip="${tip}">M</div></td>`; }
           if (he) { days_p += 0.5; shifts_p++; return `<td><div class="att-cell ac-e${edit}" data-tip="${tip}">E</div></td>`; }
           // Single-shift leave (no present counterpart) → half day leave
