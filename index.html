@@ -1961,9 +1961,7 @@
     <div>
       <div class="nav-section" data-role="admin">Main</div>
       <div class="nav-item active" data-role="admin" onclick="nav('dashboard')"><span class="nav-icon">📊</span>Dashboard</div>
-      <div class="nav-item" data-role="admin" onclick="nav('profile')"><span class="nav-icon">👤</span>Profile</div>
       <div class="nav-item" data-role="admin" onclick="nav('employees')"><span class="nav-icon">👥</span>Employees</div>
-      <div class="nav-item" data-role="admin" onclick="nav('accounts')"><span class="nav-icon">🔑</span>User Accounts</div>
       <div class="nav-section" data-role="admin">Attendance</div>
       <div class="nav-item" data-role="admin" onclick="nav('punch')"><span class="nav-icon">👊</span>Attendance</div>
       <div class="nav-item" data-role="admin" onclick="nav('monthly')"><span class="nav-icon">📅</span>Monthly View</div>
@@ -1974,6 +1972,9 @@
       <div class="nav-item" data-role="admin" onclick="nav('ptpkg')"><span class="nav-icon">✅</span>PT Packages<span class="ptpkg-badge"></span></div>
       <div class="nav-item" data-role="employee" onclick="nav('ptpkg')"><span class="nav-icon">✅</span>PT Details<span class="ptpkg-badge"></span></div>
       <div class="nav-item" data-role="admin" onclick="nav('advances')"><span class="nav-icon">💳</span>Advances</div>
+      <div class="nav-section" data-role="admin">Account</div>
+      <div class="nav-item" data-role="admin" onclick="nav('profile')"><span class="nav-icon">👤</span>Profile</div>
+      <div class="nav-item" data-role="admin" onclick="nav('accounts')"><span class="nav-icon">🔑</span>User Accounts</div>
     </div>
     <div class="sidebar-bottom">
       <div id="sb-time"></div>
@@ -2039,16 +2040,17 @@
             </div>
           </div>
         </div>
-        <div class="grid2">
+        <div class="grid2" style="align-items:start">
           <div class="card">
             <div class="card-title">Today's Attendance</div>
-            <div id="dash-att"></div>
+            <div id="dash-att" style="max-height:260px;overflow-y:auto"></div>
           </div>
           <div class="card">
             <div class="card-title">Recent Punches</div>
-            <div id="dash-recent"></div>
+            <div id="dash-recent" style="max-height:260px;overflow-y:auto"></div>
           </div>
         </div>
+        <div id="dash-trainer-perf" style="margin-top:16px"></div>
       </div>
 
       <!-- EMPLOYEES -->
@@ -6378,6 +6380,71 @@
       </div>`;
         }).join('');
       }
+
+      document.getElementById('dash-trainer-perf').innerHTML = renderTrainerPerfHtml(mon);
+    }
+
+    // Builds the "Trainer of the Month" spotlight + performance bar chart for the dashboard
+    function renderTrainerPerfHtml(mon) {
+      const emps = getEmp();
+      const pts = getPt().filter(p => p.month === mon);
+      const trainerIds = [...new Set(pts.map(p => p.trainerId))];
+      const stats = trainerIds.map(id => {
+        const emp = emps.find(e => e.id === id);
+        if (!emp) return null;
+        const tpts = pts.filter(p => p.trainerId === id);
+        const revenue = tpts.reduce((s, p) => s + (p.amount || 0), 0);
+        return { emp, sessions: tpts.length, revenue, commission: getPtCommissionAmount(id, mon) };
+      }).filter(Boolean).sort((a, b) => b.revenue - a.revenue);
+
+      if (!stats.length) {
+        return `<div class="pkg-chart-card"><div class="pkg-chart-title">🏆 Trainer Performance — ${fmtMon(mon)}</div><div class="empty" style="padding:20px 0"><p>No PT sessions logged this month yet.</p></div></div>`;
+      }
+
+      const top = stats[0];
+      const maxRevenue = Math.max(...stats.map(s => s.revenue), 1);
+      const maxH = 120;
+
+      const spotlight = `
+        <div class="pkg-chart-card" style="background:linear-gradient(135deg, rgba(245,158,11,.12), var(--card));border-color:var(--accent)">
+          <div class="pkg-chart-title">🏆 Trainer of the Month — ${fmtMon(mon)}</div>
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+            <div class="av" style="width:52px;height:52px;font-size:20px;background:var(--accent);color:#1a1a1a">${top.emp.name[0]}</div>
+            <div style="flex:1;min-width:120px">
+              <div style="font-size:17px;font-weight:700">${top.emp.name}</div>
+              <div style="font-size:11px;color:var(--txt3)">${top.emp.role || 'Trainer'}</div>
+            </div>
+            <div style="display:flex;gap:20px;text-align:right">
+              <div><div style="font-size:16px;font-weight:700;color:var(--green)">₹${top.revenue.toLocaleString('en-IN')}</div><div style="font-size:10px;color:var(--txt3)">Revenue</div></div>
+              <div><div style="font-size:16px;font-weight:700;color:var(--blue)">${top.sessions}</div><div style="font-size:10px;color:var(--txt3)">Sessions</div></div>
+              <div><div style="font-size:16px;font-weight:700;color:var(--accent)">₹${top.commission.toLocaleString('en-IN')}</div><div style="font-size:10px;color:var(--txt3)">Commission</div></div>
+            </div>
+          </div>
+        </div>`;
+
+      const chart = `
+        <div class="pkg-chart-card">
+          <div class="pkg-chart-title">📊 Trainer Performance — ${fmtMon(mon)}</div>
+          <div class="pkg-barchart">
+            ${stats.map((s, i) => {
+              const hBar = Math.max(4, Math.round(s.revenue / maxRevenue * maxH));
+              const color = i === 0 ? 'var(--accent)' : 'var(--blue)';
+              return `
+                <div class="pkg-bar-group">
+                  <div class="pkg-bar-pair" style="height:${maxH}px">
+                    <div class="pkg-bar" style="width:30px;height:${hBar}px;background:${color}" title="${s.emp.name}: ₹${s.revenue.toLocaleString('en-IN')} (${s.sessions} sessions)"></div>
+                  </div>
+                  <div class="pkg-bar-label">${i === 0 ? '🥇 ' : ''}${s.emp.name}<br>₹${s.revenue.toLocaleString('en-IN')}</div>
+                </div>`;
+            }).join('')}
+          </div>
+          <div class="pkg-chart-legend">
+            <span><i style="background:var(--accent)"></i>Top Trainer</span>
+            <span><i style="background:var(--blue)"></i>Other Trainers</span>
+          </div>
+        </div>`;
+
+      return spotlight + chart;
     }
 
     // ─── INIT ────────────────────────────────────────────────────────────
